@@ -1,0 +1,95 @@
+:root { color-scheme: light; font-family: 'DM Sans', sans-serif; color: #172d31; background: #f5f7f6; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; font-family: 'DM Sans', sans-serif; }
+button, input { font: inherit; }
+
+html[data-acrho-theme='azure-blue'] {
+  --acrho-sidebar: #183b5b;
+  --acrho-sidebar-active: #2b527a;
+  --acrho-accent: #005cbb;
+  --acrho-accent-dark: #00458f;
+  --acrho-page: #f3f7fc;
+  --acrho-soft: #e8f0fa;
+  --acrho-heading: #193b5b;
+  --acrho-text: #304b68;
+  --acrho-muted: #71839a;
+  --acrho-border: #dce5ef;
+  --acrho-sidebar-text: #d6e2f0;
+  --mat-sys-body-large-font: 'DM Sans';
+  --mat-sys-body-medium-font: 'DM Sans';
+  --mat-sys-body-small-font: 'DM Sans';
+  --mat-sys-display-large-font: 'DM Sans';
+  --mat-sys-display-medium-font: 'DM Sans';
+  --mat-sys-display-small-font: 'DM Sans';
+  --mat-sys-headline-large-font: 'DM Sans';
+  --mat-sys-headline-medium-font: 'DM Sans';
+  --mat-sys-headline-small-font: 'DM Sans';
+  --mat-sys-label-large-font: 'DM Sans';
+  --mat-sys-label-medium-font: 'DM Sans';
+  --mat-sys-label-small-font: 'DM Sans';
+  --mat-sys-title-large-font: 'DM Sans';
+  --mat-sys-title-medium-font: 'DM Sans';
+  --mat-sys-title-small-font: 'DM Sans';
+}
+
+/* Angular Material's prebuilt theme sets the color system; these rules align app UI too. */
+html[data-acrho-theme] .sidebar { background: var(--acrho-sidebar); color: var(--acrho-sidebar-text); }
+html[data-acrho-theme] .main { background: var(--acrho-page); }
+html[data-acrho-theme] .brand-mark { background: var(--acrho-accent); }
+html[data-acrho-theme] .page-heading h1,
+html[data-acrho-theme] .race-hero h1,
+html[data-acrho-theme] .section-head h2 { color: var(--acrho-heading); }
+html[data-acrho-theme] .page-heading h1 em,
+html[data-acrho-theme] .date-tile,
+html[data-acrho-theme] .hero-icon,
+html[data-acrho-theme] .rank,
+html[data-acrho-theme] .back-link { color: var(--acrho-accent); }
+html[data-acrho-theme] .date-tile,
+html[data-acrho-theme] .race-hero { background: var(--acrho-soft); }
+html[data-acrho-theme] .stat-icon { color: var(--acrho-accent); background: var(--acrho-soft); }
+html[data-acrho-theme] .race-row:hover { background: var(--acrho-page); }
+html[data-acrho-theme] .route-card:hover { border-color: var(--acrho-accent); }
+html[data-acrho-theme] .runner-avatar { color: var(--acrho-accent-dark); background: var(--acrho-soft); }
+html[data-acrho-theme] .mat-mdc-header-cell { color: var(--acrho-muted); }
+html[data-acrho-theme] .mat-mdc-cell { color: var(--acrho-text); }
+html[data-acrho-theme] .stat-card b,
+html[data-acrho-theme] .race-info strong,
+html[data-acrho-theme] .route-card,
+html[data-acrho-theme] .runner-card b,
+html[data-acrho-theme] .section-head h2 { color: var(--acrho-heading); }
+html[data-acrho-theme] .page-heading p,
+html[data-acrho-theme] .race-hero p,
+html[data-acrho-theme] .race-info span,
+html[data-acrho-theme] .stat-card span:not(.stat-icon),
+html[data-acrho-theme] .runner-card span,
+html[data-acrho-theme] .runner-card small { color: var(--acrho-muted); }
+html[data-acrho-theme] .nav-item { color: var(--acrho-sidebar-text); }
+html[data-acrho-theme] .nav-item:hover,
+html[data-acrho-theme] .nav-item.active { background: var(--acrho-sidebar-active); color: #fff; }
+html[data-acrho-theme] .nav-label,
+html[data-acrho-theme] .sidebar-bottom { color: #b6c9dd; }
+html[data-acrho-theme] .api-status,
+html[data-acrho-theme] .breadcrumb b,
+html[data-acrho-theme] .calendar-tag { color: var(--acrho-text); }
+html[data-acrho-theme] .mat-mdc-form-field,
+html[data-acrho-theme] .mat-mdc-select,
+html[data-acrho-theme] .mat-mdc-option,
+html[data-acrho-theme] .mat-mdc-table,
+html[data-acrho-theme] .mat-mdc-paginator,
+html[data-acrho-theme] .mat-mdc-button-base,
+html[data-acrho-theme] .mat-mdc-menu-item { font-family: 'DM Sans', sans-serif; }
+html[data-acrho-theme] .eyebrow { color: var(--acrho-muted); }
+html[data-acrho-theme] .race-coef,
+html[data-acrho-theme] .route-type,
+html[data-acrho-theme] .category-pill { color: var(--acrho-accent-dark); background: var(--acrho-soft); }
+html[data-acrho-theme] .row-arrow { color: var(--acrho-muted); }
+html[data-acrho-theme] mat-icon { color: var(--acrho-accent); }
+html[data-acrho-theme] .nav-item mat-icon { color: inherit; }
+html[data-acrho-theme] .race-info span mat-icon,
+html[data-acrho-theme] .row-arrow { color: var(--acrho-muted); }
+html[data-acrho-theme] .error-banner mat-icon { color: inherit; }
+
+
+
+@media (max-width: 480px) { app-root mat-paginator .mat-mdc-paginator-container { flex-wrap: wrap; justify-content: center; padding: 4px; } }
+
