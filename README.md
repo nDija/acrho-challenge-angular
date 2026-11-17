@@ -1,4 +1,4 @@
-# ACRHO Angular
+# ACRHO Challenge Angular
 
 Interface web Angular autonome pour consulter les saisons ACRHO, leur calendrier, les parcours et les résultats publiés, ainsi que rechercher des coureurs.
 

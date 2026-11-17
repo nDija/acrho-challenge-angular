@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "acrho-angular": {
+    "acrho-challenge-angular": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -51,9 +51,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ]
+            "styles": ["src/styles.scss"]
           },
           "configurations": {
             "production": {
@@ -83,13 +81,16 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "acrho-angular:build:production"
+              "buildTarget": "acrho-challenge-angular:build:production"
             },
             "development": {
-              "buildTarget": "acrho-angular:build:development"
+              "buildTarget": "acrho-challenge-angular:build:development"
             }
           },
           "defaultConfiguration": "development"
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }
