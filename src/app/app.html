@@ -4,22 +4,55 @@
     <div class="nav-label">ESPACE PERSONNEL</div>
     <button class="nav-item" [class.active]="activeView === 'calendar'" (click)="activeView='calendar'; backToCalendar()"><mat-icon>calendar_month</mat-icon> Courses</button>
     <button class="nav-item" [class.active]="activeView === 'runners'" (click)="showRunners()"><mat-icon>groups</mat-icon> Coureurs</button>
+    <button class="nav-item" [class.active]="activeView === 'regulation'" (click)="showRegulation()"><mat-icon>gavel</mat-icon> Règlement</button>
     <div class="sidebar-bottom"><span class="pulse"></span> Saison {{selectedYear}} <span class="status">ACTIVE</span></div>
   </aside>
 
   <main class="main">
-    <header class="topbar"><div class="breadcrumb">ACRHO <span>/</span> <b>{{selectedRace ? 'DÉTAIL DE COURSE' : activeView === 'runners' ? 'ANNUAIRE' : 'SAISON'}}</b></div><div class="top-actions"><span class="api-status"><i></i> API CONNECTÉE</span><span class="avatar">VH</span></div></header>
+    <header class="topbar"><div class="breadcrumb">ACRHO <span>/</span> <b>{{selectedRace ? 'DÉTAIL DE COURSE' : activeView === 'runners' ? 'ANNUAIRE' : activeView === 'regulation' ? 'RÈGLEMENT' : 'SAISON'}}</b></div><div class="top-actions"><span class="api-status"><i></i> API CONNECTÉE</span><span class="avatar">VH</span></div></header>
     <section class="content">
       @if (activeView === 'calendar' && !selectedRace) {
         <div class="page-heading"><div><div class="eyebrow">VOTRE CALENDRIER DE RUNNING</div><h1>La saison, <em>en mouvement.</em></h1><p>Retrouvez les courses et résultats du challenge ACRHO.</p></div>
           <mat-form-field appearance="outline" class="season-select"><mat-label>Saison</mat-label><mat-select [(ngModel)]="selectedYear" (selectionChange)="loadRaces()"><mat-option *ngFor="let s of seasons" [value]="s.year">{{s.year}}</mat-option></mat-select></mat-form-field>
         </div>
-        <div class="stats-row"><article class="stat-card"><span class="stat-icon orange"><mat-icon>directions_run</mat-icon></span><div><b>{{races.length}}</b><span>Courses dans le rétro</span></div></article><article class="stat-card"><span class="stat-icon mint"><mat-icon>event_available</mat-icon></span><div><b>{{upcomingCount}}</b><span>à venir cette saison</span></div></article><article class="stat-card"><span class="stat-icon blue"><mat-icon>emoji_events</mat-icon></span><div><b>{{selectedYear}}</b><span>saison sélectionnée</span></div></article><article class="stat-card"><span class="stat-icon blue"><mat-icon>route</mat-icon></span><div><b>{{distanceLoading ? '…' : (publishedDistanceKm | number:'1.0-1')}}</b><span>km avalés</span></div></article></div>
-        <div class="section-head"><div><div class="eyebrow">À VOS MARQUES</div><h2>Les courses <span>({{races.length}})</span></h2></div><span class="calendar-tag"><mat-icon>calendar_today</mat-icon> CALENDRIER {{selectedYear}}</span></div>
+        <div class="stats-row"><button class="stat-card upcoming-card" [class.selected]="!showPlannedRaces && !showCancelledRaces" type="button" [attr.aria-pressed]="!showPlannedRaces && !showCancelledRaces" (click)="showPublishedRaces()"><span class="stat-icon orange"><mat-icon>directions_run</mat-icon></span><div><b>{{races.length}}</b><span>Courses dans le rétro</span></div><mat-icon class="card-action-icon">{{showPlannedRaces || showCancelledRaces ? 'expand_more' : 'expand_less'}}</mat-icon></button><button class="stat-card upcoming-card" [class.selected]="showPlannedRaces" type="button" [attr.aria-pressed]="showPlannedRaces" (click)="togglePlannedRaces()"><span class="stat-icon mint"><mat-icon>event_available</mat-icon></span><div><b>{{upcomingCount}}</b><span>à venir cette saison</span></div><mat-icon class="card-action-icon">{{showPlannedRaces ? 'expand_less' : 'expand_more'}}</mat-icon></button><button class="stat-card upcoming-card next-race-card" type="button" [disabled]="!nextUpcomingRace" [attr.aria-label]="nextUpcomingRace ? 'Afficher les détails de ' + nextUpcomingRace.name : 'Aucune prochaine course planifiée'" (click)="showNextRaceDetails()"><span class="stat-icon mint"><mat-icon>flag</mat-icon></span><div class="next-race-copy">@if (nextUpcomingRace; as nextRace) { <b>{{nextRace.name}}</b><span>{{nextRace.raceDate | date:'EEE d MMM'}}</span><small>{{nextRace.city || 'Lieu à confirmer'}}</small> } @else { <b>À définir</b><span>Aucune prochaine course</span> }</div></button><button class="stat-card upcoming-card" [class.selected]="showCancelledRaces" type="button" [attr.aria-pressed]="showCancelledRaces" (click)="toggleCancelledRaces()"><span class="stat-icon cancelled"><mat-icon>event_busy</mat-icon></span><div><b>{{cancelledRaces.length}}</b><span>courses annulées</span></div><mat-icon class="card-action-icon">{{showCancelledRaces ? 'expand_less' : 'expand_more'}}</mat-icon></button><article class="stat-card"><span class="stat-icon blue"><mat-icon>emoji_events</mat-icon></span><div><b>{{selectedYear}}</b><span>saison sélectionnée</span></div></article><article class="stat-card"><span class="stat-icon blue"><mat-icon>route</mat-icon></span><div><b>{{distanceLoading ? '…' : (publishedDistanceKm | number:'1.0-1')}}</b><span>km avalés</span></div></article></div>
+        <div class="section-head"><div><div class="eyebrow">À VOS MARQUES</div><h2>{{showPlannedRaces ? 'Courses à venir' : showCancelledRaces ? 'Courses annulées' : 'Les courses'}} <span>({{displayedRaces.length}})</span></h2></div><span class="calendar-tag"><mat-icon>calendar_today</mat-icon> CALENDRIER {{selectedYear}}</span></div>
         @if (loading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> }
         @if (error) { <div class="error-banner"><mat-icon>error_outline</mat-icon>{{error}}</div> }
-        @if (!loading && races.length) { <div class="race-list">@for (race of races; track race.id) { <button class="race-row" (click)="openRace(race)"><div class="date-tile"><b>{{race.raceDate | date:'dd'}}</b><span>{{race.raceDate | date:'MMM'}}</span></div><div class="race-info"><strong>{{race.name}}</strong><span><mat-icon>location_on</mat-icon>{{race.city || 'Lieu à confirmer'}}</span></div><div class="race-meta"><span class="race-coef">COEF. {{race.coefficient ?? '—'}}</span><span class="race-state">{{race.status || 'AU CALENDRIER'}}</span></div><mat-icon class="row-arrow">arrow_forward</mat-icon></button> }</div> }
-        @if (!loading && !races.length && !error) { <div class="empty">Aucune course trouvée pour cette saison.</div> }
+        @if (!loading && displayedRaces.length) {
+          <div class="race-list">
+            @if (showPlannedRaces) {
+              @for (race of plannedRaces; track race.id) {
+                <div class="planned-race-item">
+                  <button class="race-row" type="button" [attr.aria-expanded]="expandedRaceId === race.id" (click)="togglePlannedDetails(race)">
+                    <div class="date-tile"><b>{{race.raceDate | date:'dd'}}</b><span>{{race.raceDate | date:'MMM'}}</span></div><div class="race-info"><strong>{{race.name}}</strong><span><mat-icon>location_on</mat-icon>{{race.city || 'Lieu à confirmer'}}</span></div><div class="race-meta"><span class="race-coef">COEF. {{race.coefficient ?? '—'}}</span><span class="race-state">{{race.status || 'AU CALENDRIER'}}</span></div><mat-icon class="row-arrow">{{expandedRaceId === race.id ? 'expand_less' : 'expand_more'}}</mat-icon>
+                  </button>
+                  @if (expandedRaceId === race.id) {
+                    <div class="practical-info-panel">
+                      @if (practicalInfoLoading) { <div class="inline-loading"><mat-spinner diameter="28"></mat-spinner><span>Chargement des détails…</span></div> }
+                      @if (!practicalInfoLoading && expandedRaceDetails) {
+                        @if (expandedRaceDetails.routes?.length) {
+                          <div class="practical-routes"><h3>Parcours</h3><div class="practical-route-list">@for (route of expandedRaceDetails.routes; track route.id) { <div><strong>{{route.label}}</strong><span>{{route.distanceM ? (route.distanceM / 1000 | number:'1.1-1') + ' km' : 'Distance à confirmer'}}@if (route.startTime) { · départ {{route.startTime.slice(0, 5)}} }@if (route.challenge) { · Challenge }</span></div> }</div></div>
+                        }
+                        <div class="practical-info-grid">
+                          @for (section of practicalSections(expandedRaceDetails); track section.key) { <article class="practical-info-section"><h3>{{section.label}}</h3><p>{{section.value}}</p></article> }
+                          @if (practicalRouteDescription) { <article class="practical-info-section"><h3>Informations sur le parcours</h3><p>{{practicalRouteDescription}}</p>@if (openRunnerUrl) { <a [href]="openRunnerUrl" target="_blank" rel="noopener noreferrer">Voir le parcours sur OpenRunner ↗</a> }</article> }
+                        </div>
+                        @if (expandedRaceDetails.practicalInfo?.sourceUrl) { <a class="practical-source" [href]="expandedRaceDetails.practicalInfo?.sourceUrl" target="_blank" rel="noopener noreferrer">Voir la fiche sur acrho.org ↗</a> }
+                        @if (!expandedRaceDetails.routes?.length && !practicalSections(expandedRaceDetails).length && !practicalRouteDescription) { <p class="no-practical-info">Aucune information pratique n’a été importée pour cette course.</p> }
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            } @else if (showCancelledRaces) {
+              @for (race of cancelledRaces; track race.id) { <button class="race-row cancelled-race-row" type="button" (click)="openRace(race)"><div class="date-tile"><b>{{race.raceDate | date:'dd'}}</b><span>{{race.raceDate | date:'MMM'}}</span></div><div class="race-info"><strong>{{race.name}}</strong><span><mat-icon>location_on</mat-icon>{{race.city || 'Lieu à confirmer'}}</span></div><div class="race-meta"><span class="race-state cancelled-state">ANNULÉE</span></div><mat-icon class="row-arrow">arrow_forward</mat-icon></button> }
+            } @else {
+              @for (race of races; track race.id) { <button class="race-row" type="button" (click)="openRace(race)"><div class="date-tile"><b>{{race.raceDate | date:'dd'}}</b><span>{{race.raceDate | date:'MMM'}}</span></div><div class="race-info"><strong>{{race.name}}</strong><span><mat-icon>location_on</mat-icon>{{race.city || 'Lieu à confirmer'}}</span></div><div class="race-meta"><span class="race-coef">COEF. {{race.coefficient ?? '—'}}</span><span class="race-state">{{race.status || 'AU CALENDRIER'}}</span></div><mat-icon class="row-arrow">arrow_forward</mat-icon></button> }
+            }
+          </div>
+        }
+        @if (!loading && !displayedRaces.length && !error) { <div class="empty">{{showPlannedRaces ? 'Aucune course planifiée pour cette saison.' : showCancelledRaces ? 'Aucune course annulée pour cette saison.' : 'Aucune course publiée pour cette saison.'}}</div> }
       }
       @if (selectedRace) {
         <button class="back-link" (click)="backToCalendar()"><mat-icon>arrow_back</mat-icon> Retour au calendrier</button>
@@ -30,7 +63,7 @@
         <div class="filter-toolbar"><button class="filter-toggle" type="button" [attr.aria-expanded]="showResultFilters" aria-controls="results-filter-panel" (click)="showResultFilters = !showResultFilters"><mat-icon>tune</mat-icon><span>Filtres de recherche</span><mat-icon class="filter-chevron">{{showResultFilters ? 'expand_less' : 'expand_more'}}</mat-icon></button><button mat-icon-button class="clear-filters" type="button" aria-label="Effacer les filtres" title="Effacer les filtres" (click)="clearResultFilters()"><mat-icon>delete</mat-icon></button></div>
         @if (showResultFilters) { <div class="filter-panel" id="results-filter-panel"><div class="filters"><div class="filter-fields"><mat-form-field appearance="outline"><mat-label>Rechercher un coureur</mat-label><input matInput [(ngModel)]="resultQuery" (keyup.enter)="applyResultFilters()"></mat-form-field><mat-form-field appearance="outline"><mat-label>Catégorie</mat-label><mat-select [(ngModel)]="category"><mat-option value="">Toutes</mat-option><mat-option *ngFor="let c of categories" [value]="c.id">{{c.code}}</mat-option></mat-select></mat-form-field><mat-form-field appearance="outline"><mat-label>Sexe</mat-label><mat-select [(ngModel)]="gender"><mat-option value="">Tous</mat-option><mat-option value="M">Hommes</mat-option><mat-option value="F">Femmes</mat-option></mat-select></mat-form-field></div><button mat-icon-button class="apply-filter" type="button" aria-label="Appliquer les filtres" title="Appliquer les filtres" (click)="applyResultFilters()"><mat-icon>search</mat-icon></button></div></div> }
         @if (loading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> }
-        @if (results.length) { <div class="result-cards">@for (result of results; track result.runner.id) { <article class="result-card"><div class="result-rank">{{result.overallRank ?? '—'}}</div><div class="result-person"><strong>{{result.runner.firstName}} {{result.runner.lastName}}</strong><span>{{result.runner.club || 'Indépendant'}}</span></div><div class="result-details"><span class="category-pill">{{result.category || '—'}}</span><b class="result-time">{{result.time || '—'}}</b></div></article> }</div><mat-paginator [length]="resultTotal" [pageSize]="resultSize" [pageIndex]="resultPage" [pageSizeOptions]="[20,50,100]" (page)="onResultsPage($event)"></mat-paginator> }
+        @if (results.length) { <div class="result-cards">@for (result of results; track result.runner.id) { <article class="result-card"><div class="result-rank">{{result.overallRank ?? '—'}}</div><div class="result-person"><strong>{{result.runner.firstName}} {{result.runner.lastName}}</strong><span>{{result.runner.club || 'Indépendant'}}</span></div><div class="result-details"><span class="category-pill">{{result.category || '—'}}</span><span class="result-time-wrap"><b class="result-time">{{result.time || '—'}}</b>@if (pacePerKm(result); as pace) { <small class="result-pace">{{pace}}</small> }</span></div></article> }</div><mat-paginator [length]="resultTotal" [pageSize]="resultSize" [pageIndex]="resultPage" [pageSizeOptions]="[20,50,100]" (page)="onResultsPage($event)"></mat-paginator> }
         @if (!loading && !results.length && !error) { <div class="empty">Sélectionnez un parcours pour consulter les résultats.</div> }
         @if (error) { <div class="error-banner"><mat-icon>info</mat-icon>{{error}}</div> }
       }
@@ -40,6 +73,12 @@
         @if (loading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> } @if (error) { <div class="error-banner">{{error}}</div> }
         @if (runners.length) { <div class="runner-grid">@for (runner of runners; track runner.id) { <article class="runner-card"><div class="runner-avatar">{{runner.firstName?.[0]}}{{runner.lastName?.[0]}}</div><div><b>{{runner.firstName}} {{runner.lastName}}</b><span>{{runner.club || 'Indépendant'}}</span><small>{{runner.birthYear || '—'}} · {{runner.gender || '—'}}</small></div></article> }</div><mat-paginator [length]="runnerTotal" [pageSize]="20" [pageIndex]="runnerPage" (page)="onRunnerPage($event)"></mat-paginator> }
         @if (!loading && !runners.length && runnerQuery.length >= 2 && !error) { <div class="empty">Aucun coureur trouvé pour « {{runnerQuery}} ».</div> }
+      }
+      @if (activeView === 'regulation') {
+        <div class="page-heading regulation-heading"><div><div class="eyebrow">ACRHO · INFORMATIONS</div><h1>Le <em>règlement.</em></h1><p>Les règles des épreuves et du challenge.</p></div></div>
+        @if (regulationLoading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> }
+        @if (regulationError) { <div class="error-banner"><mat-icon>error_outline</mat-icon>{{regulationError}}</div> }
+        @if (regulationHtml) { <article class="regulation-sheet" [innerHTML]="regulationHtml"></article> }
       }
     </section>
   </main>
