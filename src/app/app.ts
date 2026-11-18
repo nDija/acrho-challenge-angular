@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { catchError, from, mergeMap, of, toArray } from 'rxjs';
-import { AcrhoApi, Category, Race, RaceDetail, Result, Runner, Season } from './acrho-api.service';
+import { AcrhoApi, Category, Race, RaceDetail, Result, RouteInfo, Runner, Season } from './acrho-api.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -22,6 +22,7 @@ export class App implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   seasons: Season[] = []; selectedYear = new Date().getFullYear(); races: Race[] = []; seasonRaces: Race[] = [];
   showPlannedRaces = false; showCancelledRaces = false;
+  nextUpcomingRaceRoutes: RouteInfo[] = [];
   selectedRace?: RaceDetail; categories: Category[] = []; results: Result[] = []; runners: Runner[] = [];
   expandedRaceId?: number; expandedRaceDetails?: RaceDetail; practicalInfoLoading = false;
   activeView: 'calendar' | 'runners' | 'regulation' = 'calendar'; loading = false; error = '';
@@ -37,7 +38,7 @@ export class App implements OnInit {
     this.api.seasons().subscribe({ next: xs => { this.seasons = xs; if (xs.length && !xs.some(s => s.year === this.selectedYear)) this.selectedYear = xs[0].year; this.loadRaces(); this.cdr.markForCheck(); }, error: e => this.fail(e) });
     this.api.categories().subscribe({ next: xs => { this.categories = xs; this.cdr.markForCheck(); }, error: () => {} });
   }
-  loadRaces() { const requestId = ++this.distanceRequestId; this.showPlannedRaces = false; this.showCancelledRaces = false; this.expandedRaceId = undefined; this.expandedRaceDetails = undefined; this.publishedDistanceKm = 0; this.distanceLoading = true; this.loading = true; this.error = ''; this.selectedRace = undefined; this.api.races(this.selectedYear).subscribe({ next: xs => { this.seasonRaces = xs; this.races = xs.filter(r => r.status?.toUpperCase() === 'PUBLISHED').sort((a,b) => a.raceDate.localeCompare(b.raceDate)); this.loadPublishedDistance(this.races, requestId); this.loading = false; this.cdr.markForCheck(); }, error: e => { this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
+  loadRaces() { const requestId = ++this.distanceRequestId; this.showPlannedRaces = false; this.showCancelledRaces = false; this.expandedRaceId = undefined; this.expandedRaceDetails = undefined; this.nextUpcomingRaceRoutes = []; this.publishedDistanceKm = 0; this.distanceLoading = true; this.loading = true; this.error = ''; this.selectedRace = undefined; this.api.races(this.selectedYear).subscribe({ next: xs => { this.seasonRaces = xs; this.races = xs.filter(r => r.status?.toUpperCase() === 'PUBLISHED').sort((a,b) => a.raceDate.localeCompare(b.raceDate)); this.loadNextUpcomingRaceRoutes(); this.loadPublishedDistance(this.races, requestId); this.loading = false; this.cdr.markForCheck(); }, error: e => { this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
   private loadPublishedDistance(races: Race[], requestId: number) {
     if (!races.length) {
       this.distanceLoading = false;
@@ -87,6 +88,18 @@ export class App implements OnInit {
     const now = new Date();
     const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60_000).toISOString().slice(0, 10);
     return this.plannedRaces.find(race => race.raceDate >= localDate);
+  }
+  private loadNextUpcomingRaceRoutes() {
+    const race = this.nextUpcomingRace;
+    if (!race) return;
+    this.api.race(race.id).subscribe({
+      next: detail => {
+        if (this.nextUpcomingRace?.id !== race.id) return;
+        this.nextUpcomingRaceRoutes = detail.routes;
+        this.cdr.markForCheck();
+      },
+      error: () => { /* Keep the card usable if this optional detail is unavailable. */ }
+    });
   }
   get displayedRaces() { return this.showPlannedRaces ? this.plannedRaces : this.showCancelledRaces ? this.cancelledRaces : this.races; }
   showPublishedRaces() { this.showPlannedRaces = false; this.showCancelledRaces = false; this.expandedRaceId = undefined; this.expandedRaceDetails = undefined; this.practicalInfoLoading = false; }
@@ -211,7 +224,7 @@ export class App implements OnInit {
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   }
   backToCalendar() { this.activeView = 'calendar'; this.selectedRace = undefined; this.error = ''; }
-  private fail(e: HttpErrorResponse) { this.error = e.status === 0 ? 'Impossible de joindre l’API. Vérifie que le serveur ACRHO tourne sur localhost:8080.' : `Erreur API (${e.status}) : ${e.error?.message ?? e.message}`; }
+  private fail(e: HttpErrorResponse) { this.error = e.status === 0 ? 'Impossible de joindre l’API ACRHO. Vérifie que le serveur est démarré et accessible sur le réseau.' : `Erreur API (${e.status}) : ${e.error?.message ?? e.message}`; }
 }
 
 

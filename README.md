@@ -4,11 +4,11 @@ Interface web Angular autonome pour consulter les saisons ACRHO, leur calendrier
 
 ## Démarrage local
 
-1. Démarrer l'API Spring ACRHO sur `http://localhost:8080`.
+1. Vérifier que l'API ACRHO est accessible sur le réseau, par défaut `http://192.168.0.100:8080`.
 2. Depuis ce dossier, lancer `npm install` si nécessaire.
 3. Lancer `npm start`, puis ouvrir `http://localhost:4200`.
 
-Le serveur de développement redirige `/api` vers `http://localhost:8080` via `proxy.conf.json`. L'application et l'API doivent être accessibles ensemble pendant le développement.
+Le serveur de développement redirige `/api` vers `http://192.168.0.100:8080` via `proxy.conf.json`. Pour utiliser une API locale, modifier cette cible en `http://localhost:8080`.
 
 ## Publication sur GitHub Pages
 
@@ -45,11 +45,11 @@ Dans PowerShell, depuis le dossier du projet :
 
 ```powershell
 $env:GIT_SSH_COMMAND = 'C:/Windows/System32/OpenSSH/ssh.exe'
-ng deploy --base-href=/acrho-challenge-angular/
+npm run deploy:pages
 ```
 
 Le chemin OpenSSH utilise des `/` afin que Git le transmette correctement à son shell. La commande `ng deploy`
-reconstruit le site et publie les fichiers dans `gh-pages`.
+construit avec la configuration Angular `production` puis publie les fichiers dans `gh-pages`.
 
 ### Configurer la source GitHub Pages
 
@@ -68,9 +68,9 @@ qu'ils restent sous les seuils d'erreur.
 ### API en production
 
 GitHub Pages héberge uniquement les fichiers statiques : il ne relaie pas les requêtes `/api` vers Spring.
-`proxy.conf.json` ne sert qu'avec `npm start` en local. L'API Angular actuelle utilise des chemins `/api/...` ;
-pour charger les données sur le site publié, il faudra configurer une URL publique de l'API dans le frontend et
-autoriser son origine dans la configuration CORS de l'API.
+La configuration locale utilise des chemins `/api/...` et le proxy défini dans `proxy.conf.json`. La configuration
+`production` remplace l'URL de base par `https://acrho-challenge.ddns.net`. L'API doit autoriser l'origine
+`https://ndija.github.io` dans sa configuration CORS.
 
 ## Angular Material
 
