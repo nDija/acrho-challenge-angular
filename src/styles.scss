@@ -94,3 +94,6 @@ html[data-acrho-theme] .error-banner mat-icon { color: inherit; }
 
 @media (max-width: 480px) { app-root mat-paginator .mat-mdc-paginator-container { flex-wrap: wrap; justify-content: center; padding: 4px; } }
 
+
+html[data-acrho-theme] .account-panel .delete-account-button:not(:disabled) { background:#dc2626; color:#fff; border-color:#dc2626; }
+html[data-acrho-theme] .account-panel .delete-account-button:not(:disabled):hover { background:#b91c1c; border-color:#b91c1c; }
