@@ -1,5 +1,6 @@
 import { LanguageService } from './language.service';
 import { RunnerStandingCard } from './runner-standing-card';
+import { RunnerVdotChart } from './runner-vdot-chart';
 import { Standings } from './standings';
 import { TranslatePipe } from './translate.pipe';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
@@ -19,7 +20,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root', standalone: true,
-  imports: [RunnerStandingCard, Standings, TranslatePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
+  imports: [RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
   templateUrl: './app.html', styleUrl: './app.scss'
 })
 export class App implements OnInit {
@@ -74,6 +75,17 @@ export class App implements OnInit {
   regulationHtml = ''; regulationLoading = false; regulationError = '';
   selectedRunner?: Runner;
   runnerYear?: number;
+  showRunnerVdot = false;
+
+  get runnerVdotSeasonId(): number | undefined {
+    return this.seasons.find(season => season.year === this.runnerYear)?.id;
+  }
+
+  get runnerBannerColor(): string {
+    return this.bannerColors.find(option => option.value === this.selectedRunner?.bannerColor)?.color
+      ?? this.bannerColors[0].color;
+  }
+
   runnerSeasons: number[] = [];
   runnerResults: RunnerResult[] = [];
   runnerDetailLoading = false;
@@ -289,6 +301,7 @@ export class App implements OnInit {
     this.selectedRace = undefined;
     this.error = '';
     this.selectedRunner = runner;
+    this.showRunnerVdot = false;
     this.bannerError = '';
     this.runnerYear = year;
     this.runnerSeasons = [];

@@ -13,6 +13,32 @@ export interface Me { id: number; email: string; displayName?: string; role: 'US
 export interface Category { id: number; code: string; label: string; }
 export interface Result { overallRank?: number; categoryRank?: number; bibNumber?: number; runner: Runner; category?: string | null; timeMs?: number | null; time?: string; status?: string; points?: number | null; }
 export interface RunnerResult { raceId: number; raceName: string; raceDate: string; city?: string; routeId: number; routeLabel: string; distanceM?: number; result: Result; }
+export interface VdotPerformance {
+  raceId: number;
+  raceName: string;
+  date: string;
+  distanceMeters: number;
+  durationSeconds: number | null;
+  vdot: number | null;
+  reliability: 'STANDARD' | 'ESTIMATED';
+  warnings: string[];
+}
+
+export interface RunnerVdot {
+  runnerId: number;
+  seasonId: number;
+  statistics: {
+    bestVdot: number | null;
+    averageVdot: number | null;
+    firstVdot: number | null;
+    lastVdot: number | null;
+    evolution: number | null;
+    raceCount: number;
+    validRaceCount: number;
+  };
+  performances: VdotPerformance[];
+}
+
 export interface Page<T> { content: T[]; page: number; size: number; total: number; }
 
 export interface StandingEntry {
@@ -82,6 +108,9 @@ export class AcrhoApi {
     return this.http.get<RunnerStanding>(this.apiUrl(`/api/v1/runners/${id}/standing`));
   }
   runnerSeasons(id: number) { return this.http.get<number[]>(this.apiUrl(`/api/v1/runners/${id}/seasons`)); }
+  runnerVdot(id: number, seasonId: number) {
+    return this.http.get<RunnerVdot>(this.apiUrl(`/api/v1/runners/${id}/seasons/${seasonId}/vdot`));
+  }
   runnerResults(id: number, year: number) {
     return this.http.get<RunnerResult[]>(this.apiUrl(`/api/v1/runners/${id}/results`), { params: { year } });
   }

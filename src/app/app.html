@@ -7,7 +7,6 @@
     <button class="nav-item" [class.active]="activeView === 'runners'" (click)="showRunners()" [attr.aria-label]="'Coureurs' | t"><mat-icon>groups</mat-icon><span class="nav-item-label">{{ 'Coureurs' | t }}</span></button>
     @if (me) { <button class="nav-item" [class.active]="activeView === 'favorites'" (click)="showFavorites()" [attr.aria-label]="'Favoris' | t"><mat-icon>favorite</mat-icon><span class="nav-item-label">{{ 'Favoris' | t }}</span></button> }
     <button class="nav-item" [class.active]="activeView === 'regulation'" (click)="showRegulation()" [attr.aria-label]="'Règlement' | t"><mat-icon>gavel</mat-icon><span class="nav-item-label">{{ 'Règlement' | t }}</span></button>
-    @if (me) { <button class="nav-item" [class.active]="activeView === 'settings'" (click)="showSettings()" [attr.aria-label]="'Paramètres' | t"><mat-icon>settings</mat-icon><span class="nav-item-label">{{ 'Paramètres' | t }}</span></button> }
     <a class="nav-item privacy-link" href="confidentialite.html" [attr.aria-label]="'Confidentialité' | t"><mat-icon>privacy_tip</mat-icon><span class="nav-item-label">{{ 'Confidentialité' | t }}</span></a>
     <div class="sidebar-bottom"><span class="pulse"></span> {{ "Saison" | t }} {{selectedYear}} <span class="status">{{ "ACTIVE" | t }}</span></div>
   </aside>
@@ -83,6 +82,7 @@
           </div>
 
           @if (favoritesError) { <div class="error-banner" role="alert">{{favoritesError | t}}<button mat-button type="button" (click)="loadFavorites()">{{ "Réessayer" | t }}</button></div> }
+          @let vdotSeasonId = runnerVdotSeasonId;
           <div class="runner-season-summary">
             @if (!runnerDetailError) {
               <article class="stat-card">
@@ -93,6 +93,23 @@
             <app-runner-standing-card class="stat-card" [runnerId]="runner.id" aria-labelledby="runner-standing-title">
               <span class="stat-icon blue"><mat-icon aria-hidden="true">leaderboard</mat-icon></span>
             </app-runner-standing-card>
+            <button class="stat-card upcoming-card runner-vdot-toggle" [class.selected]="showRunnerVdot"
+              type="button" aria-controls="runner-vdot-panel" [attr.aria-expanded]="showRunnerVdot"
+              [disabled]="vdotSeasonId == null" (click)="showRunnerVdot = !showRunnerVdot">
+              <span class="stat-icon blue"><mat-icon aria-hidden="true">show_chart</mat-icon></span>
+              <strong>VDOT</strong>
+              <mat-icon class="card-action-icon" aria-hidden="true">{{showRunnerVdot ? 'expand_less' : 'expand_more'}}</mat-icon>
+            </button>
+          </div>
+          <div id="runner-vdot-panel" [hidden]="!showRunnerVdot">
+            @if (showRunnerVdot && vdotSeasonId != null) {
+              @defer (when showRunnerVdot) {
+                <app-runner-vdot-chart [runnerId]="runner.id" [year]="runnerYear"
+                  [seasonId]="vdotSeasonId" [color]="runnerBannerColor" [results]="runnerResults" />
+              } @loading {
+                <p role="status">{{ 'Chargement du VDOT…' | t }}</p>
+              }
+            }
           </div>
           <div class="section-head"><h2>{{ "Résultats" | t }} {{runnerYear}} @if (!runnerDetailLoading && !runnerDetailError) { <span>({{runnerResults.length}})</span> }</h2></div>
           @if (runnerDetailLoading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> }

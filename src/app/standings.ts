@@ -44,16 +44,16 @@ import { TranslatePipe } from './translate.pipe';
                       {{ row.entry.firstName[0] }}{{ row.entry.lastName[0] }}
                     }
                   </div>
-                  <div class="result-person-copy"><strong>{{ row.entry.firstName }} {{ row.entry.lastName }}</strong></div>
+                  <div class="result-person-copy"><strong [title]="row.entry.firstName + ' ' + row.entry.lastName">{{ row.entry.firstName }} {{ row.entry.lastName }}</strong></div>
                 </button>
-                <span class="category-pill">{{ row.categoryLabel | t }}</span>
+                <span class="category-pill" [title]="row.categoryLabel | t">{{ row.categoryLabel | t }}</span>
               </div>
               @if (row.rank === null) { <div class="provisional-label">{{ 'Provisoire' | t }}</div> }
               <dl>
                 <div><dt>{{ 'Courses' | t }}</dt><dd>{{ row.entry.score.participations | number:'1.0-0':i18n.locale() }}</dd></div>
-                <div><dt>{{ 'Points' | t }}</dt><dd>{{ row.entry.score.resultPoints | number:'1.0-0':i18n.locale() }}</dd></div>
+                <div><dt><abbr [title]="'Points' | t">pts</abbr></dt><dd>{{ row.entry.score.resultPoints | number:'1.0-0':i18n.locale() }}</dd></div>
                 <div><dt>{{ 'Bonus' | t }}</dt><dd>{{ row.entry.score.bonusPoints | number:'1.0-0':i18n.locale() }}</dd></div>
-                <div><dt>{{ 'Total' | t }}</dt><dd><strong>{{ row.total | number:'1.0-0':i18n.locale() }}</strong></dd></div>
+                <div class="score-total"><dt>{{ 'Total' | t }}</dt><dd><strong>{{ row.total | number:'1.0-0':i18n.locale() }}</strong></dd></div>
               </dl>
             </li>
           }
@@ -80,7 +80,7 @@ import { TranslatePipe } from './translate.pipe';
     mat-form-field { width: min(100%, 19rem); }
     .standing-cards {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+      grid-template-columns: minmax(0, 1fr);
       gap: 12px;
       padding: 0;
       margin: 0 0 12px;
@@ -100,6 +100,9 @@ import { TranslatePipe } from './translate.pipe';
     .card-heading .category-pill { max-width: 6rem; overflow-wrap: anywhere; }
     .provisional-label { font-size: .75rem; font-weight: 700; }
     dl { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0; }
+    dl > div { display: flex; align-items: baseline; gap: 4px; }
+    dl > div:not(.score-total) dd { order: -1; }
+    dt abbr { text-decoration: none; }
     dt { font-size: .75rem; }
     dd { margin: 0; font-variant-numeric: tabular-nums; }
     .runner-link {
@@ -111,9 +114,27 @@ import { TranslatePipe } from './translate.pipe';
       text-align: start;
       cursor: pointer;
     }
-    .runner-link:hover strong { text-decoration: underline; }
+    .runner-link strong { font-size: clamp(1rem, 2.5vw, 1.125rem); line-height: 1.25; white-space: normal; overflow-wrap: anywhere; }
+    .standing-card:hover { border-color: var(--acrho-accent); }
     .runner-link:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
     .provisional { color: #964000; background: #fff5e9; }
+    @media (width > 700px) {
+      .standing-card {
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        align-items: center;
+        column-gap: clamp(8px, 1.5vw, 20px);
+        padding-block: 8px;
+      }
+      .runner-link strong, .card-heading .category-pill { white-space: nowrap; }
+      .card-heading .category-pill { overflow: hidden; text-overflow: ellipsis; }
+      .provisional-label { grid-column: 2; }
+      dl {
+        grid-column: 3;
+        grid-template-columns: repeat(4, auto);
+        gap: clamp(8px, 1.5vw, 20px);
+      }
+      dl > div { white-space: nowrap; }
+    }
   `,
 })
 export class Standings {
