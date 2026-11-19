@@ -16,10 +16,10 @@ De tijdregistratie stopt na een tijd berekend op 8 minuten per kilometer (7,5 km
 
 ED (Jonge dames) van 10 tot 19 jaar in het kalenderjaar
 DA (Dames) van 20 tot 39 jaar in het kalenderjaar
-A1 (Dames masters 1) van 40 tot 49 jaar in het kalenderjaar
-A2 (Dames masters 2) van 50 tot 59 jaar in het kalenderjaar
-A3 (Dames masters 3) van 60 tot 69 jaar in het kalenderjaar
-A4 (Dames masters 4) vanaf 70 jaar in het kalenderjaar
+A1 (Oudsten 1) van 40 tot 49 jaar in het kalenderjaar
+A2 (Oudsten 2) van 50 tot 59 jaar in het kalenderjaar
+A3 (Oudsten 3) van 60 tot 69 jaar in het kalenderjaar
+A4 (Oudsten 4) vanaf 70 jaar in het kalenderjaar
 EH (Jonge heren) van 10 tot 19 jaar in het kalenderjaar
 SE (Senioren) van 20 tot 39 jaar in het kalenderjaar
 V1 (Heren masters 1) van 40 tot 49 jaar in het kalenderjaar

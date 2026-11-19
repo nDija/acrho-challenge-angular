@@ -14,19 +14,19 @@ Timing ends after a duration calculated at 8 minutes per kilometre (7.5 km/h). R
 
 **Categories** apply from 1 January, based on the year of birth.
 
-ED (Young women) ages 10–19 in the year
+ED (Promising female runner) ages 10–19 in the year
 DA (Women) ages 20–39 in the year
-A1 (Women masters 1) ages 40–49 in the year
-A2 (Women masters 2) ages 50–59 in the year
-A3 (Women masters 3) ages 60–69 in the year
-A4 (Women masters 4) age 70 and above in the year
-EH (Young men) ages 10–19 in the year
-SE (Senior men) ages 20–39 in the year
-V1 (Men masters 1) ages 40–49 in the year
-V2 (Men masters 2) ages 50–59 in the year
-V3 (Men masters 3) ages 60–69 in the year
-V4 (Men masters 4) ages 70–79 in the year
-V5 (Men masters 5) age 80 and above in the year
+A1 (Elders 1) ages 40–49 in the year
+A2 (Elders 2) ages 50–59 in the year
+A3 (Elders 3) ages 60–69 in the year
+A4 (Elders 4) age 70 and above in the year
+EH (Promising male runner) ages 10–19 in the year
+SE (Seniors) ages 20–39 in the year
+V1 (Veterans 1) ages 40–49 in the year
+V2 (Veterans 2) ages 50–59 in the year
+V3 (Veterans 3) ages 60–69 in the year
+V4 (Veterans 4) ages 70–79 in the year
+V5 (Veterans 5) age 80 and above in the year
 
 Runners enter the overall standings after participating in at least 12 races during the season.
 
