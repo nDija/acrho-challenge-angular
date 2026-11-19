@@ -1,5 +1,6 @@
 import { LanguageService } from './language.service';
 import { RunnerStandingCard } from './runner-standing-card';
+import { RankedRunnerAvatar } from './ranked-runner-avatar';
 import { RunnerVdotChart } from './runner-vdot-chart';
 import { Standings } from './standings';
 import { TranslatePipe } from './translate.pipe';
@@ -20,7 +21,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root', standalone: true,
-  imports: [RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
+  imports: [RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
   templateUrl: './app.html', styleUrl: './app.scss'
 })
 export class App implements OnInit {

@@ -10,10 +10,11 @@ import { Subject, catchError, of, startWith, switchMap } from 'rxjs';
 import { AcrhoApi, Runner, StandingEntry } from './acrho-api.service';
 import { LanguageService } from './language.service';
 import { TranslatePipe } from './translate.pipe';
+import { RankedRunnerAvatar } from './ranked-runner-avatar';
 
 @Component({
   selector: 'app-standings',
-  imports: [DecimalPipe, TranslatePipe, MatButtonModule, MatFormFieldModule, MatSelectModule, MatProgressSpinnerModule, MatPaginatorModule],
+  imports: [RankedRunnerAvatar, DecimalPipe, TranslatePipe, MatButtonModule, MatFormFieldModule, MatSelectModule, MatProgressSpinnerModule, MatPaginatorModule],
   template: `
     <h1 id="standings-title">{{ 'Classement de la saison' | t }} @if (standings(); as data) { {{ data.year }} }</h1>
     @if (standings(); as data) {
@@ -36,14 +37,7 @@ import { TranslatePipe } from './translate.pipe';
                 </span>
                 <button class="runner-link result-person" type="button" (click)="openRunner(row.entry, data.year)"
                         [attr.aria-label]="('Voir les résultats de ' | t) + row.entry.firstName + ' ' + row.entry.lastName">
-                  <div class="runner-avatar result-avatar" aria-hidden="true">
-                    @if (row.entry.pictureUrl && !failedPictures.has(row.entry.pictureUrl)) {
-                      <img [src]="row.entry.pictureUrl" alt="" loading="lazy" referrerpolicy="no-referrer"
-                           (error)="failedPictures.add(row.entry.pictureUrl)">
-                    } @else {
-                      {{ row.entry.firstName[0] }}{{ row.entry.lastName[0] }}
-                    }
-                  </div>
+                  <app-ranked-runner-avatar [runner]="row.entry" [rank]="row.rank" [failedPictures]="failedPictures" />
                   <div class="result-person-copy"><strong [title]="row.entry.firstName + ' ' + row.entry.lastName">{{ row.entry.firstName }} {{ row.entry.lastName }}</strong></div>
                 </button>
                 <span class="category-pill" [title]="row.categoryLabel | t">{{ row.categoryLabel | t }}</span>
