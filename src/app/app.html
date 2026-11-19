@@ -95,7 +95,7 @@
         } @else {
         <mat-form-field appearance="outline" class="runner-search"><mat-label>Nom ou prénom (2 caractères minimum)</mat-label><input matInput [(ngModel)]="runnerQuery" (ngModelChange)="onRunnerQueryChange()" (keyup.enter)="findRunners()"><button mat-icon-button matSuffix (click)="findRunners()"><mat-icon>search</mat-icon></button></mat-form-field>
         @if (loading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> } @if (error) { <div class="error-banner">{{error}}</div> }
-        @if (runners.length) { <div class="runner-grid">@for (runner of runners; track runner.id) { <button class="runner-card runner-card-link" type="button" (click)="openRunner(runner)"><div class="runner-avatar">{{runner.firstName?.[0]}}{{runner.lastName?.[0]}}</div><div><b>{{runner.firstName}} {{runner.lastName}}</b><span>{{runner.club || 'Indépendant'}}</span>@if (runner.category) { <small>Catégorie {{runner.category}} · {{runner.categoryYear}}</small> }</div></button> }</div><mat-paginator [length]="runnerTotal" [pageSize]="20" [pageIndex]="runnerPage" (page)="onRunnerPage($event)"></mat-paginator> }
+        @if (runners.length) { <div class="runner-grid">@for (runner of runners; track runner.id) { <button class="runner-card runner-card-link" type="button" (click)="openRunner(runner)"><div class="runner-avatar">@if (runner.pictureUrl && !failedRunnerPictures.has(runner.pictureUrl)) { <img [src]="runner.pictureUrl" alt="" loading="lazy" referrerpolicy="no-referrer" (error)="failedRunnerPictures.add(runner.pictureUrl)"> } @else { {{runner.firstName?.[0]}}{{runner.lastName?.[0]}} }</div><div><b>{{runner.firstName}} {{runner.lastName}}</b><span>{{runner.club || 'Indépendant'}}</span>@if (runner.category) { <small>Catégorie {{runner.category}} · {{runner.categoryYear}}</small> }</div></button> }</div><mat-paginator [length]="runnerTotal" [pageSize]="20" [pageIndex]="runnerPage" (page)="onRunnerPage($event)"></mat-paginator> }
         @if (!loading && !runners.length && runnerQuery.length >= 2 && !error) { <div class="empty">Aucun coureur trouvé pour « {{runnerQuery}} ».</div> }
         }
         } @else if (authChecked) {
@@ -123,14 +123,16 @@
               <p><strong>{{linkedRunner ? linkedRunner.firstName + ' ' + linkedRunner.lastName : 'Coureur lié au compte'}}</strong>@if (linkedRunner?.club) { · {{linkedRunner?.club}} }</p>
               <div class="account-actions">@if (linkedRunner; as runner) { <button mat-stroked-button type="button" (click)="openRunner(runner)">Voir mes résultats</button> }<button mat-button type="button" [disabled]="runnerLinkSaving || deletingAccount" (click)="saveRunnerLink()">Retirer la liaison</button></div>
             } @else { <p>Choisis ta fiche coureur pour la lier à ton compte.</p> }
+            @if (!user.runnerId) {
             <form class="account-actions" (ngSubmit)="loadAccountRunners()">
               <mat-form-field appearance="outline" class="runner-search"><input matInput name="accountRunnerQuery" [(ngModel)]="accountRunnerQuery" placeholder="Nom ou prénom" aria-label="Rechercher un coureur" [disabled]="runnerLinkSaving || deletingAccount"><button mat-icon-button matSuffix type="submit" aria-label="Rechercher un coureur" title="Rechercher" [disabled]="runnerLinkLoading || runnerLinkSaving || deletingAccount || (accountRunnerQuery.trim().length > 0 && accountRunnerQuery.trim().length < 2)"><mat-icon>search</mat-icon></button></mat-form-field>
             </form>
             @if (!accountRunnerQuery.trim()) { <p>Suggestions les plus proches de ton nom Google, par ordre de ressemblance.</p> }
+            }
             @if (runnerLinkLoading) { <div class="loading"><mat-spinner diameter="28"></mat-spinner></div> }
             @if (runnerLinkError) { <div class="error-banner" role="alert">{{runnerLinkError}}</div> }
             @if (runnerLinkMessage) { <p role="status">{{runnerLinkMessage}}</p> }
-            @if (!runnerLinkLoading && !runnerLinkError) {
+            @if (!user.runnerId && !runnerLinkLoading && !runnerLinkError) {
               @for (runner of suggestedRunners; track runner.id) {
                 <div class="account-runner-option"><div><strong>{{runner.firstName}} {{runner.lastName}}</strong><p>{{runner.club || 'Indépendant'}}@if (runner.category) { · {{runner.category}} ({{runner.categoryYear}}) }</p></div><button mat-stroked-button type="button" [disabled]="runnerLinkSaving || deletingAccount || user.runnerId === runner.id" (click)="saveRunnerLink(runner)">{{user.runnerId === runner.id ? 'Lié' : 'Lier mon compte'}}</button></div>
               } @empty { <p>Aucun coureur trouvé. Essaie une recherche avec ton nom ou ton prénom.</p> }

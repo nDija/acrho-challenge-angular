@@ -97,3 +97,7 @@ html[data-acrho-theme] .error-banner mat-icon { color: inherit; }
 
 html[data-acrho-theme] .account-panel .delete-account-button:not(:disabled) { background:#dc2626; color:#fff; border-color:#dc2626; }
 html[data-acrho-theme] .account-panel .delete-account-button:not(:disabled):hover { background:#b91c1c; border-color:#b91c1c; }
+
+html[data-acrho-theme] .account-panel button:not(.delete-account-button):not(:disabled) { background:var(--acrho-sidebar); color:#fff; border-color:var(--acrho-sidebar); }
+html[data-acrho-theme] .account-panel button:not(.delete-account-button):not(:disabled):hover { background:var(--acrho-sidebar-active); border-color:var(--acrho-sidebar-active); }
+html[data-acrho-theme] .account-panel button:not(.delete-account-button):not(:disabled) mat-icon { color:#fff; }

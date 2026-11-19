@@ -39,6 +39,7 @@ export class App implements OnInit {
   confirmAccountDeletion = false;
   deletingAccount = false;
   accountError = '';
+  failedRunnerPictures = new Set<string>();
   linkedRunner?: Runner;
   openingLinkedRunner = false;
   suggestedRunners: Runner[] = [];
