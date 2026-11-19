@@ -1,0 +1,20 @@
+acrho-challenge.ddns.net {
+    encode zstd gzip
+
+    # L'API et la connexion Google
+    @backend path /api/* /oauth2/* /login/* /logout /actuator/health
+    handle @backend {
+        reverse_proxy app:8080
+    }
+
+    # Le front Angular (tout le reste), avec repli sur index.html pour les routes du front
+    handle {
+        root * /srv/front
+        # Seuls les fichiers dont le nom contient l'empreinte Angular (main-ABCD1234.js...) sont immuables
+        @hashed path_regexp hashed ^/[\w.-]+-[A-Z0-9]{8}\.(js|css)$
+        header @hashed Cache-Control "public, max-age=31536000, immutable"
+        header /index.html Cache-Control "no-cache"
+        try_files {path} /index.html
+        file_server
+    }
+}

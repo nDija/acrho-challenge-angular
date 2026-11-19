@@ -9,7 +9,7 @@
   </aside>
 
   <main class="main">
-    <header class="topbar"><div class="breadcrumb">ACRHO <span>/</span> <b>{{selectedRace ? 'DÉTAIL DE COURSE' : activeView === 'runners' ? 'ANNUAIRE' : activeView === 'regulation' ? 'RÈGLEMENT' : 'SAISON'}}</b></div><div class="top-actions"><span class="api-status"><i></i> API CONNECTÉE</span><span class="avatar">VH</span></div></header>
+    <header class="topbar"><div class="breadcrumb">ACRHO <span>/</span> <b>{{selectedRace ? 'DÉTAIL DE COURSE' : activeView === 'runners' ? 'ANNUAIRE' : activeView === 'regulation' ? 'RÈGLEMENT' : 'SAISON'}}</b></div><div class="top-actions"><span class="api-status"><i></i> API CONNECTÉE</span>@if (me) { <span class="avatar" [title]="me.email">{{initials}}</span><button class="auth-btn" type="button" (click)="logout()">Se déconnecter</button> } @else if (authChecked) { <button class="auth-btn" type="button" (click)="login()">Se connecter avec Google</button> }</div></header>
     <section class="content">
       @if (activeView === 'calendar' && !selectedRace) {
         <div class="page-heading"><div><div class="eyebrow">VOTRE CALENDRIER DE RUNNING</div><h1>La saison, <em>en mouvement.</em></h1><p>Retrouvez les courses et résultats du challenge ACRHO.</p></div>
@@ -69,10 +69,14 @@
       }
       @if (activeView === 'runners') {
         <div class="page-heading"><div><div class="eyebrow">COMMUNAUTÉ ACRHO</div><h1>Tous les coureurs, <em>un même départ.</em></h1><p>Recherchez un participant dans les saisons importées.</p></div></div>
+        @if (me) {
         <mat-form-field appearance="outline" class="runner-search"><mat-label>Nom ou prénom (2 caractères minimum)</mat-label><input matInput [(ngModel)]="runnerQuery" (ngModelChange)="onRunnerQueryChange()" (keyup.enter)="findRunners()"><button mat-icon-button matSuffix (click)="findRunners()"><mat-icon>search</mat-icon></button></mat-form-field>
         @if (loading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> } @if (error) { <div class="error-banner">{{error}}</div> }
-        @if (runners.length) { <div class="runner-grid">@for (runner of runners; track runner.id) { <article class="runner-card"><div class="runner-avatar">{{runner.firstName?.[0]}}{{runner.lastName?.[0]}}</div><div><b>{{runner.firstName}} {{runner.lastName}}</b><span>{{runner.club || 'Indépendant'}}</span><small>{{runner.birthYear || '—'}} · {{runner.gender || '—'}}</small></div></article> }</div><mat-paginator [length]="runnerTotal" [pageSize]="20" [pageIndex]="runnerPage" (page)="onRunnerPage($event)"></mat-paginator> }
+        @if (runners.length) { <div class="runner-grid">@for (runner of runners; track runner.id) { <article class="runner-card"><div class="runner-avatar">{{runner.firstName?.[0]}}{{runner.lastName?.[0]}}</div><div><b>{{runner.firstName}} {{runner.lastName}}</b><span>{{runner.club || 'Indépendant'}}</span><small>{{runner.gender || '—'}}</small></div></article> }</div><mat-paginator [length]="runnerTotal" [pageSize]="20" [pageIndex]="runnerPage" (page)="onRunnerPage($event)"></mat-paginator> }
         @if (!loading && !runners.length && runnerQuery.length >= 2 && !error) { <div class="empty">Aucun coureur trouvé pour « {{runnerQuery}} ».</div> }
+        } @else if (authChecked) {
+          <div class="empty">L’annuaire des coureurs est réservé aux membres connectés.<br><button class="auth-btn auth-btn-primary" type="button" (click)="login()">Se connecter avec Google</button></div>
+        }
       }
       @if (activeView === 'regulation') {
         <div class="page-heading regulation-heading"><div><div class="eyebrow">ACRHO · INFORMATIONS</div><h1>Le <em>règlement.</em></h1><p>Les règles des épreuves et du challenge.</p></div></div>

@@ -8,7 +8,8 @@ export interface Race { id: number; seasonId: number; name: string; raceDate: st
 export interface RouteInfo { id: number; label: string; distanceM?: number; startTime?: string | null; type?: string; challenge?: boolean; }
 export interface RacePracticalInfo { details?: Record<string, unknown>; sourceUrl?: string | null; }
 export interface RaceDetail extends Race { organizer?: string; routes: RouteInfo[]; practicalInfo?: RacePracticalInfo | null; }
-export interface Runner { id: number; firstName: string; lastName: string; gender?: string; birthYear?: number; club?: string; }
+export interface Runner { id: number; firstName: string; lastName: string; gender?: string; club?: string; }
+export interface Me { id: number; email: string; displayName?: string; role: 'USER' | 'ADMIN'; }
 export interface Category { id: number; code: string; label: string; }
 export interface Result { overallRank?: number; categoryRank?: number; bibNumber?: number; runner: Runner; category?: string | null; timeMs?: number | null; time?: string; status?: string; }
 export interface Page<T> { content: T[]; page: number; size: number; total: number; }
@@ -18,6 +19,12 @@ export class AcrhoApi {
   private http = inject(HttpClient);
   private apiUrl(path: string) { return `${environment.apiBaseUrl}${path}`; }
   seasons() { return this.http.get<Season[]>(this.apiUrl('/api/v1/seasons')); }
+  /** The signed-in person; answers 401 when nobody is signed in. */
+  me() { return this.http.get<Me>(this.apiUrl('/api/v1/me')); }
+  /** Sign-in is a full-page navigation to the API, which sends the browser to Google and back to the site. */
+  loginUrl() { return this.apiUrl('/oauth2/authorization/google'); }
+  /** The X-XSRF-TOKEN header is added by Angular from the XSRF-TOKEN cookie (same origin). */
+  logout() { return this.http.post(this.apiUrl('/logout'), null); }
   regulation() { return this.http.get('assets/reglement.md', { responseType: 'text' }); }
   races(year: number) { return this.http.get<Race[]>(this.apiUrl(`/api/v1/seasons/year/${year}/races`)); }
   race(id: number) { return this.http.get<RaceDetail>(this.apiUrl(`/api/v1/races/${id}`)); }

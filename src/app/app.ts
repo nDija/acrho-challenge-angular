@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { catchError, from, mergeMap, of, toArray } from 'rxjs';
-import { AcrhoApi, Category, Race, RaceDetail, Result, RouteInfo, Runner, Season } from './acrho-api.service';
+import { AcrhoApi, Category, Me, Race, RaceDetail, Result, RouteInfo, Runner, Season } from './acrho-api.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,6 +20,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 export class App implements OnInit {
   private api = inject(AcrhoApi);
   private cdr = inject(ChangeDetectorRef);
+  me?: Me; authChecked = false;
   seasons: Season[] = []; selectedYear = new Date().getFullYear(); races: Race[] = []; seasonRaces: Race[] = [];
   showPlannedRaces = false; showCancelledRaces = false;
   nextUpcomingRaceRoutes: RouteInfo[] = [];
@@ -35,6 +36,7 @@ export class App implements OnInit {
   publishedDistanceKm = 0;
   distanceLoading = false;
   ngOnInit() {
+    this.loadMe();
     this.api.seasons().subscribe({ next: xs => { this.seasons = xs; if (xs.length && !xs.some(s => s.year === this.selectedYear)) this.selectedYear = xs[0].year; this.loadRaces(); this.cdr.markForCheck(); }, error: e => this.fail(e) });
     this.api.categories().subscribe({ next: xs => { this.categories = xs; this.cdr.markForCheck(); }, error: () => {} });
   }
@@ -69,9 +71,10 @@ export class App implements OnInit {
       this.cdr.markForCheck();
       return;
     }
+    if (!this.me) return;
     this.runnerSearchTimer = setTimeout(() => this.findRunners(), 300);
   }
-  findRunners(page = 0) { if (this.runnerSearchTimer) clearTimeout(this.runnerSearchTimer); const q = this.runnerQuery.trim(); if (q.length < 2) { this.runners = []; this.runnerTotal = 0; return; } this.activeView = 'runners'; this.loading = true; const requestId = ++this.runnerRequestId; this.api.runners(q, page).subscribe({ next: x => { if (requestId !== this.runnerRequestId) return; this.runners = x.content; this.runnerTotal = x.total; this.runnerPage = x.page; this.loading = false; this.cdr.markForCheck(); }, error: e => { if (requestId !== this.runnerRequestId) return; this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
+  findRunners(page = 0) { if (this.runnerSearchTimer) clearTimeout(this.runnerSearchTimer); if (!this.me) return; const q = this.runnerQuery.trim(); if (q.length < 2) { this.runners = []; this.runnerTotal = 0; return; } this.activeView = 'runners'; this.loading = true; const requestId = ++this.runnerRequestId; this.api.runners(q, page).subscribe({ next: x => { if (requestId !== this.runnerRequestId) return; this.runners = x.content; this.runnerTotal = x.total; this.runnerPage = x.page; this.loading = false; this.cdr.markForCheck(); }, error: e => { if (requestId !== this.runnerRequestId) return; this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
   get firstRace() { return this.races[0]; }
   pacePerKm(result: Result): string | null {
     const distanceM = this.selectedRace?.routes.find(route => route.id === this.selectedRouteId)?.distanceM;
@@ -224,7 +227,25 @@ export class App implements OnInit {
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   }
   backToCalendar() { this.activeView = 'calendar'; this.selectedRace = undefined; this.error = ''; }
-  private fail(e: HttpErrorResponse) { this.error = e.status === 0 ? 'Impossible de joindre l’API ACRHO. Vérifie que le serveur est démarré et accessible sur le réseau.' : `Erreur API (${e.status}) : ${e.error?.message ?? e.message}`; }
+  private loadMe() {
+    this.api.me().subscribe({
+      next: me => { this.me = me; this.authChecked = true; this.cdr.markForCheck(); },
+      error: () => { this.me = undefined; this.authChecked = true; this.cdr.markForCheck(); }
+    });
+  }
+  login() { window.location.href = this.api.loginUrl(); }
+  logout() {
+    this.api.logout().subscribe({
+      next: () => { this.me = undefined; this.runners = []; this.runnerTotal = 0; this.runnerQuery = ''; this.error = ''; this.cdr.markForCheck(); },
+      error: e => { this.fail(e); this.cdr.markForCheck(); }
+    });
+  }
+  get initials() {
+    const name = (this.me?.displayName || this.me?.email || '?').trim();
+    const parts = name.split(/[\s@.]+/).filter(Boolean);
+    return ((parts[0]?.[0] ?? '?') + (parts.length > 1 ? parts[1][0] : '')).toUpperCase();
+  }
+  private fail(e: HttpErrorResponse) { if (e.status === 401) { this.me = undefined; this.error = 'Connecte-toi avec Google pour accéder à cette fonction.'; return; } if (e.status === 403) { this.error = 'Accès refusé.'; return; } this.error = e.status === 0 ? 'Impossible de joindre l’API ACRHO. Vérifie que le serveur est démarré et accessible sur le réseau.' : `Erreur API (${e.status}) : ${e.error?.message ?? e.message}`; }
 }
 
 
