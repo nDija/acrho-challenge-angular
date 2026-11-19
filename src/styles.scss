@@ -101,3 +101,44 @@ html[data-acrho-theme] .account-panel .delete-account-button:not(:disabled):hove
 html[data-acrho-theme] .account-panel button:not(.delete-account-button):not(:disabled) { background:var(--acrho-sidebar); color:#fff; border-color:var(--acrho-sidebar); }
 html[data-acrho-theme] .account-panel button:not(.delete-account-button):not(:disabled):hover { background:var(--acrho-sidebar-active); border-color:var(--acrho-sidebar-active); }
 html[data-acrho-theme] .account-panel button:not(.delete-account-button):not(:disabled) mat-icon { color:#fff; }
+
+html[data-acrho-theme] .favorite-toggle { background:transparent; }
+
+html[data-acrho-theme] .favorite-toggle mat-icon { color:var(--acrho-muted); }
+
+html[data-acrho-theme] .favorite-toggle.is-favorite mat-icon { color:#dc2626; }
+
+html[data-acrho-theme] .favorite-remove:not(:disabled) { background:#dc2626; color:#fff; }
+html[data-acrho-theme] .favorite-remove:not(:disabled):hover { background:#b91c1c; }
+html[data-acrho-theme] .favorite-remove mat-icon { color:#fff; }
+
+html[data-acrho-theme] .account-panel .delete-account-button:not(:disabled) mat-icon { color:#fff; }
+
+html[data-acrho-theme] .runner-profile-banner {
+  flex:1;
+  width:100%;
+  padding:clamp(20px,3vw,36px);
+  border-radius:20px;
+  background:radial-gradient(ellipse at 100% 0%,rgba(79,172,254,.28),transparent 65%),linear-gradient(120deg,var(--acrho-sidebar),#164e82);
+  box-shadow:0 10px 28px rgba(24,59,91,.12);
+}
+html[data-acrho-theme] .runner-profile-banner h1 { color:#fff; margin-top:0; }
+html[data-acrho-theme] .runner-profile-banner p { color:#e1edfa; line-height:1.6; }
+html[data-acrho-theme] .runner-profile-banner .runner-profile-avatar { box-shadow:0 0 0 3px rgba(255,255,255,.85); }
+html[data-acrho-theme] .runner-profile-banner .favorite-toggle:not(.is-favorite) mat-icon { color:#fff; }
+@media(max-width:550px) {
+  html[data-acrho-theme] .runner-profile-banner { padding:20px 16px; border-radius:16px; }
+  html[data-acrho-theme] .runner-profile-banner h1 { font-size:clamp(22px,6vw,30px); }
+  html[data-acrho-theme] .runner-profile-banner .runner-meta-row { gap:4px; }
+}
+
+html[data-acrho-theme] .page-heading .runner-profile-banner h1 { color:#fff; }
+html[data-acrho-theme] .runner-profile-banner .runner-profile-info { flex:1; }
+html[data-acrho-theme] .runner-profile-banner .season-select { flex-shrink:0; margin-left:auto; margin-bottom:-22px; --mat-form-field-outlined-container-shape:12px; }
+html[data-acrho-theme] .runner-profile-banner .season-select .mat-mdc-text-field-wrapper { background:#fff; border-radius:12px; }
+@media(max-width:700px) {
+  html[data-acrho-theme] .runner-profile-banner { flex-wrap:wrap; }
+  html[data-acrho-theme] .runner-profile-banner .season-select { flex-basis:100%; width:100%; margin-left:0; margin-top:12px; }
+}
+
+html[data-acrho-theme] .runner-profile-banner .season-select .mdc-floating-label { background:#fff; color:var(--acrho-heading); border-radius:6px; padding:0 6px; }

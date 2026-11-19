@@ -220,6 +220,10 @@ export class App implements OnInit {
   onResultsPage(e: PageEvent) { this.resultSize = e.pageSize; if (this.selectedRouteId) this.loadResults(this.selectedRouteId, e.pageIndex); }
   onRunnerPage(e: PageEvent) { this.findRunners(e.pageIndex); }
   showRunners() { this.closeRunner(); this.activeView = 'runners'; this.selectedRace = undefined; this.error = ''; }
+  categoryLabel(code?: string | null): string {
+    if (!code) return '—';
+    return this.categories.find(category => category.code === code)?.label ?? code;
+  }
   get runnerDistanceKm() {
     return this.runnerResults
       .filter(entry => entry.result.status === 'FINISHED')
@@ -304,7 +308,7 @@ export class App implements OnInit {
         return `<h1>${this.regulationInline(lines[0].slice(2))}</h1>`;
       }
       if (lines.every(line => categoryLine.test(line))) {
-        return `<ul class="regulation-categories">${lines.map(line => `<li>${this.regulationInline(line)}</li>`).join('')}</ul>`;
+        return `<ul class="regulation-categories">${lines.map(line => `<li>${this.regulationInline(line.replace(/^[A-Z][A-Z0-9]*\s+\(([^)]+)\)/, '$1'))}</li>`).join('')}</ul>`;
       }
       if (lines[0].startsWith('**Conditions d’âge:**') || lines[0].startsWith("**Conditions d'âge:**")) {
         return `<h2>Conditions d’âge</h2><p>${lines.slice(1).map(line => this.regulationInline(line)).join('<br>')}</p>`;
