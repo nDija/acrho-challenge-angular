@@ -9,7 +9,7 @@ export interface RouteInfo { id: number; label: string; distanceM?: number; star
 export interface RacePracticalInfo { details?: Record<string, unknown>; sourceUrl?: string | null; }
 export interface RaceDetail extends Race { organizer?: string; routes: RouteInfo[]; practicalInfo?: RacePracticalInfo | null; }
 export interface Runner { id: number; firstName: string; lastName: string; gender?: string; club?: string; }
-export interface Me { id: number; email: string; displayName?: string; role: 'USER' | 'ADMIN'; }
+export interface Me { id: number; email: string; displayName?: string; role: 'USER' | 'ADMIN'; pictureUrl?: string | null; }
 export interface Category { id: number; code: string; label: string; }
 export interface Result { overallRank?: number; categoryRank?: number; bibNumber?: number; runner: Runner; category?: string | null; timeMs?: number | null; time?: string; status?: string; }
 export interface Page<T> { content: T[]; page: number; size: number; total: number; }

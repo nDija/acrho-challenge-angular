@@ -168,7 +168,15 @@
 .result-time-wrap { display:flex; flex-direction:column; align-items:flex-end; gap:3px; }
 .result-pace { color:var(--acrho-muted); font-size:10px; white-space:nowrap; }
 
-.auth-btn { border:1px solid var(--acrho-border); background:#fff; color:var(--acrho-accent-dark); border-radius:999px; padding:8px 14px; font:inherit; font-size:12px; font-weight:700; cursor:pointer; }
-.auth-btn:hover { background:var(--acrho-soft); }
-.auth-btn-primary { margin-top:14px; background:var(--acrho-accent-dark); color:#fff; border-color:var(--acrho-accent-dark); }
-.auth-btn-primary:hover { background:var(--acrho-accent-dark); opacity:.9; }
+.auth-btn { border:1px solid var(--acrho-sidebar); background:var(--acrho-sidebar); color:#fff; border-radius:999px; padding:8px 14px; font:inherit; font-size:12px; font-weight:700; cursor:pointer; }
+.auth-btn:hover { background:var(--acrho-sidebar-active); border-color:var(--acrho-sidebar-active); }
+.auth-btn-primary { margin-top:14px; }
+
+
+.privacy-link { text-decoration:none; }
+
+.auth-icon-btn { display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; padding:0; vertical-align:middle; }
+.auth-icon-btn mat-icon { width:22px; height:22px; font-size:22px; }
+
+.avatar { overflow:hidden; flex-shrink:0; }
+.avatar img { display:block; width:100%; height:100%; object-fit:cover; }

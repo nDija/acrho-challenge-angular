@@ -20,7 +20,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 export class App implements OnInit {
   private api = inject(AcrhoApi);
   private cdr = inject(ChangeDetectorRef);
-  me?: Me; authChecked = false;
+  me?: Me; authChecked = false; avatarFailed = false;
   seasons: Season[] = []; selectedYear = new Date().getFullYear(); races: Race[] = []; seasonRaces: Race[] = [];
   showPlannedRaces = false; showCancelledRaces = false;
   nextUpcomingRaceRoutes: RouteInfo[] = [];
