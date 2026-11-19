@@ -26,6 +26,9 @@ export class AcrhoApi {
   /** Sign-in is a full-page navigation to the API, which sends the browser to Google and back to the site. */
   loginUrl() { return this.apiUrl('/oauth2/authorization/google'); }
   /** The X-XSRF-TOKEN header is added by Angular from the XSRF-TOKEN cookie (same origin). */
+  favorites() { return this.http.get<Runner[]>(this.apiUrl('/api/v1/me/favorites')); }
+  addFavorite(id: number) { return this.http.put<void>(this.apiUrl(`/api/v1/me/favorites/${id}`), null); }
+  removeFavorite(id: number) { return this.http.delete<void>(this.apiUrl(`/api/v1/me/favorites/${id}`)); }
   runnerSuggestions() { return this.http.get<Runner[]>(this.apiUrl('/api/v1/me/runner-suggestions')); }
   linkRunner(runnerId: number) { return this.http.put<void>(this.apiUrl('/api/v1/me/runner'), { runnerId }); }
   unlinkRunner() { return this.http.delete<void>(this.apiUrl('/api/v1/me/runner')); }

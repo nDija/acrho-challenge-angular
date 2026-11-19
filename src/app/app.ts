@@ -35,10 +35,15 @@ export class App implements OnInit {
   nextUpcomingRaceRoutes: RouteInfo[] = [];
   selectedRace?: RaceDetail; categories: Category[] = []; results: Result[] = []; runners: Runner[] = [];
   expandedRaceId?: number; expandedRaceDetails?: RaceDetail; practicalInfoLoading = false;
-  activeView: 'calendar' | 'runners' | 'regulation' | 'settings' = 'calendar'; loading = false; error = '';
+  activeView: 'calendar' | 'runners' | 'regulation' | 'settings' | 'favorites' = 'calendar'; loading = false; error = '';
   confirmAccountDeletion = false;
   deletingAccount = false;
   accountError = '';
+  favorites: Runner[] = [];
+  favoritesLoading = false;
+  favoritesError = '';
+  savingFavorites = new Set<number>();
+  private favoritesRequestId = 0;
   failedRunnerPictures = new Set<string>();
   linkedRunner?: Runner;
   openingLinkedRunner = false;
@@ -320,8 +325,65 @@ export class App implements OnInit {
   backToCalendar() { this.activeView = 'calendar'; this.selectedRace = undefined; this.error = ''; }
   private loadMe() {
     this.api.me().subscribe({
-      next: me => { this.me = me; this.authChecked = true; this.cdr.markForCheck(); },
-      error: () => { this.me = undefined; this.authChecked = true; this.cdr.markForCheck(); }
+      next: me => { this.me = me; this.loadFavorites(); this.authChecked = true; this.cdr.markForCheck(); },
+      error: () => { this.me = undefined; this.favorites = []; this.favoritesRequestId++; this.authChecked = true; this.cdr.markForCheck(); }
+    });
+  }
+  showFavorites() {
+    this.closeRunner();
+    this.selectedRace = undefined;
+    this.activeView = 'favorites';
+    this.error = '';
+    if (this.me) this.loadFavorites();
+  }
+  isFavorite(id: number) { return this.favorites.some(runner => runner.id === id); }
+  loadFavorites() {
+    if (!this.me) return;
+    const userId = this.me.id;
+    const requestId = ++this.favoritesRequestId;
+    this.favoritesLoading = true;
+    this.favoritesError = '';
+    this.api.favorites().subscribe({
+      next: runners => {
+        if (this.me?.id !== userId || requestId !== this.favoritesRequestId) return;
+        this.favorites = runners;
+        this.favoritesLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: (error: HttpErrorResponse) => {
+        if (this.me?.id !== userId || requestId !== this.favoritesRequestId) return;
+        this.favoritesLoading = false;
+        this.favoritesError = 'Impossible de charger les favoris.';
+        if (error.status === 401) this.fail(error);
+        this.cdr.markForCheck();
+      },
+    });
+  }
+  toggleFavorite(runner: Runner) {
+    if (!this.me || this.savingFavorites.has(runner.id) || this.favoritesLoading || this.favoritesError) return;
+    const userId = this.me.id;
+    const remove = this.isFavorite(runner.id);
+    this.savingFavorites.add(runner.id);
+    this.favoritesError = '';
+    const request = remove ? this.api.removeFavorite(runner.id) : this.api.addFavorite(runner.id);
+    request.subscribe({
+      next: () => {
+        this.savingFavorites.delete(runner.id);
+        if (this.me?.id !== userId) return;
+        this.favoritesRequestId++;
+        this.favoritesLoading = false;
+        this.favorites = this.favorites.filter(favorite => favorite.id !== runner.id);
+        if (!remove) this.favorites.push(runner);
+        this.favorites.sort((a, b) => a.lastName.localeCompare(b.lastName) || a.firstName.localeCompare(b.firstName));
+        this.cdr.markForCheck();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.savingFavorites.delete(runner.id);
+        if (this.me?.id !== userId) return;
+        this.favoritesError = 'Impossible de modifier les favoris.';
+        if (error.status === 401) this.fail(error);
+        this.cdr.markForCheck();
+      },
     });
   }
   openLinkedRunner() {
@@ -425,7 +487,7 @@ export class App implements OnInit {
         this.deletingAccount = false;
         this.confirmAccountDeletion = false;
         this.closeRunner();
-        this.me = undefined;
+        this.me = undefined; this.favorites = []; this.favoritesRequestId++;
         this.runners = [];
         this.runnerTotal = 0;
         this.runnerQuery = '';
@@ -443,7 +505,7 @@ export class App implements OnInit {
   login() { window.location.href = this.api.loginUrl(); }
   logout() {
     this.api.logout().subscribe({
-      next: () => { this.closeRunner(); this.me = undefined; this.runners = []; this.runnerTotal = 0; this.runnerQuery = ''; this.error = ''; if (this.activeView === 'settings') this.backToCalendar(); this.cdr.markForCheck(); },
+      next: () => { this.closeRunner(); this.me = undefined; this.favorites = []; this.favoritesRequestId++; this.runners = []; this.runnerTotal = 0; this.runnerQuery = ''; this.error = ''; if (this.activeView === 'settings' || this.activeView === 'favorites') this.backToCalendar(); this.cdr.markForCheck(); },
       error: e => { this.fail(e); this.cdr.markForCheck(); }
     });
   }
@@ -452,7 +514,7 @@ export class App implements OnInit {
     const parts = name.split(/[\s@.]+/).filter(Boolean);
     return ((parts[0]?.[0] ?? '?') + (parts.length > 1 ? parts[1][0] : '')).toUpperCase();
   }
-  private fail(e: HttpErrorResponse) { if (e.status === 401) { this.me = undefined; this.error = 'Connecte-toi avec Google pour accéder à cette fonction.'; return; } if (e.status === 403) { this.error = 'Accès refusé.'; return; } this.error = e.status === 0 ? 'Impossible de joindre l’API ACRHO. Vérifie que le serveur est démarré et accessible sur le réseau.' : `Erreur API (${e.status}) : ${e.error?.message ?? e.message}`; }
+  private fail(e: HttpErrorResponse) { if (e.status === 401) { this.me = undefined; this.favorites = []; this.favoritesRequestId++; this.error = 'Connecte-toi avec Google pour accéder à cette fonction.'; return; } if (e.status === 403) { this.error = 'Accès refusé.'; return; } this.error = e.status === 0 ? 'Impossible de joindre l’API ACRHO. Vérifie que le serveur est démarré et accessible sur le réseau.' : `Erreur API (${e.status}) : ${e.error?.message ?? e.message}`; }
 }
 
 
