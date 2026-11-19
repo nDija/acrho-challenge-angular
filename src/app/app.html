@@ -11,7 +11,7 @@
   </aside>
 
   <main class="main">
-    <header class="topbar"><div class="breadcrumb">ACRHO <span>/</span> <b>{{selectedRace ? 'DÉTAIL DE COURSE' : activeView === 'runners' ? 'ANNUAIRE' : activeView === 'regulation' ? 'RÈGLEMENT' : activeView === 'settings' ? 'PARAMÈTRES' : 'SAISON'}}</b></div><div class="top-actions"><span class="api-status" [class.online]="apiOnline" role="status" [title]="apiOnline ? 'API connectée' : 'API indisponible'" [attr.aria-label]="apiOnline ? 'API connectée' : 'API indisponible'"><i aria-hidden="true"></i></span>@if (me) { <button class="avatar profile-button" type="button" (click)="showSettings()" title="Paramètres du compte" aria-label="Paramètres du compte">@if (me.pictureUrl && !avatarFailed) { <img [src]="me.pictureUrl" alt="Photo de profil" referrerpolicy="no-referrer" (error)="avatarFailed = true"> } @else { {{initials}} }</button><button class="auth-btn auth-icon-btn" type="button" (click)="logout()" [disabled]="deletingAccount" title="Se déconnecter" aria-label="Se déconnecter"><mat-icon>logout</mat-icon></button> } @else if (authChecked) { <button class="auth-btn auth-icon-btn" type="button" (click)="login()" title="Se connecter avec Google" aria-label="Se connecter avec Google"><mat-icon>login</mat-icon></button> }</div></header>
+    <header class="topbar"><div class="breadcrumb">ACRHO <span>/</span> <b>{{selectedRace ? 'DÉTAIL DE COURSE' : activeView === 'runners' ? 'ANNUAIRE' : activeView === 'regulation' ? 'RÈGLEMENT' : activeView === 'settings' ? 'PARAMÈTRES' : 'SAISON'}}</b></div><div class="top-actions"><span class="api-status" [class.online]="apiOnline" role="status" [title]="apiOnline ? 'API connectée' : 'API indisponible'" [attr.aria-label]="apiOnline ? 'API connectée' : 'API indisponible'"><i aria-hidden="true"></i></span>@if (me) { <button class="avatar profile-button" type="button" (click)="showSettings()" title="Paramètres du compte" aria-label="Paramètres du compte">@if (me.pictureUrl && !avatarFailed) { <img [src]="me.pictureUrl" alt="Photo de profil" referrerpolicy="no-referrer" (error)="avatarFailed = true"> } @else { {{initials}} }</button><button class="auth-btn auth-icon-btn" type="button" (click)="logout()" [disabled]="deletingAccount || runnerLinkSaving" title="Se déconnecter" aria-label="Se déconnecter"><mat-icon>logout</mat-icon></button> } @else if (authChecked) { <button class="auth-btn auth-icon-btn" type="button" (click)="login()" title="Se connecter avec Google" aria-label="Se connecter avec Google"><mat-icon>login</mat-icon></button> }</div></header>
     <section class="content">
       @if (activeView === 'calendar' && !selectedRace) {
         <div class="page-heading"><div><div class="eyebrow">VOTRE CALENDRIER DE RUNNING</div><h1>La saison, <em>en mouvement.</em></h1><p>Retrouvez les courses et résultats du challenge ACRHO.</p></div>
@@ -117,13 +117,33 @@
             <p>Le nom et la photo de profil sont récupérés à chaque connexion Google.</p>
             <a href="https://myaccount.google.com/personal-info" target="_blank" rel="noopener noreferrer">Gérer mon profil Google ↗</a>
           </section>
+          <section class="account-panel" aria-labelledby="account-runner-heading">
+            <h2 id="account-runner-heading">Mon coureur</h2>
+            @if (user.runnerId) {
+              <p><strong>{{linkedRunner ? linkedRunner.firstName + ' ' + linkedRunner.lastName : 'Coureur lié au compte'}}</strong>@if (linkedRunner?.club) { · {{linkedRunner?.club}} }</p>
+              <div class="account-actions">@if (linkedRunner; as runner) { <button mat-stroked-button type="button" (click)="openRunner(runner)">Voir mes résultats</button> }<button mat-button type="button" [disabled]="runnerLinkSaving || deletingAccount" (click)="saveRunnerLink()">Retirer la liaison</button></div>
+            } @else { <p>Choisis ta fiche coureur pour la lier à ton compte.</p> }
+            <form class="account-actions" (ngSubmit)="loadAccountRunners()">
+              <mat-form-field appearance="outline"><mat-label>Rechercher un coureur</mat-label><input matInput name="accountRunnerQuery" [(ngModel)]="accountRunnerQuery" placeholder="Nom ou prénom" [disabled]="runnerLinkSaving || deletingAccount"></mat-form-field>
+              <button mat-stroked-button type="submit" [disabled]="runnerLinkLoading || runnerLinkSaving || deletingAccount || (accountRunnerQuery.trim().length > 0 && accountRunnerQuery.trim().length < 2)">Rechercher</button>
+            </form>
+            @if (!accountRunnerQuery.trim()) { <p>Suggestions les plus proches de ton nom Google, par ordre de ressemblance.</p> }
+            @if (runnerLinkLoading) { <div class="loading"><mat-spinner diameter="28"></mat-spinner></div> }
+            @if (runnerLinkError) { <div class="error-banner" role="alert">{{runnerLinkError}}</div> }
+            @if (runnerLinkMessage) { <p role="status">{{runnerLinkMessage}}</p> }
+            @if (!runnerLinkLoading && !runnerLinkError) {
+              @for (runner of suggestedRunners; track runner.id) {
+                <div class="account-runner-option"><div><strong>{{runner.firstName}} {{runner.lastName}}</strong><p>{{runner.club || 'Indépendant'}}@if (runner.category) { · {{runner.category}} ({{runner.categoryYear}}) }</p></div><button mat-stroked-button type="button" [disabled]="runnerLinkSaving || deletingAccount || user.runnerId === runner.id" (click)="saveRunnerLink(runner)">{{user.runnerId === runner.id ? 'Lié' : 'Lier mon compte'}}</button></div>
+              } @empty { <p>Aucun coureur trouvé. Essaie une recherche avec ton nom ou ton prénom.</p> }
+            }
+          </section>
           <section class="account-panel" aria-labelledby="account-delete-heading">
             <h2 id="account-delete-heading">Supprimer mon compte</h2>
             <p>La suppression efface ton compte ACRHO et ses informations de connexion, puis te déconnecte. Les résultats sportifs restent dans l’historique des courses. Pour une demande concernant ces résultats, consulte la <a href="confidentialite.html">politique de confidentialité</a>.</p>
             @if (accountError) { <div class="error-banner" role="alert">{{accountError}}</div> }
             @if (confirmAccountDeletion) {
               <p id="delete-account-confirmation">Confirmer la suppression définitive de ton compte ACRHO ?</p>
-              <div class="account-actions"><button mat-flat-button class="delete-account-button" type="button" aria-describedby="delete-account-confirmation" [disabled]="deletingAccount" (click)="deleteAccount()">{{deletingAccount ? 'Suppression en cours…' : 'Confirmer la suppression'}}</button><button mat-button type="button" [disabled]="deletingAccount" (click)="confirmAccountDeletion = false">Annuler</button></div>
+              <div class="account-actions"><button mat-flat-button class="delete-account-button" type="button" aria-describedby="delete-account-confirmation" [disabled]="deletingAccount || runnerLinkSaving" (click)="deleteAccount()">{{deletingAccount ? 'Suppression en cours…' : 'Confirmer la suppression'}}</button><button mat-button type="button" [disabled]="deletingAccount || runnerLinkSaving" (click)="confirmAccountDeletion = false">Annuler</button></div>
             } @else {
               <button mat-stroked-button class="delete-account-button" type="button" (click)="confirmAccountDeletion = true">Supprimer mon compte</button>
             }

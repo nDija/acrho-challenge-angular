@@ -39,6 +39,14 @@ export class App implements OnInit {
   confirmAccountDeletion = false;
   deletingAccount = false;
   accountError = '';
+  linkedRunner?: Runner;
+  suggestedRunners: Runner[] = [];
+  accountRunnerQuery = '';
+  runnerLinkLoading = false;
+  runnerLinkSaving = false;
+  runnerLinkError = '';
+  runnerLinkMessage = '';
+  private runnerLinkRequestId = 0;
   regulationHtml = ''; regulationLoading = false; regulationError = '';
   selectedRunner?: Runner;
   runnerYear?: number;
@@ -314,12 +322,74 @@ export class App implements OnInit {
     this.closeRunner();
     this.selectedRace = undefined;
     this.activeView = 'settings';
+    this.accountRunnerQuery = '';
+    this.runnerLinkMessage = '';
+    this.loadAccountRunners();
     this.confirmAccountDeletion = false;
     this.accountError = '';
     this.error = '';
   }
+  loadAccountRunners() {
+    if (!this.me) return;
+    const userId = this.me.id;
+    const requestId = ++this.runnerLinkRequestId;
+    this.runnerLinkLoading = true;
+    this.runnerLinkError = '';
+    this.suggestedRunners = [];
+    this.linkedRunner = undefined;
+    const query = this.accountRunnerQuery.trim();
+    const candidates = query.length >= 2
+      ? this.api.runners(query, 0, 5).pipe(switchMap(page => of(page.content)))
+      : this.api.runnerSuggestions();
+    forkJoin({
+      candidates,
+      linked: this.me.runnerId ? this.api.runner(this.me.runnerId).pipe(catchError(() => of(null))) : of(null),
+    }).subscribe({
+      next: ({ candidates, linked }) => {
+        if (this.me?.id !== userId || requestId !== this.runnerLinkRequestId) return;
+        this.suggestedRunners = candidates;
+        this.linkedRunner = linked ?? undefined;
+        this.runnerLinkLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: (error: HttpErrorResponse) => {
+        if (this.me?.id !== userId || requestId !== this.runnerLinkRequestId) return;
+        this.runnerLinkLoading = false;
+        this.runnerLinkError = 'Impossible de charger les coureurs.';
+        if (error.status === 401) this.fail(error);
+        this.cdr.markForCheck();
+      },
+    });
+  }
+  saveRunnerLink(runner?: Runner) {
+    if (!this.me || this.runnerLinkSaving || this.deletingAccount) return;
+    const userId = this.me.id;
+    this.runnerLinkSaving = true;
+    this.runnerLinkError = '';
+    this.runnerLinkMessage = '';
+    const request = runner ? this.api.linkRunner(runner.id) : this.api.unlinkRunner();
+    request.subscribe({
+      next: () => {
+        this.runnerLinkSaving = false;
+        if (this.me?.id !== userId) return;
+        this.runnerLinkRequestId++;
+        this.runnerLinkLoading = false;
+        this.me = { ...this.me, runnerId: runner?.id ?? null };
+        this.linkedRunner = runner;
+        this.runnerLinkMessage = runner ? 'Ton compte est lié à ce coureur.' : 'La liaison a été retirée.';
+        this.cdr.markForCheck();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.runnerLinkSaving = false;
+        if (this.me?.id !== userId) return;
+        this.runnerLinkError = 'Impossible de modifier la liaison. Réessaie dans un instant.';
+        if (error.status === 401) this.fail(error);
+        this.cdr.markForCheck();
+      },
+    });
+  }
   deleteAccount() {
-    if (!this.me || !this.confirmAccountDeletion || this.deletingAccount) return;
+    if (!this.me || !this.confirmAccountDeletion || this.deletingAccount || this.runnerLinkSaving) return;
     this.deletingAccount = true;
     this.accountError = '';
     this.api.deleteAccount().subscribe({

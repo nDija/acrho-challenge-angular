@@ -212,3 +212,6 @@
 .account-details dd { margin:6px 0 0; overflow-wrap:anywhere; color:var(--acrho-heading); font-weight:600; }
 .account-actions { display:flex; flex-wrap:wrap; gap:12px; }
 .account-panel .delete-account-button { color:#b42318; --mdc-filled-button-container-color:#fee4e2; --mdc-filled-button-label-text-color:#b42318; }
+
+.account-runner-option { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; padding:14px 0; border-bottom:1px solid var(--acrho-border); }
+.account-runner-option p { margin:4px 0; }
