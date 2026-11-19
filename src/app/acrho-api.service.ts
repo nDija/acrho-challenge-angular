@@ -29,6 +29,17 @@ export interface SeasonStandings {
   entries: StandingEntry[];
 }
 
+export interface RunnerStanding {
+  year: number;
+  placement: {
+    category: string | null;
+    overallRank: number | null;
+    categoryRank: number | null;
+    points: number;
+    provisional: boolean;
+  } | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AcrhoApi {
   private http = inject(HttpClient);
@@ -64,6 +75,9 @@ export class AcrhoApi {
     return this.http.get<Page<Result>>(this.apiUrl(`/api/v1/routes/${routeId}/results`), { params });
   }
   runner(id: number) { return this.http.get<Runner>(this.apiUrl(`/api/v1/runners/${id}`)); }
+  runnerStanding(id: number) {
+    return this.http.get<RunnerStanding>(this.apiUrl(`/api/v1/runners/${id}/standing`));
+  }
   runnerSeasons(id: number) { return this.http.get<number[]>(this.apiUrl(`/api/v1/runners/${id}/seasons`)); }
   runnerResults(id: number, year: number) {
     return this.http.get<RunnerResult[]>(this.apiUrl(`/api/v1/runners/${id}/results`), { params: { year } });

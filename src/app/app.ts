@@ -1,4 +1,5 @@
 import { LanguageService } from './language.service';
+import { RunnerStandingCard } from './runner-standing-card';
 import { Standings } from './standings';
 import { TranslatePipe } from './translate.pipe';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
@@ -18,7 +19,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root', standalone: true,
-  imports: [Standings, TranslatePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
+  imports: [RunnerStandingCard, Standings, TranslatePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
   templateUrl: './app.html', styleUrl: './app.scss'
 })
 export class App implements OnInit {
