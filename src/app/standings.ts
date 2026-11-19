@@ -1,12 +1,12 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, output, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { Subject, catchError, of, startWith, switchMap } from 'rxjs';
-import { AcrhoApi } from './acrho-api.service';
+import { AcrhoApi, Runner, StandingEntry } from './acrho-api.service';
 import { LanguageService } from './language.service';
 import { TranslatePipe } from './translate.pipe';
 
@@ -40,10 +40,15 @@ import { TranslatePipe } from './translate.pipe';
               </tr>
             </thead>
             <tbody>
-              @for (row of rows(); track row.entry) {
+              @for (row of rows(); track row.entry.runnerId) {
                 <tr [class.provisional]="row.rank === null">
                   <td>{{ row.rank ?? ('Provisoire' | t) }}</td>
-                  <th scope="row">{{ row.entry.firstName }} {{ row.entry.lastName }}</th>
+                  <th scope="row">
+                    <button class="runner-link" type="button" (click)="openRunner(row.entry, data.year)"
+                            [attr.aria-label]="('Voir les résultats de ' | t) + row.entry.firstName + ' ' + row.entry.lastName">
+                      {{ row.entry.firstName }} {{ row.entry.lastName }}
+                    </button>
+                  </th>
                   <td>{{ row.categoryLabel | t }}</td>
                   <td>{{ row.entry.score.participations | number:'1.0-0':i18n.locale() }}</td>
                   <td>{{ row.entry.score.resultPoints | number:'1.0-0':i18n.locale() }}</td>
@@ -77,10 +82,27 @@ import { TranslatePipe } from './translate.pipe';
     thead th { background: #eef3f8; }
     th:nth-child(n+4), td:nth-child(n+4) { text-align: end; font-variant-numeric: tabular-nums; }
     tbody tr:last-child > * { border-bottom: 0; }
+    .runner-link {
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-decoration: underline;
+      text-underline-offset: .18em;
+      cursor: pointer;
+    }
+    .runner-link:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
     .provisional { color: #964000; background: #fff5e9; }
   `,
 })
 export class Standings {
+  readonly runnerSelected = output<{ runner: Runner; year: number }>();
+
+  protected openRunner(entry: StandingEntry, year: number) {
+    const { runnerId, firstName, lastName, category } = entry;
+    this.runnerSelected.emit({ runner: { id: runnerId, firstName, lastName, category, categoryYear: year }, year });
+  }
   protected readonly i18n = inject(LanguageService);
   protected readonly category = signal('');
   protected readonly reload = new Subject<void>();

@@ -16,6 +16,7 @@ export interface RunnerResult { raceId: number; raceName: string; raceDate: stri
 export interface Page<T> { content: T[]; page: number; size: number; total: number; }
 
 export interface StandingEntry {
+  runnerId: number;
   firstName: string;
   lastName: string;
   category: string | null;

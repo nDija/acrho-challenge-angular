@@ -117,7 +117,7 @@
         }
       }
       @if (activeView === 'standings') {
-        <app-standings />
+        <app-standings (runnerSelected)="openRunner($event.runner, $event.year)" />
       }
       @if (activeView === 'regulation') {
         <div class="page-heading regulation-heading"><div><div class="eyebrow">{{ "ACRHO · INFORMATIONS" | t }}</div><h1>{{ "Le" | t }} <em>{{ "règlement." | t }}</em></h1><p>{{ "Les règles des épreuves et du challenge." | t }}</p></div></div>
