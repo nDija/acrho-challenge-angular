@@ -98,9 +98,9 @@ html[data-acrho-theme] .error-banner mat-icon { color: inherit; }
 html[data-acrho-theme] .account-panel .delete-account-button:not(:disabled) { background:#dc2626; color:#fff; border-color:#dc2626; }
 html[data-acrho-theme] .account-panel .delete-account-button:not(:disabled):hover { background:#b91c1c; border-color:#b91c1c; }
 
-html[data-acrho-theme] .account-panel button:not(.delete-account-button):not(:disabled) { background:var(--acrho-sidebar); color:#fff; border-color:var(--acrho-sidebar); }
-html[data-acrho-theme] .account-panel button:not(.delete-account-button):not(:disabled):hover { background:var(--acrho-sidebar-active); border-color:var(--acrho-sidebar-active); }
-html[data-acrho-theme] .account-panel button:not(.delete-account-button):not(:disabled) mat-icon { color:#fff; }
+html[data-acrho-theme] .account-panel button:not(.delete-account-button):not(.banner-swatch):not(:disabled) { background:var(--acrho-sidebar); color:#fff; border-color:var(--acrho-sidebar); }
+html[data-acrho-theme] .account-panel button:not(.delete-account-button):not(.banner-swatch):not(:disabled):hover { background:var(--acrho-sidebar-active); border-color:var(--acrho-sidebar-active); }
+html[data-acrho-theme] .account-panel button:not(.delete-account-button):not(.banner-swatch):not(:disabled) mat-icon { color:#fff; }
 
 html[data-acrho-theme] .favorite-toggle { background:transparent; }
 
@@ -155,3 +155,32 @@ html[data-acrho-theme] .runner-profile-banner .season-select .mdc-floating-label
 .banner-swatch:focus-visible { outline:3px solid var(--acrho-accent); outline-offset:3px; }
 .banner-swatch:disabled { opacity:.6; cursor:wait; }
 html[data-acrho-theme] .banner-swatch mat-icon { color:#fff; font-size:20px; width:20px; height:20px; }
+
+.account-panel .banner-palette { margin:20px 0 0; }
+
+html[data-acrho-theme] .account-panel.runner-profile-banner h2,
+html[data-acrho-theme] .account-panel.runner-profile-banner .banner-palette>span { color:#fff; }
+html[data-acrho-theme] .account-panel.runner-profile-banner .banner-swatch { border-color:rgba(255,255,255,.6); }
+html[data-acrho-theme] .account-panel.runner-profile-banner .banner-swatch[aria-pressed='true'],
+html[data-acrho-theme] .account-panel.runner-profile-banner .banner-swatch:focus-visible { outline-color:#fff; }
+
+html[data-acrho-theme] .account-panel.runner-profile-banner>p,
+html[data-acrho-theme] .account-panel.runner-profile-banner>p strong,
+html[data-acrho-theme] .account-panel.runner-profile-banner .account-runner-results:not(:disabled) { color:#fff; }
+html[data-acrho-theme] .account-panel.runner-profile-banner .account-runner-results:not(:disabled) { border-color:#fff; }
+
+html[data-acrho-theme] .account-panel.runner-profile-banner .account-runner-results:not(:disabled) { background:#fff; color:var(--acrho-sidebar); border-color:#fff; }
+html[data-acrho-theme] .account-panel.runner-profile-banner .account-runner-results:not(:disabled):hover { background:#e8f0fa; color:var(--acrho-sidebar); border-color:#e8f0fa; }
+
+.runner-profile-banner[data-banner-color='black'] { --runner-banner-start:#090909; --runner-banner-end:#262626; }
+.runner-profile-banner[data-banner-color='yellow'] { --runner-banner-start:#facc15; --runner-banner-end:#fde047; }
+html[data-acrho-theme] .page-heading .runner-profile-banner[data-banner-color='yellow'] h1,
+html[data-acrho-theme] .runner-profile-banner[data-banner-color='yellow'] p,
+html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow']>p strong,
+html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow'] h2,
+html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow'] .banner-palette>span,
+html[data-acrho-theme] .runner-profile-banner[data-banner-color='yellow'] .favorite-toggle:not(.is-favorite) mat-icon,
+html[data-acrho-theme] .banner-swatch[data-color='yellow'] mat-icon { color:#172d31; }
+html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow'] .banner-swatch { border-color:rgba(23,45,49,.5); }
+html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow'] .banner-swatch[aria-pressed='true'],
+html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow'] .banner-swatch:focus-visible { outline-color:#172d31; }

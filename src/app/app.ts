@@ -51,6 +51,8 @@ export class App implements OnInit {
     { value: 'purple', label: 'Violet', color: '#6b21a8' },
     { value: 'rose', label: 'Rose', color: '#9d174d' },
     { value: 'slate', label: 'Ardoise', color: '#334155' },
+    { value: 'black', label: 'Noir', color: '#111111' },
+    { value: 'yellow', label: 'Jaune', color: '#facc15' },
   ];
   bannerSaving = false;
   bannerError = '';
@@ -235,8 +237,8 @@ export class App implements OnInit {
     return this.categories.find(category => category.code === code)?.label ?? code;
   }
   changeBanner(color: string) {
-    if (!this.me || !this.selectedRunner || this.me.runnerId !== this.selectedRunner.id || this.bannerSaving) return;
-    const runnerId = this.selectedRunner.id;
+    if (!this.me || !this.linkedRunner || this.me.runnerId !== this.linkedRunner.id || this.bannerSaving || this.runnerLinkSaving || this.deletingAccount) return;
+    const runnerId = this.linkedRunner.id;
     const userId = this.me.id;
     this.bannerSaving = true;
     this.bannerError = '';
@@ -244,6 +246,7 @@ export class App implements OnInit {
       next: () => {
         this.bannerSaving = false;
         if (this.me?.id !== userId) return;
+        if (this.linkedRunner?.id === runnerId) this.linkedRunner = { ...this.linkedRunner, bannerColor: color };
         if (this.selectedRunner?.id === runnerId) this.selectedRunner = { ...this.selectedRunner, bannerColor: color };
         this.runners = this.runners.map(runner => runner.id === runnerId ? { ...runner, bannerColor: color } : runner);
         this.favorites = this.favorites.map(runner => runner.id === runnerId ? { ...runner, bannerColor: color } : runner);
@@ -452,6 +455,7 @@ export class App implements OnInit {
     this.selectedRace = undefined;
     this.activeView = 'settings';
     this.accountRunnerQuery = '';
+    this.bannerError = '';
     this.runnerLinkMessage = '';
     this.loadAccountRunners();
     this.confirmAccountDeletion = false;
