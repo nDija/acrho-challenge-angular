@@ -200,3 +200,15 @@
 .result-card-link { width:100%; text-align:left; font:inherit; color:inherit; cursor:pointer; }
 .result-card-link:hover { border-color:var(--acrho-accent); }
 .result-card-link:focus-visible { outline:2px solid var(--acrho-accent); outline-offset:3px; }
+
+.profile-button { padding:0; border:0; font:inherit; cursor:pointer; }
+.profile-button:focus-visible { outline:2px solid var(--acrho-accent); outline-offset:3px; }
+.account-panel { max-width:850px; padding:24px; margin-bottom:22px; border:1px solid var(--acrho-border); border-radius:14px; background:#fff; }
+.account-panel h2 { margin:0 0 20px; color:var(--acrho-heading); font-size:19px; }
+.account-panel p { color:var(--acrho-text); font-size:14px; line-height:1.7; }
+.account-panel a { color:var(--acrho-accent-dark); }
+.account-details { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; }
+.account-details dt { color:var(--acrho-muted); font-size:12px; }
+.account-details dd { margin:6px 0 0; overflow-wrap:anywhere; color:var(--acrho-heading); font-weight:600; }
+.account-actions { display:flex; flex-wrap:wrap; gap:12px; }
+.account-panel .delete-account-button { color:#b42318; --mdc-filled-button-container-color:#fee4e2; --mdc-filled-button-label-text-color:#b42318; }

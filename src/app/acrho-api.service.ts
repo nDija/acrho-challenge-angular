@@ -9,7 +9,7 @@ export interface RouteInfo { id: number; label: string; distanceM?: number; star
 export interface RacePracticalInfo { details?: Record<string, unknown>; sourceUrl?: string | null; }
 export interface RaceDetail extends Race { organizer?: string; routes: RouteInfo[]; practicalInfo?: RacePracticalInfo | null; }
 export interface Runner { id: number; firstName: string; lastName: string; gender?: string; club?: string; category?: string | null; categoryYear?: number | null; }
-export interface Me { id: number; email: string; displayName?: string; role: 'USER' | 'ADMIN'; pictureUrl?: string | null; }
+export interface Me { id: number; email: string; displayName?: string; role: 'USER' | 'ADMIN'; pictureUrl?: string | null; createdAt?: string | null; }
 export interface Category { id: number; code: string; label: string; }
 export interface Result { overallRank?: number; categoryRank?: number; bibNumber?: number; runner: Runner; category?: string | null; timeMs?: number | null; time?: string; status?: string; }
 export interface RunnerResult { raceId: number; raceName: string; raceDate: string; city?: string; routeId: number; routeLabel: string; distanceM?: number; result: Result; }
@@ -26,6 +26,7 @@ export class AcrhoApi {
   /** Sign-in is a full-page navigation to the API, which sends the browser to Google and back to the site. */
   loginUrl() { return this.apiUrl('/oauth2/authorization/google'); }
   /** The X-XSRF-TOKEN header is added by Angular from the XSRF-TOKEN cookie (same origin). */
+  deleteAccount() { return this.http.delete<void>(this.apiUrl('/api/v1/me')); }
   logout() { return this.http.post(this.apiUrl('/logout'), null); }
   regulation() { return this.http.get('assets/reglement.md', { responseType: 'text' }); }
   races(year: number) { return this.http.get<Race[]>(this.apiUrl(`/api/v1/seasons/year/${year}/races`)); }

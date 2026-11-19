@@ -35,7 +35,10 @@ export class App implements OnInit {
   nextUpcomingRaceRoutes: RouteInfo[] = [];
   selectedRace?: RaceDetail; categories: Category[] = []; results: Result[] = []; runners: Runner[] = [];
   expandedRaceId?: number; expandedRaceDetails?: RaceDetail; practicalInfoLoading = false;
-  activeView: 'calendar' | 'runners' | 'regulation' = 'calendar'; loading = false; error = '';
+  activeView: 'calendar' | 'runners' | 'regulation' | 'settings' = 'calendar'; loading = false; error = '';
+  confirmAccountDeletion = false;
+  deletingAccount = false;
+  accountError = '';
   regulationHtml = ''; regulationLoading = false; regulationError = '';
   selectedRunner?: Runner;
   runnerYear?: number;
@@ -306,10 +309,43 @@ export class App implements OnInit {
       error: () => { this.me = undefined; this.authChecked = true; this.cdr.markForCheck(); }
     });
   }
+  showSettings() {
+    if (!this.me) return;
+    this.closeRunner();
+    this.selectedRace = undefined;
+    this.activeView = 'settings';
+    this.confirmAccountDeletion = false;
+    this.accountError = '';
+    this.error = '';
+  }
+  deleteAccount() {
+    if (!this.me || !this.confirmAccountDeletion || this.deletingAccount) return;
+    this.deletingAccount = true;
+    this.accountError = '';
+    this.api.deleteAccount().subscribe({
+      next: () => {
+        this.deletingAccount = false;
+        this.confirmAccountDeletion = false;
+        this.closeRunner();
+        this.me = undefined;
+        this.runners = [];
+        this.runnerTotal = 0;
+        this.runnerQuery = '';
+        this.backToCalendar();
+        this.cdr.markForCheck();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.deletingAccount = false;
+        this.accountError = 'Impossible de supprimer le compte. Réessaie dans un instant.';
+        if (error.status === 401) this.fail(error);
+        this.cdr.markForCheck();
+      },
+    });
+  }
   login() { window.location.href = this.api.loginUrl(); }
   logout() {
     this.api.logout().subscribe({
-      next: () => { this.closeRunner(); this.me = undefined; this.runners = []; this.runnerTotal = 0; this.runnerQuery = ''; this.error = ''; this.cdr.markForCheck(); },
+      next: () => { this.closeRunner(); this.me = undefined; this.runners = []; this.runnerTotal = 0; this.runnerQuery = ''; this.error = ''; if (this.activeView === 'settings') this.backToCalendar(); this.cdr.markForCheck(); },
       error: e => { this.fail(e); this.cdr.markForCheck(); }
     });
   }
