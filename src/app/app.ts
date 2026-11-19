@@ -40,6 +40,7 @@ export class App implements OnInit {
   deletingAccount = false;
   accountError = '';
   linkedRunner?: Runner;
+  openingLinkedRunner = false;
   suggestedRunners: Runner[] = [];
   accountRunnerQuery = '';
   runnerLinkLoading = false;
@@ -315,6 +316,27 @@ export class App implements OnInit {
     this.api.me().subscribe({
       next: me => { this.me = me; this.authChecked = true; this.cdr.markForCheck(); },
       error: () => { this.me = undefined; this.authChecked = true; this.cdr.markForCheck(); }
+    });
+  }
+  openLinkedRunner() {
+    if (!this.me || this.openingLinkedRunner) return;
+    if (!this.me.runnerId) { this.showSettings(); return; }
+    const userId = this.me.id;
+    const runnerId = this.me.runnerId;
+    this.openingLinkedRunner = true;
+    this.api.runner(runnerId).subscribe({
+      next: runner => {
+        this.openingLinkedRunner = false;
+        if (this.me?.id === userId && this.me.runnerId === runnerId) this.openRunner(runner);
+        this.cdr.markForCheck();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.openingLinkedRunner = false;
+        if (this.me?.id !== userId || this.me.runnerId !== runnerId) return;
+        if (error.status === 401) this.fail(error);
+        else { this.showSettings(); this.runnerLinkError = 'Impossible d’ouvrir la fiche du coureur lié.'; }
+        this.cdr.markForCheck();
+      },
     });
   }
   showSettings() {
