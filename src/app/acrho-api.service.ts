@@ -12,12 +12,14 @@ export interface Runner { id: number; firstName: string; lastName: string; gende
 export interface Me { id: number; email: string; displayName?: string; role: 'USER' | 'ADMIN'; pictureUrl?: string | null; }
 export interface Category { id: number; code: string; label: string; }
 export interface Result { overallRank?: number; categoryRank?: number; bibNumber?: number; runner: Runner; category?: string | null; timeMs?: number | null; time?: string; status?: string; }
+export interface RunnerResult { raceId: number; raceName: string; raceDate: string; city?: string; routeId: number; routeLabel: string; distanceM?: number; result: Result; }
 export interface Page<T> { content: T[]; page: number; size: number; total: number; }
 
 @Injectable({ providedIn: 'root' })
 export class AcrhoApi {
   private http = inject(HttpClient);
   private apiUrl(path: string) { return `${environment.apiBaseUrl}${path}`; }
+  health() { return this.http.get<{ status: string }>('https://acrho-challenge.ddns.net/actuator/health'); }
   seasons() { return this.http.get<Season[]>(this.apiUrl('/api/v1/seasons')); }
   /** The signed-in person; answers 401 when nobody is signed in. */
   me() { return this.http.get<Me>(this.apiUrl('/api/v1/me')); }
@@ -35,6 +37,10 @@ export class AcrhoApi {
     if (category) params = params.set('category', category);
     if (gender) params = params.set('gender', gender);
     return this.http.get<Page<Result>>(this.apiUrl(`/api/v1/routes/${routeId}/results`), { params });
+  }
+  runner(id: number) { return this.http.get<Runner>(this.apiUrl(`/api/v1/runners/${id}`)); }
+  runnerResults(id: number, year: number) {
+    return this.http.get<RunnerResult[]>(this.apiUrl(`/api/v1/runners/${id}/results`), { params: { year } });
   }
   runners(q: string, page = 0, size = 20) {
     return this.http.get<Page<Runner>>(this.apiUrl('/api/v1/runners'), { params: { q, page, size } });

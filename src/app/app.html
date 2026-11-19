@@ -1,6 +1,6 @@
 <div class="shell">
   <aside class="sidebar">
-    <a class="brand" (click)="backToCalendar()"><span class="brand-mark">A</span><span>acrho<span class="brand-light">.run</span><small>COURIR ENSEMBLE</small></span></a>
+    <a class="brand" (click)="backToCalendar()"><img class="brand-mark" src="assets/acrho-logo.png" alt="Logo ACRHO"><span>acrho<span class="brand-light">.run</span><small>COURIR ENSEMBLE</small></span></a>
     <div class="nav-label">ESPACE PERSONNEL</div>
     <button class="nav-item" [class.active]="activeView === 'calendar'" (click)="activeView='calendar'; backToCalendar()"><mat-icon>calendar_month</mat-icon> Courses</button>
     <button class="nav-item" [class.active]="activeView === 'runners'" (click)="showRunners()"><mat-icon>groups</mat-icon> Coureurs</button>
@@ -10,7 +10,7 @@
   </aside>
 
   <main class="main">
-    <header class="topbar"><div class="breadcrumb">ACRHO <span>/</span> <b>{{selectedRace ? 'DÉTAIL DE COURSE' : activeView === 'runners' ? 'ANNUAIRE' : activeView === 'regulation' ? 'RÈGLEMENT' : 'SAISON'}}</b></div><div class="top-actions"><span class="api-status"><i></i> API CONNECTÉE</span>@if (me) { <span class="avatar" [title]="me.email">@if (me.pictureUrl && !avatarFailed) { <img [src]="me.pictureUrl" alt="Photo de profil" referrerpolicy="no-referrer" (error)="avatarFailed = true"> } @else { {{initials}} }</span><button class="auth-btn auth-icon-btn" type="button" (click)="logout()" title="Se déconnecter" aria-label="Se déconnecter"><mat-icon>logout</mat-icon></button> } @else if (authChecked) { <button class="auth-btn auth-icon-btn" type="button" (click)="login()" title="Se connecter avec Google" aria-label="Se connecter avec Google"><mat-icon>login</mat-icon></button> }</div></header>
+    <header class="topbar"><div class="breadcrumb">ACRHO <span>/</span> <b>{{selectedRace ? 'DÉTAIL DE COURSE' : activeView === 'runners' ? 'ANNUAIRE' : activeView === 'regulation' ? 'RÈGLEMENT' : 'SAISON'}}</b></div><div class="top-actions"><span class="api-status" [class.online]="apiOnline" role="status" [title]="apiOnline ? 'API connectée' : 'API indisponible'" [attr.aria-label]="apiOnline ? 'API connectée' : 'API indisponible'"><i aria-hidden="true"></i></span>@if (me) { <span class="avatar" [title]="me.email">@if (me.pictureUrl && !avatarFailed) { <img [src]="me.pictureUrl" alt="Photo de profil" referrerpolicy="no-referrer" (error)="avatarFailed = true"> } @else { {{initials}} }</span><button class="auth-btn auth-icon-btn" type="button" (click)="logout()" title="Se déconnecter" aria-label="Se déconnecter"><mat-icon>logout</mat-icon></button> } @else if (authChecked) { <button class="auth-btn auth-icon-btn" type="button" (click)="login()" title="Se connecter avec Google" aria-label="Se connecter avec Google"><mat-icon>login</mat-icon></button> }</div></header>
     <section class="content">
       @if (activeView === 'calendar' && !selectedRace) {
         <div class="page-heading"><div><div class="eyebrow">VOTRE CALENDRIER DE RUNNING</div><h1>La saison, <em>en mouvement.</em></h1><p>Retrouvez les courses et résultats du challenge ACRHO.</p></div>
@@ -69,12 +69,34 @@
         @if (error) { <div class="error-banner"><mat-icon>info</mat-icon>{{error}}</div> }
       }
       @if (activeView === 'runners') {
+        @if (!selectedRunner || !me) {
         <div class="page-heading"><div><div class="eyebrow">COMMUNAUTÉ ACRHO</div><h1>Tous les coureurs, <em>un même départ.</em></h1><p>Recherchez un participant dans les saisons importées.</p></div></div>
+        }
         @if (me) {
+        @if (selectedRunner; as runner) {
+          <button class="back-link" type="button" (click)="closeRunner()"><mat-icon>arrow_back</mat-icon> Retour aux coureurs</button>
+          <div class="page-heading">
+            <div><h1>{{runner.firstName}} {{runner.lastName}}</h1><p>{{runner.club || 'Indépendant'}}</p>@if (runner.category) { <p>Dernière catégorie connue · {{runner.category}} ({{runner.categoryYear}})</p> }</div>
+            <mat-form-field appearance="outline" class="season-select"><mat-label>Année des résultats</mat-label><mat-select [(ngModel)]="runnerYear" (selectionChange)="loadRunnerResults()">@for (season of seasons; track season.id) { <mat-option [value]="season.year">{{season.year}}</mat-option> }</mat-select></mat-form-field>
+          </div>
+          <div class="section-head"><h2>Résultats {{runnerYear}} @if (!runnerDetailLoading && !runnerDetailError) { <span>({{runnerResults.length}})</span> }</h2></div>
+          @if (runnerDetailLoading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> }
+          @if (runnerDetailError) { <div class="error-banner" role="alert">{{runnerDetailError}}<button mat-button type="button" (click)="loadRunnerResults()">Réessayer</button></div> }
+          @if (!runnerDetailLoading && !runnerDetailError && !runnerResults.length) { <div class="empty">Aucun résultat publié pour ce coureur en {{runnerYear}}.</div> }
+          <div class="runner-history">
+            @for (entry of runnerResults; track entry.routeId) {
+              <article class="runner-history-card">
+                <div><h3>{{entry.raceName}}</h3><p>{{entry.raceDate | date:'dd MMMM yyyy'}}@if (entry.city) { · {{entry.city}} }</p><p>{{entry.routeLabel}}@if (entry.distanceM) { · {{entry.distanceM / 1000 | number:'1.0-2'}} km }</p></div>
+                <dl><div><dt>Classement</dt><dd>{{entry.result.overallRank ?? '—'}}</dd></div><div><dt>Catégorie</dt><dd>{{entry.result.category || '—'}}</dd></div><div><dt>Place catégorie</dt><dd>{{entry.result.categoryRank ?? '—'}}</dd></div><div><dt>Temps</dt><dd>{{entry.result.time || '—'}}</dd></div><div><dt>Dossard</dt><dd>{{entry.result.bibNumber ?? '—'}}</dd></div><div><dt>Statut</dt><dd>{{entry.result.status || '—'}}</dd></div></dl>
+              </article>
+            }
+          </div>
+        } @else {
         <mat-form-field appearance="outline" class="runner-search"><mat-label>Nom ou prénom (2 caractères minimum)</mat-label><input matInput [(ngModel)]="runnerQuery" (ngModelChange)="onRunnerQueryChange()" (keyup.enter)="findRunners()"><button mat-icon-button matSuffix (click)="findRunners()"><mat-icon>search</mat-icon></button></mat-form-field>
         @if (loading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> } @if (error) { <div class="error-banner">{{error}}</div> }
-        @if (runners.length) { <div class="runner-grid">@for (runner of runners; track runner.id) { <article class="runner-card"><div class="runner-avatar">{{runner.firstName?.[0]}}{{runner.lastName?.[0]}}</div><div><b>{{runner.firstName}} {{runner.lastName}}</b><span>{{runner.club || 'Indépendant'}}</span><small>{{runner.gender || '—'}}</small>@if (runner.category) { <small>Catégorie {{runner.category}} · {{runner.categoryYear}}</small> }</div></article> }</div><mat-paginator [length]="runnerTotal" [pageSize]="20" [pageIndex]="runnerPage" (page)="onRunnerPage($event)"></mat-paginator> }
+        @if (runners.length) { <div class="runner-grid">@for (runner of runners; track runner.id) { <button class="runner-card runner-card-link" type="button" (click)="openRunner(runner)"><div class="runner-avatar">{{runner.firstName?.[0]}}{{runner.lastName?.[0]}}</div><div><b>{{runner.firstName}} {{runner.lastName}}</b><span>{{runner.club || 'Indépendant'}}</span>@if (runner.category) { <small>Catégorie {{runner.category}} · {{runner.categoryYear}}</small> }</div></button> }</div><mat-paginator [length]="runnerTotal" [pageSize]="20" [pageIndex]="runnerPage" (page)="onRunnerPage($event)"></mat-paginator> }
         @if (!loading && !runners.length && runnerQuery.length >= 2 && !error) { <div class="empty">Aucun coureur trouvé pour « {{runnerQuery}} ».</div> }
+        }
         } @else if (authChecked) {
           <div class="empty">L’annuaire des coureurs est réservé aux membres connectés.<br><button class="auth-btn auth-btn-primary auth-icon-btn" type="button" (click)="login()" title="Se connecter avec Google" aria-label="Se connecter avec Google"><mat-icon>login</mat-icon></button></div>
         }

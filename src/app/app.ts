@@ -2,8 +2,9 @@ import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { catchError, from, mergeMap, of, toArray } from 'rxjs';
-import { AcrhoApi, Category, Me, Race, RaceDetail, Result, RouteInfo, Runner, Season } from './acrho-api.service';
+import { catchError, forkJoin, from, mergeMap, of, switchMap, timer, timeout, toArray } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AcrhoApi, Category, Me, Race, RaceDetail, Result, RouteInfo, Runner, RunnerResult, Season } from './acrho-api.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,6 +21,14 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 export class App implements OnInit {
   private api = inject(AcrhoApi);
   private cdr = inject(ChangeDetectorRef);
+  apiOnline = false;
+  private healthCheck = timer(0, 30000).pipe(
+    switchMap(() => this.api.health().pipe(timeout(10000), catchError(() => of(null)))),
+    takeUntilDestroyed(),
+  ).subscribe(health => {
+    this.apiOnline = health?.status === 'UP';
+    this.cdr.markForCheck();
+  });
   me?: Me; authChecked = false; avatarFailed = false;
   seasons: Season[] = []; selectedYear = new Date().getFullYear(); races: Race[] = []; seasonRaces: Race[] = [];
   showPlannedRaces = false; showCancelledRaces = false;
@@ -28,6 +37,12 @@ export class App implements OnInit {
   expandedRaceId?: number; expandedRaceDetails?: RaceDetail; practicalInfoLoading = false;
   activeView: 'calendar' | 'runners' | 'regulation' = 'calendar'; loading = false; error = '';
   regulationHtml = ''; regulationLoading = false; regulationError = '';
+  selectedRunner?: Runner;
+  runnerYear = new Date().getFullYear();
+  runnerResults: RunnerResult[] = [];
+  runnerDetailLoading = false;
+  runnerDetailError = '';
+  private runnerDetailRequestId = 0;
   runnerQuery = ''; resultQuery = ''; category = ''; gender = ''; showResultFilters = false;
   resultTotal = 0; resultPage = 0; resultSize = 20; selectedRouteId?: number; runnerTotal = 0; runnerPage = 0;
   private runnerSearchTimer?: ReturnType<typeof setTimeout>;
@@ -186,7 +201,45 @@ export class App implements OnInit {
   clearResultFilters() { this.resultQuery = ''; this.category = ''; this.gender = ''; if (this.selectedRouteId) { this.resultPage = 0; this.loadResults(this.selectedRouteId, 0); } }
   onResultsPage(e: PageEvent) { this.resultSize = e.pageSize; if (this.selectedRouteId) this.loadResults(this.selectedRouteId, e.pageIndex); }
   onRunnerPage(e: PageEvent) { this.findRunners(e.pageIndex); }
-  showRunners() { this.activeView = 'runners'; this.selectedRace = undefined; this.error = ''; }
+  showRunners() { this.closeRunner(); this.activeView = 'runners'; this.selectedRace = undefined; this.error = ''; }
+  openRunner(runner: Runner) {
+    this.selectedRunner = runner;
+    this.runnerYear = this.selectedYear;
+    this.loadRunnerResults();
+  }
+  closeRunner() {
+    this.runnerDetailRequestId++;
+    this.selectedRunner = undefined;
+    this.runnerResults = [];
+    this.runnerDetailLoading = false;
+    this.runnerDetailError = '';
+  }
+  loadRunnerResults() {
+    if (!this.selectedRunner || !this.me) return;
+    const requestId = ++this.runnerDetailRequestId;
+    this.runnerDetailLoading = true;
+    this.runnerDetailError = '';
+    this.runnerResults = [];
+    forkJoin({
+      runner: this.api.runner(this.selectedRunner.id),
+      results: this.api.runnerResults(this.selectedRunner.id, this.runnerYear),
+    }).subscribe({
+      next: ({ runner, results }) => {
+        if (requestId !== this.runnerDetailRequestId) return;
+        this.selectedRunner = runner;
+        this.runnerResults = results;
+        this.runnerDetailLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: (error: HttpErrorResponse) => {
+        if (requestId !== this.runnerDetailRequestId) return;
+        this.runnerDetailLoading = false;
+        this.runnerDetailError = 'Impossible de charger les résultats de ce coureur.';
+        if (error.status === 401) { this.closeRunner(); this.fail(error); }
+        this.cdr.markForCheck();
+      },
+    });
+  }
   showRegulation() {
     this.activeView = 'regulation';
     this.selectedRace = undefined;
@@ -236,7 +289,7 @@ export class App implements OnInit {
   login() { window.location.href = this.api.loginUrl(); }
   logout() {
     this.api.logout().subscribe({
-      next: () => { this.me = undefined; this.runners = []; this.runnerTotal = 0; this.runnerQuery = ''; this.error = ''; this.cdr.markForCheck(); },
+      next: () => { this.closeRunner(); this.me = undefined; this.runners = []; this.runnerTotal = 0; this.runnerQuery = ''; this.error = ''; this.cdr.markForCheck(); },
       error: e => { this.fail(e); this.cdr.markForCheck(); }
     });
   }
