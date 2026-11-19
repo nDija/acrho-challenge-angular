@@ -119,7 +119,7 @@ html[data-acrho-theme] .runner-profile-banner {
   width:100%;
   padding:clamp(20px,3vw,36px);
   border-radius:20px;
-  background:radial-gradient(ellipse at 100% 0%,rgba(79,172,254,.28),transparent 65%),linear-gradient(120deg,var(--acrho-sidebar),#164e82);
+  background:radial-gradient(ellipse at 100% 0%,rgba(79,172,254,.28),transparent 65%),linear-gradient(120deg,var(--runner-banner-start,var(--acrho-sidebar)),var(--runner-banner-end,#164e82));
   box-shadow:0 10px 28px rgba(24,59,91,.12);
 }
 html[data-acrho-theme] .runner-profile-banner h1 { color:#fff; margin-top:0; }
@@ -142,3 +142,16 @@ html[data-acrho-theme] .runner-profile-banner .season-select .mat-mdc-text-field
 }
 
 html[data-acrho-theme] .runner-profile-banner .season-select .mdc-floating-label { background:#fff; color:var(--acrho-heading); border-radius:6px; padding:0 6px; }
+
+.runner-profile-banner[data-banner-color='teal'] { --runner-banner-start:#134e4a; --runner-banner-end:#0f766e; }
+.runner-profile-banner[data-banner-color='green'] { --runner-banner-start:#14532d; --runner-banner-end:#166534; }
+.runner-profile-banner[data-banner-color='purple'] { --runner-banner-start:#4c1d95; --runner-banner-end:#6b21a8; }
+.runner-profile-banner[data-banner-color='rose'] { --runner-banner-start:#831843; --runner-banner-end:#9d174d; }
+.runner-profile-banner[data-banner-color='slate'] { --runner-banner-start:#1e293b; --runner-banner-end:#475569; }
+.banner-palette { display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin:-12px 0 24px; }
+.banner-palette>span { font-size:13px; color:var(--acrho-text); margin-right:6px; }
+.banner-swatch { display:grid; place-items:center; width:36px; height:36px; padding:0; border:2px solid transparent; border-radius:50%; cursor:pointer; }
+.banner-swatch[aria-pressed='true'] { outline:2px solid var(--acrho-heading); outline-offset:2px; }
+.banner-swatch:focus-visible { outline:3px solid var(--acrho-accent); outline-offset:3px; }
+.banner-swatch:disabled { opacity:.6; cursor:wait; }
+html[data-acrho-theme] .banner-swatch mat-icon { color:#fff; font-size:20px; width:20px; height:20px; }

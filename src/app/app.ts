@@ -44,6 +44,16 @@ export class App implements OnInit {
   favoritesError = '';
   savingFavorites = new Set<number>();
   private favoritesRequestId = 0;
+  readonly bannerColors = [
+    { value: 'blue', label: 'Bleu', color: '#164e82' },
+    { value: 'teal', label: 'Turquoise', color: '#115e59' },
+    { value: 'green', label: 'Vert', color: '#166534' },
+    { value: 'purple', label: 'Violet', color: '#6b21a8' },
+    { value: 'rose', label: 'Rose', color: '#9d174d' },
+    { value: 'slate', label: 'Ardoise', color: '#334155' },
+  ];
+  bannerSaving = false;
+  bannerError = '';
   failedRunnerPictures = new Set<string>();
   linkedRunner?: Runner;
   openingLinkedRunner = false;
@@ -224,6 +234,30 @@ export class App implements OnInit {
     if (!code) return '—';
     return this.categories.find(category => category.code === code)?.label ?? code;
   }
+  changeBanner(color: string) {
+    if (!this.me || !this.selectedRunner || this.me.runnerId !== this.selectedRunner.id || this.bannerSaving) return;
+    const runnerId = this.selectedRunner.id;
+    const userId = this.me.id;
+    this.bannerSaving = true;
+    this.bannerError = '';
+    this.api.changeBanner(color).subscribe({
+      next: () => {
+        this.bannerSaving = false;
+        if (this.me?.id !== userId) return;
+        if (this.selectedRunner?.id === runnerId) this.selectedRunner = { ...this.selectedRunner, bannerColor: color };
+        this.runners = this.runners.map(runner => runner.id === runnerId ? { ...runner, bannerColor: color } : runner);
+        this.favorites = this.favorites.map(runner => runner.id === runnerId ? { ...runner, bannerColor: color } : runner);
+        this.cdr.markForCheck();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.bannerSaving = false;
+        if (this.me?.id !== userId) return;
+        this.bannerError = 'Impossible de changer la couleur de la bannière.';
+        if (error.status === 401) this.fail(error);
+        this.cdr.markForCheck();
+      },
+    });
+  }
   get runnerDistanceKm() {
     return this.runnerResults
       .filter(entry => entry.result.status === 'FINISHED')
@@ -238,6 +272,7 @@ export class App implements OnInit {
     this.selectedRace = undefined;
     this.error = '';
     this.selectedRunner = runner;
+    this.bannerError = '';
     this.runnerYear = year;
     this.runnerSeasons = [];
     this.loadRunnerResults();
