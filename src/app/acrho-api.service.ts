@@ -37,6 +37,7 @@ export interface RunnerStanding {
     overallRank: number | null;
     categoryRank: number | null;
     points: number;
+    participations?: number;
     provisional: boolean;
   } | null;
 }

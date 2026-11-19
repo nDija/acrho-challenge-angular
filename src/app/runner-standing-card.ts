@@ -21,12 +21,16 @@ import { TranslatePipe } from './translate.pipe';
         @if (data.placement; as placement) {
           <dl [class.provisional]="placement.provisional">
             <div>
-              <dt>{{ 'Place au général' | t }}</dt>
+              <dt>{{ 'Général' | t }}</dt>
               <dd>{{ placement.overallRank ?? '—' }}</dd>
             </div>
             <div>
-              <dt>{{ 'Place catégorie' | t }} @if (placement.category) { ({{ placement.category }}) }</dt>
+              <dt>{{ 'Catégorie' | t }} @if (placement.category) { ({{ placement.category }}) }</dt>
               <dd>{{ placement.categoryRank ?? '—' }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'Courses comptées' | t }}</dt>
+              <dd>{{ placement.participations ?? '—' }}</dd>
             </div>
             <div>
               <dt>{{ 'Points' | t }}</dt>
