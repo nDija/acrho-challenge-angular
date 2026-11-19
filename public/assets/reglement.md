@@ -1,4 +1,3 @@
-# Règlement
 Les **inscriptions** sont toujours enregistrées sur place et le jour même de l'épreuve jusqu'à 15 minutes avant l'heure du départ. Une participation de 5,00 EUR est demandée par course. et un supplément de 1,00 EUR est exigé lors de la première inscription de la saison pour les non-classés lors de la saison précédente.
 
  
