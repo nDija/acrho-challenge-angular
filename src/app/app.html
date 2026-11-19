@@ -2,13 +2,13 @@
   <aside class="sidebar">
     <a class="brand" (click)="backToCalendar()"><img class="brand-mark" src="assets/acrho-logo.png" alt="Logo ACRHO"><span>acrho<span class="brand-light">.run</span><small>{{ "COURIR ENSEMBLE" | t }}</small></span></a>
     <div class="nav-label">{{ "ESPACE PERSONNEL" | t }}</div>
-    <button class="nav-item" [class.active]="activeView === 'calendar'" (click)="activeView='calendar'; backToCalendar()"><mat-icon>calendar_month</mat-icon> {{ "Courses" | t }}</button>
-    <button class="nav-item" type="button" [class.active]="activeView === 'standings'" [attr.aria-current]="activeView === 'standings' ? 'page' : null" (click)="showStandings()"><mat-icon>leaderboard</mat-icon> {{ "Classement de la saison" | t }}</button>
-    <button class="nav-item" [class.active]="activeView === 'runners'" (click)="showRunners()"><mat-icon>groups</mat-icon> {{ "Coureurs" | t }}</button>
-    @if (me) { <button class="nav-item" [class.active]="activeView === 'favorites'" (click)="showFavorites()" [attr.aria-label]="&quot;Favoris&quot; | t"><mat-icon>favorite</mat-icon> {{ "Favoris" | t }}</button> }
-    <button class="nav-item" [class.active]="activeView === 'regulation'" (click)="showRegulation()"><mat-icon>gavel</mat-icon> {{ "Règlement" | t }}</button>
-    @if (me) { <button class="nav-item" [class.active]="activeView === 'settings'" (click)="showSettings()" [attr.aria-label]="&quot;Paramètres&quot; | t"><mat-icon>settings</mat-icon> {{ "Paramètres" | t }}</button> }
-    <a class="nav-item privacy-link" href="confidentialite.html" [attr.aria-label]="&quot;Politique de confidentialité&quot; | t"><mat-icon>privacy_tip</mat-icon> {{ "Confidentialité" | t }}</a>
+    <button class="nav-item" [class.active]="activeView === 'calendar'" (click)="activeView='calendar'; backToCalendar()" [attr.aria-label]="'Courses' | t"><mat-icon>calendar_month</mat-icon><span class="nav-item-label">{{ 'Courses' | t }}</span></button>
+    <button class="nav-item" type="button" [class.active]="activeView === 'standings'" [attr.aria-current]="activeView === 'standings' ? 'page' : null" (click)="showStandings()" [attr.aria-label]="'CLASSEMENT' | t | titlecase"><mat-icon>leaderboard</mat-icon><span class="nav-item-label">{{ 'CLASSEMENT' | t | titlecase }}</span></button>
+    <button class="nav-item" [class.active]="activeView === 'runners'" (click)="showRunners()" [attr.aria-label]="'Coureurs' | t"><mat-icon>groups</mat-icon><span class="nav-item-label">{{ 'Coureurs' | t }}</span></button>
+    @if (me) { <button class="nav-item" [class.active]="activeView === 'favorites'" (click)="showFavorites()" [attr.aria-label]="'Favoris' | t"><mat-icon>favorite</mat-icon><span class="nav-item-label">{{ 'Favoris' | t }}</span></button> }
+    <button class="nav-item" [class.active]="activeView === 'regulation'" (click)="showRegulation()" [attr.aria-label]="'Règlement' | t"><mat-icon>gavel</mat-icon><span class="nav-item-label">{{ 'Règlement' | t }}</span></button>
+    @if (me) { <button class="nav-item" [class.active]="activeView === 'settings'" (click)="showSettings()" [attr.aria-label]="'Paramètres' | t"><mat-icon>settings</mat-icon><span class="nav-item-label">{{ 'Paramètres' | t }}</span></button> }
+    <a class="nav-item privacy-link" href="confidentialite.html" [attr.aria-label]="'Confidentialité' | t"><mat-icon>privacy_tip</mat-icon><span class="nav-item-label">{{ 'Confidentialité' | t }}</span></a>
     <div class="sidebar-bottom"><span class="pulse"></span> {{ "Saison" | t }} {{selectedYear}} <span class="status">{{ "ACTIVE" | t }}</span></div>
   </aside>
 

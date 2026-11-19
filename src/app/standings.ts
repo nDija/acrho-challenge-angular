@@ -31,22 +31,27 @@ import { TranslatePipe } from './translate.pipe';
           @for (row of visibleRows(); track row.entry.runnerId) {
             <li class="standing-card" [class.provisional]="row.rank === null">
               <div class="card-heading">
-                <span class="rank">
-                  @if (row.rank === null) {
-                    {{ 'Provisoire' | t }}
-                  } @else {
-                    {{ 'Rang' | t }} {{ row.rank | number:'1.0-0':i18n.locale() }}
-                  }
+                <span class="result-rank" [attr.aria-label]="row.rank === null ? null : ('Rang' | t) + ' ' + row.rank">
+                  {{ (row.rank | number:'1.0-0':i18n.locale()) ?? '—' }}
                 </span>
-                <span>{{ row.categoryLabel | t }}</span>
+                <button class="runner-link result-person" type="button" (click)="openRunner(row.entry, data.year)"
+                        [attr.aria-label]="('Voir les résultats de ' | t) + row.entry.firstName + ' ' + row.entry.lastName">
+                  <div class="runner-avatar result-avatar" aria-hidden="true">
+                    @if (row.entry.pictureUrl && !failedPictures.has(row.entry.pictureUrl)) {
+                      <img [src]="row.entry.pictureUrl" alt="" loading="lazy" referrerpolicy="no-referrer"
+                           (error)="failedPictures.add(row.entry.pictureUrl)">
+                    } @else {
+                      {{ row.entry.firstName[0] }}{{ row.entry.lastName[0] }}
+                    }
+                  </div>
+                  <div class="result-person-copy"><strong>{{ row.entry.firstName }} {{ row.entry.lastName }}</strong></div>
+                </button>
+                <span class="category-pill">{{ row.categoryLabel | t }}</span>
               </div>
-              <button class="runner-link" type="button" (click)="openRunner(row.entry, data.year)"
-                      [attr.aria-label]="('Voir les résultats de ' | t) + row.entry.firstName + ' ' + row.entry.lastName">
-                {{ row.entry.firstName }} {{ row.entry.lastName }}
-              </button>
+              @if (row.rank === null) { <div class="provisional-label">{{ 'Provisoire' | t }}</div> }
               <dl>
                 <div><dt>{{ 'Courses' | t }}</dt><dd>{{ row.entry.score.participations | number:'1.0-0':i18n.locale() }}</dd></div>
-                <div><dt>{{ 'Points courses' | t }}</dt><dd>{{ row.entry.score.resultPoints | number:'1.0-0':i18n.locale() }}</dd></div>
+                <div><dt>{{ 'Points' | t }}</dt><dd>{{ row.entry.score.resultPoints | number:'1.0-0':i18n.locale() }}</dd></div>
                 <div><dt>{{ 'Bonus' | t }}</dt><dd>{{ row.entry.score.bonusPoints | number:'1.0-0':i18n.locale() }}</dd></div>
                 <div><dt>{{ 'Total' | t }}</dt><dd><strong>{{ row.total | number:'1.0-0':i18n.locale() }}</strong></dd></div>
               </dl>
@@ -91,8 +96,9 @@ import { TranslatePipe } from './translate.pipe';
       background: #fff;
       color: var(--acrho-heading);
     }
-    .card-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: .8rem; }
-    .rank { font-weight: 800; }
+    .card-heading { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+    .card-heading .category-pill { max-width: 6rem; overflow-wrap: anywhere; }
+    .provisional-label { font-size: .75rem; font-weight: 700; }
     dl { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0; }
     dt { font-size: .75rem; }
     dd { margin: 0; font-variant-numeric: tabular-nums; }
@@ -102,14 +108,10 @@ import { TranslatePipe } from './translate.pipe';
       background: transparent;
       color: inherit;
       font: inherit;
-      font-weight: 750;
-      justify-self: start;
       text-align: start;
-      overflow-wrap: anywhere;
-      text-decoration: underline;
-      text-underline-offset: .18em;
       cursor: pointer;
     }
+    .runner-link:hover strong { text-decoration: underline; }
     .runner-link:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
     .provisional { color: #964000; background: #fff5e9; }
   `,
@@ -118,10 +120,11 @@ export class Standings {
   readonly runnerSelected = output<{ runner: Runner; year: number }>();
 
   protected openRunner(entry: StandingEntry, year: number) {
-    const { runnerId, firstName, lastName, category } = entry;
-    this.runnerSelected.emit({ runner: { id: runnerId, firstName, lastName, category, categoryYear: year }, year });
+    const { runnerId, firstName, lastName, category, pictureUrl } = entry;
+    this.runnerSelected.emit({ runner: { id: runnerId, firstName, lastName, category, pictureUrl, categoryYear: year }, year });
   }
   protected readonly i18n = inject(LanguageService);
+  protected readonly failedPictures = new Set<string>();
   protected readonly category = signal('');
   protected readonly page = signal({ pageIndex: 0, pageSize: 20 });
 

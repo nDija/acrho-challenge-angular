@@ -195,3 +195,18 @@ html[data-acrho-theme] .runner-history-card[data-banner-color='yellow'] .runner-
 .language-picker select { max-width:115px; min-height:40px; padding:6px; border:1px solid var(--acrho-border); border-radius:8px; background:#fff; color:var(--acrho-heading); font:inherit; font-size:12px; cursor:pointer; }
 .language-picker select:focus-visible { outline:2px solid var(--acrho-accent); outline-offset:2px; }
 @media(max-width:700px) { html[data-acrho-theme] .topbar { height:auto; min-height:72px; flex-wrap:wrap; gap:12px; padding-top:12px; padding-bottom:12px; }html[data-acrho-theme] .top-actions { flex-wrap:wrap; gap:10px; }.language-picker select { max-width:105px; } }
+
+.category-pill { padding:5px 8px;border-radius:8px;background:var(--acrho-soft);font-size:10px;font-weight:700; }
+.runner-avatar { display:grid;place-items:center;flex-shrink:0;width:42px;height:42px;overflow:hidden;border-radius:50%;background:var(--acrho-soft);color:var(--acrho-accent-dark);font-weight:800;font-size:12px; }
+.runner-avatar img { display:block; width:100%; height:100%; object-fit:cover; }
+.result-rank { display:grid; place-items:center; width:42px; height:42px; border-radius:13px; background:var(--acrho-soft); color:var(--acrho-accent-dark); font:800 16px Manrope,sans-serif; }
+.result-person { display:flex; align-items:center; gap:10px; min-width:0; }
+.result-person-copy { min-width:0; }
+.result-avatar { width:32px; height:32px; }
+.result-person strong, .result-person span { display:block; }
+.result-person strong { overflow:hidden; color:var(--acrho-heading); font-size:14px; text-overflow:ellipsis; white-space:nowrap; }
+.result-person span { margin-top:4px; color:var(--acrho-muted); font-size:11px; }
+@media(max-width:700px) {
+  .result-rank { width:36px;height:36px;font-size:14px; }
+  .result-person strong { font-size:12px; }
+}

@@ -17,6 +17,7 @@ export interface Page<T> { content: T[]; page: number; size: number; total: numb
 
 export interface StandingEntry {
   runnerId: number;
+  pictureUrl?: string | null;
   firstName: string;
   lastName: string;
   category: string | null;

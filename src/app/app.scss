@@ -12,8 +12,8 @@
 .content { max-width:1190px; margin:auto; padding:52px 5.5% 80px; }.page-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:35px; }.page-heading h1,.race-hero h1 { font:800 clamp(29px,3.5vw,43px)/1.12 Manrope,sans-serif; letter-spacing:-1.8px; margin:11px 0; color:var(--acrho-heading); }.page-heading h1 em { color:var(--acrho-accent); font-style:normal; }.page-heading p,.race-hero p { color:var(--acrho-muted); font-size:14px; margin:0; }.season-select { width:150px; }.stats-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-bottom:55px; }.stat-card { display:flex; gap:15px; align-items:center; background:white; border:1px solid var(--acrho-border); border-radius:13px; padding:18px 20px; }.upcoming-card { width:100%; color:inherit; font:inherit; text-align:left; cursor:pointer; transition:border-color .15s,box-shadow .15s; }.upcoming-card:hover,.upcoming-card.selected { border-color:var(--acrho-accent); box-shadow:0 3px 12px rgba(0,0,0,.06); }.upcoming-card:focus-visible { outline:2px solid var(--acrho-accent); outline-offset:2px; }.card-action-icon { margin-left:auto; color:var(--acrho-muted); }.stat-icon { width:40px;height:40px;border-radius:12px;display:grid;place-items:center; }.stat-icon.orange { color:var(--acrho-accent);background:var(--acrho-soft); }.stat-icon.mint { color:var(--acrho-accent);background:var(--acrho-soft); }.stat-icon.blue { color:var(--acrho-accent);background:var(--acrho-soft); }.stat-card b { display:block;font:800 22px Manrope,sans-serif;color:var(--acrho-heading); }.stat-card span:not(.stat-icon) { display:block;font-size:11px;color:var(--acrho-muted);margin-top:2px; }
 .section-head { display:flex;align-items:flex-end;justify-content:space-between;margin:0 0 17px; }.section-head h2 { font:750 22px Manrope,sans-serif;letter-spacing:-.5px;color:var(--acrho-heading);margin:7px 0 0; }.section-head h2 span { color:var(--acrho-muted);font-size:16px; }.calendar-tag { display:flex;align-items:center;gap:7px;border:1px solid #e3eae6;border-radius:20px;padding:8px 11px;color:var(--acrho-muted);font-size:9px;letter-spacing:.9px;font-weight:700; }.calendar-tag mat-icon { font-size:15px;width:15px;height:15px; }
 .race-list { background:#fff;border:1px solid var(--acrho-border);border-radius:13px;overflow:hidden; }.race-row { display:flex;align-items:center;text-align:left;width:100%;padding:15px 19px;border:0;border-bottom:1px solid #eff2f0;background:white;cursor:pointer;gap:17px;transition:background .15s; }.race-row:last-child { border-bottom:0; }.race-row:hover { background:#f9fbf9; }.date-tile { width:49px;height:52px;border-radius:10px;background:var(--acrho-soft);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;color:var(--acrho-accent); }.date-tile b { font:800 18px Manrope,sans-serif;line-height:1.05; }.date-tile span { text-transform:uppercase;font-size:9px;font-weight:700;letter-spacing:.8px;margin-top:3px; }.race-info { flex:1;min-width:0; }.race-info strong { display:block;font-size:14px;color:var(--acrho-heading);font-weight:700; }.race-info span { display:flex;align-items:center;color:var(--acrho-muted);font-size:11px;margin-top:5px; }.race-info span mat-icon { width:14px;height:14px;font-size:14px;margin-right:4px; }.race-meta { display:flex;align-items:center;gap:9px; }.race-coef,.race-state,.route-type { border-radius:14px;padding:6px 9px;background:var(--acrho-soft);color:var(--acrho-muted);font-size:9px;letter-spacing:.5px;font-weight:700; }.race-state { color:#568769;background:#edf6ef; }.row-arrow { color:var(--acrho-muted);font-size:18px; }.loading { display:flex;justify-content:center;padding:40px; }.empty { padding:28px;text-align:center;border:1px dashed var(--acrho-border);border-radius:12px;color:var(--acrho-muted);font-size:13px; }.error-banner { display:flex;align-items:center;gap:10px;color:#a34f3e;background:#fff0ec;border:1px solid #f5d7ce;padding:14px;border-radius:10px;font-size:13px;margin:14px 0; }
-.back-link { display:flex;align-items:center;gap:6px;border:0;background:none;color:var(--acrho-accent-dark);font-size:12px;font-weight:700;padding:0;margin:0 0 23px;cursor:pointer; }.back-link mat-icon { font-size:18px;width:18px;height:18px; }.race-hero { display:flex;align-items:center;justify-content:space-between;background:var(--acrho-soft);border-radius:17px;padding:35px 38px;margin-bottom:35px; }.race-hero .eyebrow { color:var(--acrho-muted); }.hero-icon { display:grid;place-items:center;width:62px;height:62px;border-radius:20px;background:#fff;color:var(--acrho-accent); }.hero-icon mat-icon { font-size:30px;width:30px;height:30px; }.route-cards { display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:40px; }.route-card { display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:10px;padding:17px;background:#fff;border:1px solid var(--acrho-border);border-radius:12px;cursor:pointer;color:var(--acrho-heading); }.route-card:hover { border-color:var(--acrho-accent);box-shadow:0 5px 20px color-mix(in srgb,var(--acrho-heading) 5%,transparent); }.route-card .route-type { background:var(--acrho-soft);color:var(--acrho-accent-dark);padding:5px 8px; }.route-card b { font:700 16px Manrope,sans-serif; }.route-card>span:last-child { color:var(--acrho-muted);font-size:12px; }.result-heading { margin-top:22px; }.filters { display:flex;gap:12px;align-items:center; }.filters mat-form-field { flex:1; }.rank { color:var(--acrho-accent); }.category-pill { padding:5px 8px;border-radius:8px;background:var(--acrho-soft);font-size:10px;font-weight:700; }.runner-search { width:min(100%,520px); }.runner-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-top:20px; }.runner-card { display:flex;gap:13px;align-items:center;padding:17px;background:white;border:1px solid var(--acrho-border);border-radius:12px; }.runner-avatar { display:grid;place-items:center;flex-shrink:0;width:42px;height:42px;border-radius:14px;background:var(--acrho-soft);color:var(--acrho-accent-dark);font-weight:800;font-size:12px; }.runner-card b,.runner-card span,.runner-card small { display:block; }.runner-card b { color:var(--acrho-heading);font-size:13px; }.runner-card span,.runner-card small { color:var(--acrho-muted);font-size:11px;margin-top:4px; }
-@media(max-width:800px) { .sidebar { width:76px;padding:22px 10px; }.brand { margin:0 auto 42px; }.brand>span:last-child,.nav-label,.nav-item:not(.active) { font-size:0; }.brand>span:last-child,.sidebar-bottom { display:none; }.nav-item { justify-content:center;padding:13px 0;font-size:0; }.nav-item mat-icon { margin:0; }.content { padding:36px 24px 60px; }.topbar { padding:0 24px; }.stats-row { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }.stat-card { padding:13px;gap:9px; }.stat-icon { width:34px;height:34px; }.race-meta { display:none; } }
+.back-link { display:flex;align-items:center;gap:6px;border:0;background:none;color:var(--acrho-accent-dark);font-size:12px;font-weight:700;padding:0;margin:0 0 23px;cursor:pointer; }.back-link mat-icon { font-size:18px;width:18px;height:18px; }.race-hero { display:flex;align-items:center;justify-content:space-between;background:var(--acrho-soft);border-radius:17px;padding:35px 38px;margin-bottom:35px; }.race-hero .eyebrow { color:var(--acrho-muted); }.hero-icon { display:grid;place-items:center;width:62px;height:62px;border-radius:20px;background:#fff;color:var(--acrho-accent); }.hero-icon mat-icon { font-size:30px;width:30px;height:30px; }.route-cards { display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:40px; }.route-card { display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:10px;padding:17px;background:#fff;border:1px solid var(--acrho-border);border-radius:12px;cursor:pointer;color:var(--acrho-heading); }.route-card:hover { border-color:var(--acrho-accent);box-shadow:0 5px 20px color-mix(in srgb,var(--acrho-heading) 5%,transparent); }.route-card .route-type { background:var(--acrho-soft);color:var(--acrho-accent-dark);padding:5px 8px; }.route-card b { font:700 16px Manrope,sans-serif; }.route-card>span:last-child { color:var(--acrho-muted);font-size:12px; }.result-heading { margin-top:22px; }.filters { display:flex;gap:12px;align-items:center; }.filters mat-form-field { flex:1; }.rank { color:var(--acrho-accent); }.runner-search { width:min(100%,520px); }.runner-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-top:20px; }.runner-card { display:flex;gap:13px;align-items:center;padding:17px;background:white;border:1px solid var(--acrho-border);border-radius:12px; }.runner-card b,.runner-card span,.runner-card small { display:block; }.runner-card b { color:var(--acrho-heading);font-size:13px; }.runner-card span,.runner-card small { color:var(--acrho-muted);font-size:11px;margin-top:4px; }
+@media(max-width:800px) { .sidebar { width:76px;padding:22px 10px; }.brand { margin:0 auto 42px; }.brand>span:last-child,.nav-label { font-size:0; }.brand>span:last-child,.sidebar-bottom,.nav-item-label { display:none; }.nav-item { justify-content:center;padding:13px 0; }.nav-item mat-icon { margin:0; }.content { padding:36px 24px 60px; }.topbar { padding:0 24px; }.stats-row { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }.stat-card { padding:13px;gap:9px; }.stat-icon { width:34px;height:34px; }.race-meta { display:none; } }
 @media(max-width:550px) { .page-heading { align-items:flex-start;flex-direction:column; }.season-select { width:100%; }.stats-row { grid-template-columns:1fr; }.calendar-tag { display:none; }.race-row { padding:13px 11px;gap:10px; }.race-info strong { font-size:12px; }.race-info span { font-size:10px; }.row-arrow { display:none; }.filters { display:block; }.filters mat-form-field { width:100%; }.race-hero { padding:24px 20px; }.hero-icon { display:none; }.top-actions { gap:8px; }.api-status { font-size:8px; }.breadcrumb { font-size:8px; }.content { padding:30px 16px 50px; } }
 
 
@@ -25,11 +25,11 @@
 
 @media (max-width: 640px) {
   .shell { display: block; min-height: 100dvh; }
-  .sidebar { width: 100%; min-height: 64px; height: auto; flex-direction: row; align-items: center; gap: 8px; padding: 10px 16px; }
+  .sidebar { width: 100%; min-height: 64px; height: auto; flex-flow: row wrap; align-items: center; gap: 8px; padding: 10px 16px; }
   .brand { flex: 0 0 auto; margin: 0 auto 0 0; gap: 8px; font-size: 18px; }
   .brand-mark { width: 34px; height: 34px; border-radius: 11px; font-size: 18px; }
   .brand small, .nav-label, .sidebar-bottom { display: none; }
-  .nav-item { width: auto; min-height: 42px; margin: 0; padding: 8px 10px; gap: 7px; font-size: 11px; white-space: nowrap; }
+  .nav-item { flex: 0 0 44px; min-height: 44px; margin: 0; padding: 0; }
   .nav-item mat-icon { width: 18px; height: 18px; font-size: 18px; }
   .main { width: 100%; }
   .topbar { height: 58px; padding: 0 18px; }
@@ -46,7 +46,6 @@
   .sidebar { padding: 9px 12px; gap: 4px; }
   .brand { font-size: 16px; letter-spacing: -.5px; }
   .brand-mark { width: 32px; height: 32px; }
-  .nav-item { padding: 7px 8px; gap: 5px; font-size: 10px; }
   .topbar { height: 54px; padding: 0 14px; }
   .top-actions { gap: 9px; }
   .content { padding: 25px 14px 44px; }
@@ -93,20 +92,18 @@
 
 .result-cards { display:flex; flex-direction:column; gap:9px; }
 .result-card { display:grid; grid-template-columns:52px minmax(0,1fr) auto; align-items:center; gap:14px; min-height:76px; padding:12px 16px; border:1px solid var(--acrho-border); border-radius:12px; background:#fff; }
-.result-rank { display:grid; place-items:center; width:42px; height:42px; border-radius:13px; background:var(--acrho-soft); color:var(--acrho-accent-dark); font:800 16px Manrope,sans-serif; }
-.result-person { display:flex; align-items:center; gap:10px; min-width:0; }
-.result-person-copy { min-width:0; }
-.result-avatar { width:32px; height:32px; }
-.result-person strong, .result-person span { display:block; }
-.result-person strong { overflow:hidden; color:var(--acrho-heading); font-size:14px; text-overflow:ellipsis; white-space:nowrap; }
-.result-person span { margin-top:4px; color:var(--acrho-muted); font-size:11px; }
+
+
+
+
+
+
+
 .result-details { display:flex; align-items:center; gap:14px; min-width:0; max-width:100%; overflow-x:auto; }
 .result-details>* { flex-shrink:0; white-space:nowrap; }
 .result-time { min-width:68px; color:var(--acrho-text); font:700 13px Manrope,sans-serif; text-align:right; }
 @media(max-width:700px) {
   .result-card { grid-template-columns:40px minmax(0,1fr); gap:9px 11px; padding:11px; }
-  .result-rank { width:36px;height:36px;font-size:14px; }
-  .result-person strong { font-size:12px; }
   .result-details { grid-column:1 / -1; gap:8px; overflow:visible; }
   .result-details .category-pill { max-width:40%; white-space:normal; overflow-wrap:anywhere; }
   .result-details .result-time-wrap { flex:1; min-width:0; flex-wrap:wrap; justify-content:flex-end; gap:4px 8px; }
@@ -227,8 +224,8 @@
 .account-runner-option { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; padding:14px 0; border-bottom:1px solid var(--acrho-border); }
 .account-runner-option p { margin:4px 0; }
 
-.runner-avatar { overflow:hidden; border-radius:50%; }
-.runner-avatar img { display:block; width:100%; height:100%; object-fit:cover; }
+
+
 
 .runner-profile-heading { display:flex; align-items:center; gap:20px; min-width:0; }
 .runner-profile-info { min-width:0; overflow-wrap:anywhere; }
