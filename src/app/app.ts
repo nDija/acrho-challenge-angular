@@ -56,7 +56,7 @@ export class App implements OnInit {
     this.api.seasons().subscribe({ next: xs => { this.seasons = xs; if (xs.length && !xs.some(s => s.year === this.selectedYear)) this.selectedYear = xs[0].year; this.loadRaces(); this.cdr.markForCheck(); }, error: e => this.fail(e) });
     this.api.categories().subscribe({ next: xs => { this.categories = xs; this.cdr.markForCheck(); }, error: () => {} });
   }
-  loadRaces() { const requestId = ++this.distanceRequestId; this.showPlannedRaces = false; this.showCancelledRaces = false; this.expandedRaceId = undefined; this.expandedRaceDetails = undefined; this.nextUpcomingRaceRoutes = []; this.publishedDistanceKm = 0; this.distanceLoading = true; this.loading = true; this.error = ''; this.selectedRace = undefined; this.api.races(this.selectedYear).subscribe({ next: xs => { this.seasonRaces = xs; this.races = xs.filter(r => r.status?.toUpperCase() === 'PUBLISHED').sort((a,b) => a.raceDate.localeCompare(b.raceDate)); this.loadNextUpcomingRaceRoutes(); this.loadPublishedDistance(this.races, requestId); this.loading = false; this.cdr.markForCheck(); }, error: e => { this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
+  loadRaces() { const requestId = ++this.distanceRequestId; this.showPlannedRaces = false; this.showCancelledRaces = false; this.expandedRaceId = undefined; this.expandedRaceDetails = undefined; this.nextUpcomingRaceRoutes = []; this.publishedDistanceKm = 0; this.distanceLoading = true; this.loading = true; this.error = ''; this.selectedRace = undefined; this.api.races(this.selectedYear).subscribe({ next: xs => { this.seasonRaces = xs; this.races = xs.filter(r => r.status?.toUpperCase() === 'PUBLISHED').sort((a,b) => b.raceDate.localeCompare(a.raceDate)); this.loadNextUpcomingRaceRoutes(); this.loadPublishedDistance(this.races, requestId); this.loading = false; this.cdr.markForCheck(); }, error: e => { this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
   private loadPublishedDistance(races: Race[], requestId: number) {
     if (!races.length) {
       this.distanceLoading = false;
@@ -202,9 +202,16 @@ export class App implements OnInit {
   onResultsPage(e: PageEvent) { this.resultSize = e.pageSize; if (this.selectedRouteId) this.loadResults(this.selectedRouteId, e.pageIndex); }
   onRunnerPage(e: PageEvent) { this.findRunners(e.pageIndex); }
   showRunners() { this.closeRunner(); this.activeView = 'runners'; this.selectedRace = undefined; this.error = ''; }
-  openRunner(runner: Runner) {
+  openRunnerFromResult(result: Result) {
+    const year = this.seasons.find(season => season.id === this.selectedRace?.seasonId)?.year ?? this.selectedYear;
+    this.openRunner(result.runner, year);
+  }
+  openRunner(runner: Runner, year?: number) {
+    this.activeView = 'runners';
+    this.selectedRace = undefined;
+    this.error = '';
     this.selectedRunner = runner;
-    this.runnerYear = undefined;
+    this.runnerYear = year;
     this.runnerSeasons = [];
     this.loadRunnerResults();
   }
