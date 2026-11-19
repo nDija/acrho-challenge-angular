@@ -18,7 +18,6 @@ export const translations: readonly (readonly [string, string, string, string])[
   ['Total', 'Total', 'Totaal', 'Gesamt'],
   ['Provisoire', 'Provisional', 'Voorlopig', 'Vorläufig'],
   ['Général', 'Overall', 'Algemeen', 'Gesamt'],
-  ['Courses comptées', 'Races counted', 'Meegetelde wedstrijden', 'Gewertete Läufe'],
   ['Aucun score cette saison.', 'No score this season.', 'Geen score dit seizoen.', 'Keine Punktewertung in dieser Saison.'],
   ['Coureurs', 'Runners', 'Lopers', 'Läufer'],
   ['Favoris', 'Favorites', 'Favorieten', 'Favoriten'],

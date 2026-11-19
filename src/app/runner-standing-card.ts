@@ -29,7 +29,7 @@ import { TranslatePipe } from './translate.pipe';
               <dd>{{ placement.categoryRank ?? '—' }}</dd>
             </div>
             <div>
-              <dt>{{ 'Courses comptées' | t }}</dt>
+              <dt>{{ 'Courses' | t }}</dt>
               <dd>{{ placement.participations ?? '—' }}</dd>
             </div>
             <div>

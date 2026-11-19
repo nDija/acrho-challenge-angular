@@ -3,6 +3,7 @@ import { Component, computed, inject, output, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { Subject, catchError, of, startWith, switchMap } from 'rxjs';
@@ -12,13 +13,13 @@ import { TranslatePipe } from './translate.pipe';
 
 @Component({
   selector: 'app-standings',
-  imports: [DecimalPipe, TranslatePipe, MatButtonModule, MatFormFieldModule, MatSelectModule, MatProgressSpinnerModule],
+  imports: [DecimalPipe, TranslatePipe, MatButtonModule, MatFormFieldModule, MatSelectModule, MatProgressSpinnerModule, MatPaginatorModule],
   template: `
     <h1 id="standings-title">{{ 'Classement de la saison' | t }} @if (standings(); as data) { {{ data.year }} }</h1>
     @if (standings(); as data) {
       <mat-form-field appearance="outline">
         <mat-label>{{ 'Catégorie' | t }}</mat-label>
-        <mat-select [value]="category()" (selectionChange)="category.set($event.value)">
+        <mat-select [value]="category()" (selectionChange)="selectCategory($event.value)">
           <mat-option value="">{{ 'Classement général' | t }}</mat-option>
           @for (item of data.categories; track item.code) {
             <mat-option [value]="item.code">{{ item.label | t }}</mat-option>
@@ -26,39 +27,35 @@ import { TranslatePipe } from './translate.pipe';
         </mat-select>
       </mat-form-field>
       @if (rows().length) {
-        <div class="table-wrap" role="region" aria-labelledby="standings-title" tabindex="0">
-          <table aria-labelledby="standings-title">
-            <thead>
-              <tr>
-                <th scope="col">{{ 'Rang' | t }}</th>
-                <th scope="col">{{ 'Coureur' | t }}</th>
-                <th scope="col">{{ 'Catégorie' | t }}</th>
-                <th scope="col">{{ 'Courses' | t }}</th>
-                <th scope="col">{{ 'Points courses' | t }}</th>
-                <th scope="col">{{ 'Bonus' | t }}</th>
-                <th scope="col">{{ 'Total' | t }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (row of rows(); track row.entry.runnerId) {
-                <tr [class.provisional]="row.rank === null">
-                  <td>{{ row.rank ?? ('Provisoire' | t) }}</td>
-                  <th scope="row">
-                    <button class="runner-link" type="button" (click)="openRunner(row.entry, data.year)"
-                            [attr.aria-label]="('Voir les résultats de ' | t) + row.entry.firstName + ' ' + row.entry.lastName">
-                      {{ row.entry.firstName }} {{ row.entry.lastName }}
-                    </button>
-                  </th>
-                  <td>{{ row.categoryLabel | t }}</td>
-                  <td>{{ row.entry.score.participations | number:'1.0-0':i18n.locale() }}</td>
-                  <td>{{ row.entry.score.resultPoints | number:'1.0-0':i18n.locale() }}</td>
-                  <td>{{ row.entry.score.bonusPoints | number:'1.0-0':i18n.locale() }}</td>
-                  <td><strong>{{ row.total | number:'1.0-0':i18n.locale() }}</strong></td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+        <ul class="standing-cards" aria-labelledby="standings-title">
+          @for (row of visibleRows(); track row.entry.runnerId) {
+            <li class="standing-card" [class.provisional]="row.rank === null">
+              <div class="card-heading">
+                <span class="rank">
+                  @if (row.rank === null) {
+                    {{ 'Provisoire' | t }}
+                  } @else {
+                    {{ 'Rang' | t }} {{ row.rank | number:'1.0-0':i18n.locale() }}
+                  }
+                </span>
+                <span>{{ row.categoryLabel | t }}</span>
+              </div>
+              <button class="runner-link" type="button" (click)="openRunner(row.entry, data.year)"
+                      [attr.aria-label]="('Voir les résultats de ' | t) + row.entry.firstName + ' ' + row.entry.lastName">
+                {{ row.entry.firstName }} {{ row.entry.lastName }}
+              </button>
+              <dl>
+                <div><dt>{{ 'Courses' | t }}</dt><dd>{{ row.entry.score.participations | number:'1.0-0':i18n.locale() }}</dd></div>
+                <div><dt>{{ 'Points courses' | t }}</dt><dd>{{ row.entry.score.resultPoints | number:'1.0-0':i18n.locale() }}</dd></div>
+                <div><dt>{{ 'Bonus' | t }}</dt><dd>{{ row.entry.score.bonusPoints | number:'1.0-0':i18n.locale() }}</dd></div>
+                <div><dt>{{ 'Total' | t }}</dt><dd><strong>{{ row.total | number:'1.0-0':i18n.locale() }}</strong></dd></div>
+              </dl>
+            </li>
+          }
+        </ul>
+        <mat-paginator [attr.aria-label]="'Classement de la saison' | t" [length]="rows().length"
+                       [pageIndex]="page().pageIndex" [pageSize]="page().pageSize" [pageSizeOptions]="[20, 50, 100]"
+                       (page)="changePage($event)" />
       } @else {
         <p role="status">{{ (category() ? 'Aucun résultat pour cette catégorie.' : 'Aucun classement pour cette saison.') | t }}</p>
       }
@@ -76,18 +73,39 @@ import { TranslatePipe } from './translate.pipe';
   styles: `
     h1 { margin-block: 0 1rem; }
     mat-form-field { width: min(100%, 19rem); }
-    .table-wrap { overflow-x: auto; border: 1px solid #dbe2ec; border-radius: 12px; }
-    table { width: 100%; border-collapse: collapse; background: #fff; color: #172b48; }
-    th, td { padding: .75rem; border-bottom: 1px solid #e5eaf0; text-align: start; white-space: nowrap; }
-    thead th { background: #eef3f8; }
-    th:nth-child(n+4), td:nth-child(n+4) { text-align: end; font-variant-numeric: tabular-nums; }
-    tbody tr:last-child > * { border-bottom: 0; }
+    .standing-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+      gap: 12px;
+      padding: 0;
+      margin: 0 0 12px;
+      list-style: none;
+    }
+    .standing-card {
+      display: grid;
+      align-content: start;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--acrho-border);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--acrho-heading);
+    }
+    .card-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: .8rem; }
+    .rank { font-weight: 800; }
+    dl { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0; }
+    dt { font-size: .75rem; }
+    dd { margin: 0; font-variant-numeric: tabular-nums; }
     .runner-link {
       padding: 0;
       border: 0;
       background: transparent;
       color: inherit;
       font: inherit;
+      font-weight: 750;
+      justify-self: start;
+      text-align: start;
+      overflow-wrap: anywhere;
       text-decoration: underline;
       text-underline-offset: .18em;
       cursor: pointer;
@@ -105,6 +123,16 @@ export class Standings {
   }
   protected readonly i18n = inject(LanguageService);
   protected readonly category = signal('');
+  protected readonly page = signal({ pageIndex: 0, pageSize: 20 });
+
+  protected selectCategory(category: string) {
+    this.category.set(category);
+    this.page.update(page => ({ ...page, pageIndex: 0 }));
+  }
+
+  protected changePage({ pageIndex, pageSize }: PageEvent) {
+    this.page.set({ pageIndex, pageSize });
+  }
   protected readonly reload = new Subject<void>();
   private readonly api = inject(AcrhoApi);
   protected readonly standings = toSignal(this.reload.pipe(
@@ -135,5 +163,11 @@ export class Standings {
       const categoryLabel = entry.category ? labels.get(entry.category) ?? entry.category : '—';
       return { entry, categoryLabel, total, rank: provisional ? null : rank };
     });
+  });
+
+  protected readonly visibleRows = computed(() => {
+    const { pageIndex, pageSize } = this.page();
+    const start = pageIndex * pageSize;
+    return this.rows().slice(start, start + pageSize);
   });
 }
