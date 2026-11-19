@@ -127,7 +127,7 @@ export class App implements OnInit {
   get firstRace() { return this.races[0]; }
   displayTime(time?: string | null): string {
     if (!time) return '—';
-    return time.replace(/^00:(?=\d{2}:\d{2})/, '').replace(/[.,]0+$/, '');
+    return time.replace(/^00:(?=\d{2}:\d{2})/, '').replace(/^0([1-9]):(?=\d{2}:\d{2})/, '$1:').replace(/[.,]0+$/, '');
   }
   pacePerKm(result: Result, distanceM = this.selectedRace?.routes.find(route => route.id === this.selectedRouteId)?.distanceM): string | null {
     if (!result.timeMs || result.timeMs <= 0 || !distanceM || distanceM <= 0) return null;
