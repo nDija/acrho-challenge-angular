@@ -7,6 +7,13 @@ export interface Season { id: number; year: number; }
 export interface Race { id: number; seasonId: number; name: string; raceDate: string; city?: string; coefficient?: number; status?: string; }
 export interface RouteInfo { id: number; label: string; distanceM?: number; startTime?: string | null; type?: string; challenge?: boolean; }
 export interface RacePracticalInfo { details?: Record<string, unknown>; sourceUrl?: string | null; }
+export interface RacePhoto {
+  url: string;
+  sourceUrl: string;
+  author: string;
+  license: string;
+  licenseUrl: string | null;
+}
 export interface RaceDetail extends Race { organizer?: string; routes: RouteInfo[]; practicalInfo?: RacePracticalInfo | null; }
 export interface Runner { id: number; firstName: string; lastName: string; gender?: string; club?: string; category?: string | null; categoryYear?: number | null; pictureUrl?: string | null; bannerColor?: string; }
 export interface Me { id: number; email: string; displayName?: string; role: 'USER' | 'ADMIN'; pictureUrl?: string | null; createdAt?: string | null; runnerId?: number | null; }
@@ -94,6 +101,7 @@ export class AcrhoApi {
   logout() { return this.http.post(this.apiUrl('/logout'), null); }
   regulation(language = 'fr') { return this.http.get(`assets/reglement${language === 'fr' ? '' : '.' + language}.md`, { responseType: 'text' }); }
   races(year: number) { return this.http.get<Race[]>(this.apiUrl(`/api/v1/seasons/year/${year}/races`)); }
+  racePhoto(id: number) { return this.http.get<RacePhoto | null>(this.apiUrl(`/api/v1/races/${id}/photo`)); }
   race(id: number) { return this.http.get<RaceDetail>(this.apiUrl(`/api/v1/races/${id}`)); }
   categories() { return this.http.get<Category[]>(this.apiUrl('/api/v1/categories')); }
   results(routeId: number, page = 0, size = 20, q = '', category = '', gender = ''): Observable<Page<Result>> {

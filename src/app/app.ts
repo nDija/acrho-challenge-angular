@@ -8,11 +8,12 @@ import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { catchError, forkJoin, from, mergeMap, of, switchMap, timer, timeout, toArray } from 'rxjs';
+import { Observable, catchError, forkJoin, from, mergeMap, of, switchMap, timer, timeout, toArray } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AcrhoApi, Category, Me, Race, RaceDetail, Result, RouteInfo, Runner, RunnerResult, Season } from './acrho-api.service';
+import { AcrhoApi, Category, Me, Race, RaceDetail, RacePhoto, Result, RouteInfo, Runner, RunnerResult, Season } from './acrho-api.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -21,7 +22,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root', standalone: true,
-  imports: [RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
+  imports: [RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatMenuModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
   templateUrl: './app.html', styleUrl: './app.scss'
 })
 export class App implements OnInit {
@@ -41,6 +42,8 @@ export class App implements OnInit {
   showPlannedRaces = false; showCancelledRaces = false;
   nextUpcomingRaceRoutes: RouteInfo[] = [];
   selectedRace?: RaceDetail; categories: Category[] = []; results: Result[] = []; runners: Runner[] = [];
+  racePhoto?: Observable<RacePhoto | null>;
+  racePhotoLoaded?: string;
   expandedRaceId?: number; expandedRaceDetails?: RaceDetail; practicalInfoLoading = false;
   activeView: 'calendar' | 'runners' | 'regulation' | 'settings' | 'favorites' | 'standings' = 'calendar'; loading = false; error = '';
   confirmAccountDeletion = false;
@@ -122,7 +125,7 @@ export class App implements OnInit {
       this.distanceLoading = false;
       this.cdr.markForCheck();
     });
-  }  openRace(r: Race) { this.loading = true; this.error = ''; this.api.race(r.id).subscribe({ next: x => { this.selectedRace = x; this.loading = false; this.results = []; this.resultPage = 0; this.selectedRouteId = undefined; if (x.routes?.length) this.loadResults(x.routes[0].id); this.cdr.markForCheck(); }, error: e => { this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
+  }  openRace(r: Race) { this.loading = true; this.error = ''; this.api.race(r.id).subscribe({ next: x => { this.selectedRace = x; this.racePhotoLoaded = undefined; this.racePhoto = x.city ? this.api.racePhoto(x.id).pipe(catchError(() => of(null))) : undefined; this.loading = false; this.results = []; this.resultPage = 0; this.selectedRouteId = undefined; if (x.routes?.length) this.loadResults(x.routes[0].id); this.cdr.markForCheck(); }, error: e => { this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
   loadResults(routeId: number, page = 0) { this.selectedRouteId = routeId; this.loading = true; this.api.results(routeId, page, this.resultSize, this.resultQuery, this.category, this.gender).subscribe({ next: x => { this.results = x.content; this.resultTotal = x.total; this.resultPage = x.page; this.loading = false; this.cdr.markForCheck(); }, error: e => { this.loading = false; this.results = []; this.resultTotal = 0; if (e.status === 404) this.error = 'Les résultats ne sont pas publiés pour cette course.'; else this.fail(e); this.cdr.markForCheck(); } }); }
   onRunnerQueryChange() {
     if (this.runnerSearchTimer) clearTimeout(this.runnerSearchTimer);

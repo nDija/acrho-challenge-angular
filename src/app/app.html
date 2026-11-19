@@ -59,7 +59,32 @@
       }
       @if (selectedRace) {
         <button class="back-link" (click)="backToCalendar()"><mat-icon>arrow_back</mat-icon> {{ "Retour au calendrier" | t }}</button>
-        <div class="race-hero"><div><div class="eyebrow">{{selectedRace.raceDate | date:'EEEE d MMMM y':undefined:i18n.locale()}} · {{selectedRace.city || 'ACRHO'}}</div><h1>{{selectedRace.name}}</h1><p>{{selectedRace.organizer || ("Course du challenge ACRHO" | t)}}</p></div><span class="hero-icon"><mat-icon>flag</mat-icon></span></div>
+        @let photo = racePhoto | async;
+        @let showPhoto = !!photo && racePhotoLoaded === photo.url;
+        <div class="race-hero" [class.race-hero--photo]="showPhoto">
+          @if (photo) {
+            <img class="race-hero-image" [class.is-loaded]="showPhoto" [src]="photo.url" alt=""
+              referrerpolicy="no-referrer" (load)="racePhotoLoaded = photo.url">
+            @if (showPhoto) {
+              <button class="race-hero-credit" type="button" [matMenuTriggerFor]="photoCredits"
+                [attr.aria-label]="'Crédits de la photo' | t">
+                <mat-icon aria-hidden="true">info_outline</mat-icon>
+              </button>
+              <mat-menu #photoCredits="matMenu" xPosition="before">
+                @if (photo.author) { <div class="race-hero-credit-text">{{photo.author}}</div> }
+                <a mat-menu-item [href]="photo.sourceUrl" target="_blank" rel="noopener noreferrer" translate="no">Wikimedia Commons</a>
+                @if (photo.licenseUrl) {
+                  <a mat-menu-item [href]="photo.licenseUrl" target="_blank" rel="noopener noreferrer">{{photo.license}}</a>
+                } @else { <div class="race-hero-credit-text">{{photo.license}}</div> }
+              </mat-menu>
+            }
+          }
+          <div class="race-hero-copy">
+            <div class="eyebrow">{{selectedRace.raceDate | date:'EEEE d MMMM y':undefined:i18n.locale()}} · {{selectedRace.city || 'ACRHO'}}</div>
+            <h1>{{selectedRace.name}}</h1>
+            <p>{{selectedRace.organizer || ("Course du challenge ACRHO" | t)}}</p>
+          </div>
+        </div>
         <div class="section-head"><div><div class="eyebrow">{{ "PARCOURS" | t }}</div><h2>{{ "Choisissez votre distance" | t }}</h2></div></div>
         <div class="route-cards">@for (route of selectedRace.routes; track route.id) { <button class="route-card" (click)="loadResults(route.id)"><span class="route-type">{{(route.challenge ? 'CHALLENGE' : (route.type || 'COURSE')) | t}}</span><b>{{route.label}}</b><div class="route-details"><span>{{route.distanceM ? (route.distanceM / 1000 | number:'1.1-1':i18n.locale()) + ' km' : ("Distance à confirmer" | t)}}</span>@if (route.startTime) { <span class="route-start"><mat-icon>schedule</mat-icon>{{ "Départ" | t }} {{route.startTime.slice(0, 5)}}</span> }</div></button> }</div>
         <div class="section-head result-heading"><div><div class="eyebrow">{{ "CLASSEMENT" | t }}</div><h2>{{ "Résultats" | t }} <span>({{resultTotal}})</span></h2></div></div>

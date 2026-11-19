@@ -50,6 +50,7 @@ export const translations: readonly (readonly [string, string, string, string])[
   ['API indisponible', 'API unavailable', 'API niet beschikbaar', 'API nicht verfügbar'],
   ['Mes résultats', 'My results', 'Mijn resultaten', 'Meine Ergebnisse'],
   ['Lier mon compte à un coureur', 'Link my account to a runner', 'Mijn account aan een loper koppelen', 'Mein Konto mit einem Läufer verknüpfen'],
+  ['Crédits de la photo', 'Photo credits', 'Fotocredits', 'Bildnachweis'],
   ['Photo de profil', 'Profile picture', 'Profielfoto', 'Profilbild'],
   ['Paramètres du compte', 'Account settings', 'Accountinstellingen', 'Kontoeinstellungen'],
   ['Se déconnecter', 'Sign out', 'Uitloggen', 'Abmelden'],
