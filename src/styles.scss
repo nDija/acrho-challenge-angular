@@ -143,11 +143,11 @@ html[data-acrho-theme] .runner-profile-banner .season-select .mat-mdc-text-field
 
 html[data-acrho-theme] .runner-profile-banner .season-select .mdc-floating-label { background:#fff; color:var(--acrho-heading); border-radius:6px; padding:0 6px; }
 
-.runner-profile-banner[data-banner-color='teal'] { --runner-banner-start:#134e4a; --runner-banner-end:#0f766e; }
-.runner-profile-banner[data-banner-color='green'] { --runner-banner-start:#14532d; --runner-banner-end:#166534; }
-.runner-profile-banner[data-banner-color='purple'] { --runner-banner-start:#4c1d95; --runner-banner-end:#6b21a8; }
-.runner-profile-banner[data-banner-color='rose'] { --runner-banner-start:#831843; --runner-banner-end:#9d174d; }
-.runner-profile-banner[data-banner-color='slate'] { --runner-banner-start:#1e293b; --runner-banner-end:#475569; }
+.runner-profile-banner[data-banner-color='teal'], .runner-history-card[data-banner-color='teal'] { --runner-banner-start:#134e4a; --runner-banner-end:#0f766e; }
+.runner-profile-banner[data-banner-color='green'], .runner-history-card[data-banner-color='green'] { --runner-banner-start:#14532d; --runner-banner-end:#166534; }
+.runner-profile-banner[data-banner-color='purple'], .runner-history-card[data-banner-color='purple'] { --runner-banner-start:#4c1d95; --runner-banner-end:#6b21a8; }
+.runner-profile-banner[data-banner-color='rose'], .runner-history-card[data-banner-color='rose'] { --runner-banner-start:#831843; --runner-banner-end:#9d174d; }
+.runner-profile-banner[data-banner-color='slate'], .runner-history-card[data-banner-color='slate'] { --runner-banner-start:#1e293b; --runner-banner-end:#475569; }
 .banner-palette { display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin:-12px 0 24px; }
 .banner-palette>span { font-size:13px; color:var(--acrho-text); margin-right:6px; }
 .banner-swatch { display:grid; place-items:center; width:36px; height:36px; padding:0; border:2px solid transparent; border-radius:50%; cursor:pointer; }
@@ -172,8 +172,8 @@ html[data-acrho-theme] .account-panel.runner-profile-banner .account-runner-resu
 html[data-acrho-theme] .account-panel.runner-profile-banner .account-runner-results:not(:disabled) { background:#fff; color:var(--acrho-sidebar); border-color:#fff; }
 html[data-acrho-theme] .account-panel.runner-profile-banner .account-runner-results:not(:disabled):hover { background:#e8f0fa; color:var(--acrho-sidebar); border-color:#e8f0fa; }
 
-.runner-profile-banner[data-banner-color='black'] { --runner-banner-start:#090909; --runner-banner-end:#262626; }
-.runner-profile-banner[data-banner-color='yellow'] { --runner-banner-start:#facc15; --runner-banner-end:#fde047; }
+.runner-profile-banner[data-banner-color='black'], .runner-history-card[data-banner-color='black'] { --runner-banner-start:#090909; --runner-banner-end:#262626; }
+.runner-profile-banner[data-banner-color='yellow'], .runner-history-card[data-banner-color='yellow'] { --runner-banner-start:#facc15; --runner-banner-end:#fde047; }
 html[data-acrho-theme] .page-heading .runner-profile-banner[data-banner-color='yellow'] h1,
 html[data-acrho-theme] .runner-profile-banner[data-banner-color='yellow'] p,
 html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow']>p strong,
@@ -184,3 +184,8 @@ html[data-acrho-theme] .banner-swatch[data-color='yellow'] mat-icon { color:#172
 html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow'] .banner-swatch { border-color:rgba(23,45,49,.5); }
 html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow'] .banner-swatch[aria-pressed='true'],
 html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow'] .banner-swatch:focus-visible { outline-color:#172d31; }
+
+.runner-history-body { padding:20px; }
+.runner-race-banner { padding:16px 20px; background:radial-gradient(ellipse at 100% 0%,rgba(79,172,254,.28),transparent 65%),linear-gradient(120deg,var(--runner-banner-start,var(--acrho-sidebar)),var(--runner-banner-end,#164e82)); }
+html[data-acrho-theme] .runner-history-card .runner-race-banner h3 { margin:0; color:#fff; overflow-wrap:anywhere; }
+html[data-acrho-theme] .runner-history-card[data-banner-color='yellow'] .runner-race-banner h3 { color:#172d31; }
