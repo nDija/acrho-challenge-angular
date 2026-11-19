@@ -83,10 +83,17 @@
           </div>
 
           @if (favoritesError) { <div class="error-banner" role="alert">{{favoritesError | t}}<button mat-button type="button" (click)="loadFavorites()">{{ "Réessayer" | t }}</button></div> }
-          @if (!runnerDetailError) {
-            <div class="runner-season-summary"><article class="stat-card runner-distance-stat"><span class="stat-icon blue"><mat-icon>route</mat-icon></span><div><b>{{runnerDetailLoading ? '…' : (runnerDistanceKm | number:'1.0-2':i18n.locale())}}</b><span>{{ "km avalés" | t }}@if (runnerYear) { {{ "· saison" | t }} {{runnerYear}} }</span></div></article></div>
-          }
-          <app-runner-standing-card [runnerId]="runner.id" />
+          <div class="runner-season-summary">
+            @if (!runnerDetailError) {
+              <article class="stat-card">
+                <span class="stat-icon blue"><mat-icon>route</mat-icon></span>
+                <div><b>{{runnerDetailLoading ? '…' : (runnerDistanceKm | number:'1.0-2':i18n.locale())}}</b><span>{{ "km avalés" | t }}@if (runnerYear) { {{ "· saison" | t }} {{runnerYear}} }</span></div>
+              </article>
+            }
+            <app-runner-standing-card class="stat-card" [runnerId]="runner.id" aria-labelledby="runner-standing-title">
+              <span class="stat-icon blue"><mat-icon aria-hidden="true">leaderboard</mat-icon></span>
+            </app-runner-standing-card>
+          </div>
           <div class="section-head"><h2>{{ "Résultats" | t }} {{runnerYear}} @if (!runnerDetailLoading && !runnerDetailError) { <span>({{runnerResults.length}})</span> }</h2></div>
           @if (runnerDetailLoading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> }
           @if (runnerDetailError) { <div class="error-banner" role="alert">{{runnerDetailError | t}}<button mat-button type="button" (click)="loadRunnerResults()">{{ "Réessayer" | t }}</button></div> }

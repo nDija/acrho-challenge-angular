@@ -1,7 +1,6 @@
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { Component, inject, input } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { MatIconModule } from '@angular/material/icon';
 import { catchError, of, startWith, switchMap } from 'rxjs';
 import { AcrhoApi } from './acrho-api.service';
 import { LanguageService } from './language.service';
@@ -9,13 +8,15 @@ import { TranslatePipe } from './translate.pipe';
 
 @Component({
   selector: 'app-runner-standing-card',
-  imports: [DecimalPipe, MatIconModule, TranslatePipe],
+  imports: [DecimalPipe, TitleCasePipe, TranslatePipe],
+  host: { role: 'region' },
   template: `
-    <section aria-labelledby="runner-standing-title">
-      <h2 id="runner-standing-title">
-        <mat-icon aria-hidden="true">leaderboard</mat-icon>
-        {{ 'Classement de la saison' | t }} {{ standing()?.year }}
-      </h2>
+    <ng-content />
+    <div>
+      <div class="heading">
+        <h2 id="runner-standing-title">{{ 'CLASSEMENT' | t | titlecase }}</h2>
+        @if (standing(); as data) { <span>{{ data.year }}</span> }
+      </div>
       @if (standing(); as data) {
         @if (data.placement; as placement) {
           <dl [class.provisional]="placement.provisional">
@@ -39,17 +40,20 @@ import { TranslatePipe } from './translate.pipe';
       } @else {
         <p role="status">{{ (standing() === null ? 'Le classement est indisponible.' : 'Chargement du classement…') | t }}</p>
       }
-    </section>
+    </div>
   `,
   styles: `
-    :host { display: block; margin: 0 0 24px; }
-    section { padding: 16px 20px; border: 1px solid var(--acrho-border); border-radius: 13px; background: white; }
-    h2 { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--acrho-heading); font-size: 1rem; }
-    mat-icon { color: var(--acrho-accent); }
-    dl { display: flex; flex-wrap: wrap; gap: 12px 28px; margin: 12px 0 0; }
-    dt { font-size: .8rem; }
-    dd { margin: 0; font-size: 1.2rem; font-weight: 800; font-variant-numeric: tabular-nums; }
-    p { margin: 8px 0 0; }
+    .heading { display: flex; align-items: baseline; gap: 6px; }
+    h2 { margin: 0; color: var(--acrho-heading); font: 800 1rem Manrope, sans-serif; }
+    .heading span, dt, p { color: var(--acrho-muted); font-size: 11px; }
+    dl { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 4px 0 0; }
+    dl > div { display: flex; flex-direction: column-reverse; }
+    dd { margin: 0; font: 800 22px Manrope, sans-serif; font-variant-numeric: tabular-nums; }
+    p { margin: 4px 0 0; }
+    @media (max-width: 600px) {
+      dd { font-size: 19px; }
+      dt { font-size: 10px; }
+    }
     .provisional { color: #964000; }
   `,
 })
