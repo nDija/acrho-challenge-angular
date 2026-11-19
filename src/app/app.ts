@@ -38,7 +38,8 @@ export class App implements OnInit {
   activeView: 'calendar' | 'runners' | 'regulation' = 'calendar'; loading = false; error = '';
   regulationHtml = ''; regulationLoading = false; regulationError = '';
   selectedRunner?: Runner;
-  runnerYear = new Date().getFullYear();
+  runnerYear?: number;
+  runnerSeasons: number[] = [];
   runnerResults: RunnerResult[] = [];
   runnerDetailLoading = false;
   runnerDetailError = '';
@@ -91,9 +92,8 @@ export class App implements OnInit {
   }
   findRunners(page = 0) { if (this.runnerSearchTimer) clearTimeout(this.runnerSearchTimer); if (!this.me) return; const q = this.runnerQuery.trim(); if (q.length < 2) { this.runners = []; this.runnerTotal = 0; return; } this.activeView = 'runners'; this.loading = true; const requestId = ++this.runnerRequestId; this.api.runners(q, page).subscribe({ next: x => { if (requestId !== this.runnerRequestId) return; this.runners = x.content; this.runnerTotal = x.total; this.runnerPage = x.page; this.loading = false; this.cdr.markForCheck(); }, error: e => { if (requestId !== this.runnerRequestId) return; this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
   get firstRace() { return this.races[0]; }
-  pacePerKm(result: Result): string | null {
-    const distanceM = this.selectedRace?.routes.find(route => route.id === this.selectedRouteId)?.distanceM;
-    if (!result.timeMs || !distanceM || distanceM <= 0) return null;
+  pacePerKm(result: Result, distanceM = this.selectedRace?.routes.find(route => route.id === this.selectedRouteId)?.distanceM): string | null {
+    if (!result.timeMs || result.timeMs <= 0 || !distanceM || distanceM <= 0) return null;
     const paceSeconds = Math.round(result.timeMs / distanceM);
     const minutes = Math.floor(paceSeconds / 60);
     const seconds = String(paceSeconds % 60).padStart(2, '0');
@@ -204,12 +204,15 @@ export class App implements OnInit {
   showRunners() { this.closeRunner(); this.activeView = 'runners'; this.selectedRace = undefined; this.error = ''; }
   openRunner(runner: Runner) {
     this.selectedRunner = runner;
-    this.runnerYear = this.selectedYear;
+    this.runnerYear = undefined;
+    this.runnerSeasons = [];
     this.loadRunnerResults();
   }
   closeRunner() {
     this.runnerDetailRequestId++;
     this.selectedRunner = undefined;
+    this.runnerSeasons = [];
+    this.runnerYear = undefined;
     this.runnerResults = [];
     this.runnerDetailLoading = false;
     this.runnerDetailError = '';
@@ -222,11 +225,21 @@ export class App implements OnInit {
     this.runnerResults = [];
     forkJoin({
       runner: this.api.runner(this.selectedRunner.id),
-      results: this.api.runnerResults(this.selectedRunner.id, this.runnerYear),
-    }).subscribe({
-      next: ({ runner, results }) => {
+      years: this.api.runnerSeasons(this.selectedRunner.id),
+    }).pipe(
+      switchMap(({ runner, years }) => {
+        const year = years.find(year => year === this.runnerYear) ?? years[0];
+        return forkJoin({
+          runner: of(runner), years: of(years), year: of(year),
+          results: year === undefined ? of([] as RunnerResult[]) : this.api.runnerResults(runner.id, year),
+        });
+      }),
+    ).subscribe({
+      next: ({ runner, results, years, year }) => {
         if (requestId !== this.runnerDetailRequestId) return;
         this.selectedRunner = runner;
+        this.runnerSeasons = years;
+        this.runnerYear = year;
         this.runnerResults = results;
         this.runnerDetailLoading = false;
         this.cdr.markForCheck();

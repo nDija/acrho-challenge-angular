@@ -77,17 +77,17 @@
           <button class="back-link" type="button" (click)="closeRunner()"><mat-icon>arrow_back</mat-icon> Retour aux coureurs</button>
           <div class="page-heading">
             <div><h1>{{runner.firstName}} {{runner.lastName}}</h1><p>{{runner.club || 'Indépendant'}}</p>@if (runner.category) { <p>Dernière catégorie connue · {{runner.category}} ({{runner.categoryYear}})</p> }</div>
-            <mat-form-field appearance="outline" class="season-select"><mat-label>Année des résultats</mat-label><mat-select [(ngModel)]="runnerYear" (selectionChange)="loadRunnerResults()">@for (season of seasons; track season.id) { <mat-option [value]="season.year">{{season.year}}</mat-option> }</mat-select></mat-form-field>
+            <mat-form-field appearance="outline" class="season-select"><mat-label>Saison</mat-label><mat-select [(ngModel)]="runnerYear" [disabled]="runnerDetailLoading || !runnerSeasons.length" (selectionChange)="loadRunnerResults()">@for (year of runnerSeasons; track year) { <mat-option [value]="year">{{year}}</mat-option> }</mat-select></mat-form-field>
           </div>
           <div class="section-head"><h2>Résultats {{runnerYear}} @if (!runnerDetailLoading && !runnerDetailError) { <span>({{runnerResults.length}})</span> }</h2></div>
           @if (runnerDetailLoading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> }
           @if (runnerDetailError) { <div class="error-banner" role="alert">{{runnerDetailError}}<button mat-button type="button" (click)="loadRunnerResults()">Réessayer</button></div> }
-          @if (!runnerDetailLoading && !runnerDetailError && !runnerResults.length) { <div class="empty">Aucun résultat publié pour ce coureur en {{runnerYear}}.</div> }
+          @if (!runnerDetailLoading && !runnerDetailError && !runnerResults.length) { <div class="empty">Aucun résultat publié pour ce coureur.</div> }
           <div class="runner-history">
             @for (entry of runnerResults; track entry.routeId) {
               <article class="runner-history-card">
                 <div><h3>{{entry.raceName}}</h3><p>{{entry.raceDate | date:'dd MMMM yyyy'}}@if (entry.city) { · {{entry.city}} }</p><p>{{entry.routeLabel}}@if (entry.distanceM) { · {{entry.distanceM / 1000 | number:'1.0-2'}} km }</p></div>
-                <dl><div><dt>Classement</dt><dd>{{entry.result.overallRank ?? '—'}}</dd></div><div><dt>Catégorie</dt><dd>{{entry.result.category || '—'}}</dd></div><div><dt>Place catégorie</dt><dd>{{entry.result.categoryRank ?? '—'}}</dd></div><div><dt>Temps</dt><dd>{{entry.result.time || '—'}}</dd></div><div><dt>Dossard</dt><dd>{{entry.result.bibNumber ?? '—'}}</dd></div><div><dt>Statut</dt><dd>{{entry.result.status || '—'}}</dd></div></dl>
+                <dl><div><dt>Classement</dt><dd>{{entry.result.overallRank ?? '—'}}</dd></div><div><dt>Catégorie</dt><dd>{{entry.result.category || '—'}}</dd></div><div><dt>Place catégorie</dt><dd>{{entry.result.categoryRank ?? '—'}}</dd></div><div><dt>Temps</dt><dd>{{entry.result.time || '—'}}</dd></div><div><dt>Allure (min/km)</dt><dd>{{pacePerKm(entry.result, entry.distanceM) || '—'}}</dd></div><div><dt>Dossard</dt><dd>{{entry.result.bibNumber ?? '—'}}</dd></div><div><dt>Statut</dt><dd>{{entry.result.status || '—'}}</dd></div></dl>
               </article>
             }
           </div>

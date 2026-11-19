@@ -39,6 +39,7 @@ export class AcrhoApi {
     return this.http.get<Page<Result>>(this.apiUrl(`/api/v1/routes/${routeId}/results`), { params });
   }
   runner(id: number) { return this.http.get<Runner>(this.apiUrl(`/api/v1/runners/${id}`)); }
+  runnerSeasons(id: number) { return this.http.get<number[]>(this.apiUrl(`/api/v1/runners/${id}/seasons`)); }
   runnerResults(id: number, year: number) {
     return this.http.get<RunnerResult[]>(this.apiUrl(`/api/v1/runners/${id}/results`), { params: { year } });
   }
