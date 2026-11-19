@@ -1,3 +1,5 @@
+import { LanguageService } from './language.service';
+import { TranslatePipe } from './translate.pipe';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -15,10 +17,11 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root', standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
+  imports: [TranslatePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
   templateUrl: './app.html', styleUrl: './app.scss'
 })
 export class App implements OnInit {
+  readonly i18n = inject(LanguageService);
   private api = inject(AcrhoApi);
   private cdr = inject(ChangeDetectorRef);
   apiOnline = false;
@@ -234,7 +237,7 @@ export class App implements OnInit {
   showRunners() { this.closeRunner(); this.activeView = 'runners'; this.selectedRace = undefined; this.error = ''; }
   categoryLabel(code?: string | null): string {
     if (!code) return '—';
-    return this.categories.find(category => category.code === code)?.label ?? code;
+    return this.i18n.t(this.categories.find(category => category.code === code)?.label ?? code);
   }
   changeBanner(color: string) {
     if (!this.me || !this.linkedRunner || this.me.runnerId !== this.linkedRunner.id || this.bannerSaving || this.runnerLinkSaving || this.deletingAccount) return;
@@ -325,6 +328,13 @@ export class App implements OnInit {
       },
     });
   }
+  changeLanguage(language: string) {
+    this.i18n.setLanguage(language);
+    this.regulationHtml = '';
+    this.regulationError = '';
+    this.regulationLoading = false;
+    if (this.activeView === 'regulation') this.showRegulation();
+  }
   showRegulation() {
     this.activeView = 'regulation';
     this.selectedRace = undefined;
@@ -332,9 +342,10 @@ export class App implements OnInit {
     if (this.regulationHtml || this.regulationLoading) return;
     this.regulationLoading = true;
     this.regulationError = '';
-    this.api.regulation().subscribe({
-      next: markdown => { this.regulationHtml = this.renderRegulationMarkdown(markdown); this.regulationLoading = false; this.cdr.markForCheck(); },
-      error: () => { this.regulationError = 'Impossible de charger le règlement.'; this.regulationLoading = false; this.cdr.markForCheck(); }
+    const language = this.i18n.language();
+    this.api.regulation(language).subscribe({
+      next: markdown => { if (this.i18n.language() !== language) return; this.regulationHtml = this.renderRegulationMarkdown(markdown); this.regulationLoading = false; this.cdr.markForCheck(); },
+      error: () => { if (this.i18n.language() !== language) return; this.regulationError = 'Impossible de charger le règlement.'; this.regulationLoading = false; this.cdr.markForCheck(); }
     });
   }
   private renderRegulationMarkdown(markdown: string): string {
@@ -342,8 +353,10 @@ export class App implements OnInit {
     return markdown.replace(/\r/g, '').trim().split(/\n\s*\n/).map(block => {
       const lines = block.split('\n').map(line => line.trim()).filter(Boolean);
       if (!lines.length) return '';
-      if (lines.length === 1 && lines[0].startsWith('# ')) {
-        return `<h1>${this.regulationInline(lines[0].slice(2))}</h1>`;
+      const heading = lines.length === 1 ? /^(#{1,3})\s+(.+)$/.exec(lines[0]) : null;
+      if (heading) {
+        const level = heading[1].length;
+        return `<h${level}>${this.regulationInline(heading[2])}</h${level}>`;
       }
       if (lines.every(line => categoryLine.test(line))) {
         return `<ul class="regulation-categories">${lines.map(line => `<li>${this.regulationInline(line.replace(/^[A-Z][A-Z0-9]*\s+\(([^)]+)\)/, '$1'))}</li>`).join('')}</ul>`;

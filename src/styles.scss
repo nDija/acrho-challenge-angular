@@ -119,7 +119,7 @@ html[data-acrho-theme] .runner-profile-banner {
   width:100%;
   padding:clamp(20px,3vw,36px);
   border-radius:20px;
-  background:radial-gradient(ellipse at 100% 0%,rgba(79,172,254,.28),transparent 65%),linear-gradient(120deg,var(--runner-banner-start,var(--acrho-sidebar)),var(--runner-banner-end,#164e82));
+  background:radial-gradient(ellipse at 100% 0%,rgba(255,255,255,.28),transparent 65%),linear-gradient(120deg,var(--runner-banner-start,var(--acrho-sidebar)),var(--runner-banner-end,#164e82));
   box-shadow:0 10px 28px rgba(24,59,91,.12);
 }
 html[data-acrho-theme] .runner-profile-banner h1 { color:#fff; margin-top:0; }
@@ -186,6 +186,12 @@ html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='y
 html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow'] .banner-swatch:focus-visible { outline-color:#172d31; }
 
 .runner-history-body { padding:20px; }
-.runner-race-banner { padding:16px 20px; background:radial-gradient(ellipse at 100% 0%,rgba(79,172,254,.28),transparent 65%),linear-gradient(120deg,var(--runner-banner-start,var(--acrho-sidebar)),var(--runner-banner-end,#164e82)); }
+.runner-race-banner { padding:16px 20px; background:radial-gradient(ellipse at 100% 0%,rgba(255,255,255,.28),transparent 65%),linear-gradient(120deg,var(--runner-banner-start,var(--acrho-sidebar)),var(--runner-banner-end,#164e82)); }
 html[data-acrho-theme] .runner-history-card .runner-race-banner h3 { margin:0; color:#fff; overflow-wrap:anywhere; }
 html[data-acrho-theme] .runner-history-card[data-banner-color='yellow'] .runner-race-banner h3 { color:#172d31; }
+
+.language-picker { display:inline-flex; align-items:center; gap:6px; color:var(--acrho-heading); }
+.language-picker mat-icon { width:20px; height:20px; font-size:20px; }
+.language-picker select { max-width:115px; min-height:40px; padding:6px; border:1px solid var(--acrho-border); border-radius:8px; background:#fff; color:var(--acrho-heading); font:inherit; font-size:12px; cursor:pointer; }
+.language-picker select:focus-visible { outline:2px solid var(--acrho-accent); outline-offset:2px; }
+@media(max-width:700px) { html[data-acrho-theme] .topbar { height:auto; min-height:72px; flex-wrap:wrap; gap:12px; padding-top:12px; padding-bottom:12px; }html[data-acrho-theme] .top-actions { flex-wrap:wrap; gap:10px; }.language-picker select { max-width:105px; } }
