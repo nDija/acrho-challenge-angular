@@ -15,12 +15,29 @@ export interface Result { overallRank?: number; categoryRank?: number; bibNumber
 export interface RunnerResult { raceId: number; raceName: string; raceDate: string; city?: string; routeId: number; routeLabel: string; distanceM?: number; result: Result; }
 export interface Page<T> { content: T[]; page: number; size: number; total: number; }
 
+export interface StandingEntry {
+  firstName: string;
+  lastName: string;
+  category: string | null;
+  score: { participations: number; resultPoints: number; bonusPoints: number };
+}
+
+export interface SeasonStandings {
+  year: number;
+  minimumParticipations: number;
+  categories: Category[];
+  entries: StandingEntry[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class AcrhoApi {
   private http = inject(HttpClient);
   private apiUrl(path: string) { return `${environment.apiBaseUrl}${path}`; }
   health() { return this.http.get<{ status: string }>('https://acrho-challenge.ddns.net/actuator/health'); }
   seasons() { return this.http.get<Season[]>(this.apiUrl('/api/v1/seasons')); }
+  currentStandings() {
+    return this.http.get<SeasonStandings>(this.apiUrl('/api/v1/standings/current'));
+  }
   /** The signed-in person; answers 401 when nobody is signed in. */
   me() { return this.http.get<Me>(this.apiUrl('/api/v1/me')); }
   /** Sign-in is a full-page navigation to the API, which sends the browser to Google and back to the site. */

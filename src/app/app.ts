@@ -1,4 +1,5 @@
 import { LanguageService } from './language.service';
+import { Standings } from './standings';
 import { TranslatePipe } from './translate.pipe';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -17,7 +18,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root', standalone: true,
-  imports: [TranslatePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
+  imports: [Standings, TranslatePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
   templateUrl: './app.html', styleUrl: './app.scss'
 })
 export class App implements OnInit {
@@ -38,7 +39,7 @@ export class App implements OnInit {
   nextUpcomingRaceRoutes: RouteInfo[] = [];
   selectedRace?: RaceDetail; categories: Category[] = []; results: Result[] = []; runners: Runner[] = [];
   expandedRaceId?: number; expandedRaceDetails?: RaceDetail; practicalInfoLoading = false;
-  activeView: 'calendar' | 'runners' | 'regulation' | 'settings' | 'favorites' = 'calendar'; loading = false; error = '';
+  activeView: 'calendar' | 'runners' | 'regulation' | 'settings' | 'favorites' | 'standings' = 'calendar'; loading = false; error = '';
   confirmAccountDeletion = false;
   deletingAccount = false;
   accountError = '';
@@ -238,6 +239,11 @@ export class App implements OnInit {
   clearResultFilters() { this.resultQuery = ''; this.category = ''; this.gender = ''; if (this.selectedRouteId) { this.resultPage = 0; this.loadResults(this.selectedRouteId, 0); } }
   onResultsPage(e: PageEvent) { this.resultSize = e.pageSize; if (this.selectedRouteId) this.loadResults(this.selectedRouteId, e.pageIndex); }
   onRunnerPage(e: PageEvent) { this.findRunners(e.pageIndex); }
+  showStandings() {
+    this.closeRunner();
+    this.selectedRace = undefined;
+    this.activeView = 'standings';
+  }
   showRunners() { this.closeRunner(); this.activeView = 'runners'; this.selectedRace = undefined; this.error = ''; }
   categoryLabel(code?: string | null): string {
     if (!code) return '—';
