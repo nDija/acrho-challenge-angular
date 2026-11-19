@@ -403,9 +403,25 @@ export class App implements OnInit {
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   }
   backToCalendar() { this.activeView = 'calendar'; this.selectedRace = undefined; this.error = ''; }
+  private shouldShowFirstLoginSettings(me: Me): boolean {
+    if (!me.firstLogin) return false;
+    const key = `acrho-first-login-settings:${me.id}:${me.createdAt ?? ''}`;
+    try {
+      if (localStorage.getItem(key) === 'shown') return false;
+      localStorage.setItem(key, 'shown');
+    } catch { /* Still show settings when storage is unavailable. */ }
+    return true;
+  }
+
   private loadMe() {
     this.api.me().subscribe({
-      next: me => { this.me = me; this.loadFavorites(); this.authChecked = true; this.cdr.markForCheck(); },
+      next: me => {
+        this.me = me;
+        this.authChecked = true;
+        if (this.shouldShowFirstLoginSettings(me)) this.showSettings();
+        this.loadFavorites();
+        this.cdr.markForCheck();
+      },
       error: () => { this.me = undefined; this.favorites = []; this.favoritesRequestId++; this.authChecked = true; this.cdr.markForCheck(); }
     });
   }
