@@ -215,6 +215,11 @@ export class App implements OnInit {
   onResultsPage(e: PageEvent) { this.resultSize = e.pageSize; if (this.selectedRouteId) this.loadResults(this.selectedRouteId, e.pageIndex); }
   onRunnerPage(e: PageEvent) { this.findRunners(e.pageIndex); }
   showRunners() { this.closeRunner(); this.activeView = 'runners'; this.selectedRace = undefined; this.error = ''; }
+  get runnerDistanceKm() {
+    return this.runnerResults
+      .filter(entry => entry.result.status === 'FINISHED')
+      .reduce((meters, entry) => meters + (entry.distanceM ?? 0), 0) / 1000;
+  }
   openRunnerFromResult(result: Result) {
     const year = this.seasons.find(season => season.id === this.selectedRace?.seasonId)?.year ?? this.selectedYear;
     this.openRunner(result.runner, year);
@@ -405,7 +410,7 @@ export class App implements OnInit {
       error: (error: HttpErrorResponse) => {
         this.runnerLinkSaving = false;
         if (this.me?.id !== userId) return;
-        this.runnerLinkError = 'Impossible de modifier la liaison. Réessaie dans un instant.';
+        this.runnerLinkError = error.status === 409 ? 'Ce coureur est déjà lié à un autre compte Google.' : 'Impossible de modifier la liaison. Réessaie dans un instant.';
         if (error.status === 401) this.fail(error);
         this.cdr.markForCheck();
       },

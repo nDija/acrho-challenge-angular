@@ -80,6 +80,9 @@
             <div class="runner-profile-heading"><div class="runner-avatar runner-profile-avatar">@if (runner.pictureUrl && !failedRunnerPictures.has(runner.pictureUrl)) { <img [src]="runner.pictureUrl" alt="" referrerpolicy="no-referrer" (error)="failedRunnerPictures.add(runner.pictureUrl)"> } @else { {{runner.firstName?.[0]}}{{runner.lastName?.[0]}} }</div><div class="runner-profile-info"><h1>{{runner.firstName}} {{runner.lastName}}</h1><p>{{runner.club || 'Indépendant'}}</p>@if (runner.category) { <p>Dernière catégorie connue · {{runner.category}} ({{runner.categoryYear}})</p> }</div></div>
             <mat-form-field appearance="outline" class="season-select"><mat-label>Saison</mat-label><mat-select [(ngModel)]="runnerYear" [disabled]="runnerDetailLoading || !runnerSeasons.length" (selectionChange)="loadRunnerResults()">@for (year of runnerSeasons; track year) { <mat-option [value]="year">{{year}}</mat-option> }</mat-select></mat-form-field>
           </div>
+          @if (!runnerDetailError) {
+            <article class="stat-card runner-distance-stat"><span class="stat-icon blue"><mat-icon>route</mat-icon></span><div><b>{{runnerDetailLoading ? '…' : (runnerDistanceKm | number:'1.0-2')}}</b><span>km avalés@if (runnerYear) { · saison {{runnerYear}} }</span></div></article>
+          }
           <div class="section-head"><h2>Résultats {{runnerYear}} @if (!runnerDetailLoading && !runnerDetailError) { <span>({{runnerResults.length}})</span> }</h2></div>
           @if (runnerDetailLoading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> }
           @if (runnerDetailError) { <div class="error-banner" role="alert">{{runnerDetailError}}<button mat-button type="button" (click)="loadRunnerResults()">Réessayer</button></div> }
