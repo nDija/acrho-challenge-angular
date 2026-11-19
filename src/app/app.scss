@@ -101,7 +101,15 @@
 .result-details { display:flex; align-items:center; gap:14px; min-width:0; max-width:100%; overflow-x:auto; }
 .result-details>* { flex-shrink:0; white-space:nowrap; }
 .result-time { min-width:68px; color:var(--acrho-text); font:700 13px Manrope,sans-serif; text-align:right; }
-@media(max-width:700px) { .result-card { grid-template-columns:40px minmax(0,1fr); gap:9px 11px; padding:11px; }.result-rank { width:36px;height:36px;font-size:14px; }.result-person strong { font-size:12px; }.result-details { grid-column:1 / -1; justify-content:flex-start; gap:10px; }.result-time { text-align:right; } }
+@media(max-width:700px) {
+  .result-card { grid-template-columns:40px minmax(0,1fr); gap:9px 11px; padding:11px; }
+  .result-rank { width:36px;height:36px;font-size:14px; }
+  .result-person strong { font-size:12px; }
+  .result-details { grid-column:1 / -1; gap:8px; overflow:visible; }
+  .result-details .category-pill { max-width:40%; white-space:normal; overflow-wrap:anywhere; }
+  .result-details .result-time-wrap { flex:1; min-width:0; flex-wrap:wrap; justify-content:flex-end; gap:4px 8px; }
+  .result-time { min-width:0; }
+}
 
 .filters { display: block; }.filter-fields { display: flex; gap: 12px; }.filter-fields mat-form-field { flex: 1; min-width: 0; }.filters .apply-filter { display: flex; align-items: center; justify-content: center; width: 100%; height: 48px; margin: 0 0 12px; border-radius: 12px; background: var(--acrho-accent); color: #fff; }
 .filters .apply-filter mat-icon { color: inherit; }
