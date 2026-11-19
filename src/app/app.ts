@@ -125,6 +125,10 @@ export class App implements OnInit {
   }
   findRunners(page = 0) { if (this.runnerSearchTimer) clearTimeout(this.runnerSearchTimer); if (!this.me) return; const q = this.runnerQuery.trim(); if (q.length < 2) { this.runners = []; this.runnerTotal = 0; return; } this.activeView = 'runners'; this.loading = true; const requestId = ++this.runnerRequestId; this.api.runners(q, page).subscribe({ next: x => { if (requestId !== this.runnerRequestId) return; this.runners = x.content; this.runnerTotal = x.total; this.runnerPage = x.page; this.loading = false; this.cdr.markForCheck(); }, error: e => { if (requestId !== this.runnerRequestId) return; this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
   get firstRace() { return this.races[0]; }
+  displayTime(time?: string | null): string {
+    if (!time) return '—';
+    return time.replace(/^00:(?=\d{2}:\d{2})/, '').replace(/[.,]0+$/, '');
+  }
   pacePerKm(result: Result, distanceM = this.selectedRace?.routes.find(route => route.id === this.selectedRouteId)?.distanceM): string | null {
     if (!result.timeMs || result.timeMs <= 0 || !distanceM || distanceM <= 0) return null;
     const paceSeconds = Math.round(result.timeMs / distanceM);
