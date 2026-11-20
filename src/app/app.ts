@@ -4,6 +4,7 @@ import { RankedRunnerAvatar } from './ranked-runner-avatar';
 import { RunnerVdotChart } from './runner-vdot-chart';
 import { Standings } from './standings';
 import { TranslatePipe } from './translate.pipe';
+import { ClubNamePipe } from './club-name.pipe';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -22,7 +23,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root', standalone: true,
-  imports: [RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatMenuModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
+  imports: [RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, ClubNamePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatMenuModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
   templateUrl: './app.html', styleUrl: './app.scss'
 })
 export class App implements OnInit {
