@@ -2,6 +2,13 @@ export type Language = 'fr' | 'en' | 'nl' | 'de';
 
 // Columns are French, English, Dutch and German.
 export const translations: readonly (readonly [string, string, string, string])[] = [
+  ['Médias', 'Media', 'Media', 'Medien'],
+  ['Photos', 'Photos', 'Foto’s', 'Fotos'],
+  ['Reportages', 'Video reports', 'Reportages', 'Reportagen'],
+  ['Année des reportages', 'Report year', 'Jaar van de reportages', 'Jahr der Reportagen'],
+  ['Archive ACRHO', 'ACRHO archive', 'ACRHO-archief', 'ACRHO-Archiv'],
+  ['Galeries de jogging', 'Running galleries', 'Hardloopgalerijen', 'Laufgalerien'],
+  ['Voir les albums', 'View albums', 'Bekijk albums', 'Alben ansehen'],
   ['Sponsors', 'Sponsors', 'Sponsors', 'Sponsoren'],
   ["Sponsors officiels de l’ACRHO","Official ACRHO sponsors","Officiële ACRHO-sponsors","Offizielle Sponsoren der ACRHO"],
   ["Matériaux – location de matériel – terrassement – transport","Materials, equipment hire, earthworks and transport","Materialen, materieelverhuur, grondwerken en transport","Baustoffe, Geräteverleih, Erdarbeiten und Transport"],

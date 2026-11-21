@@ -1,3 +1,4 @@
+import { Photos } from './photos';
 import { Sponsors } from './sponsors';
 import { RaceWeather } from './race-weather';
 import { LanguageService } from './language.service';
@@ -25,7 +26,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root', standalone: true,
-  imports: [Sponsors, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, ClubNamePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatMenuModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
+  imports: [Photos, Sponsors, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, ClubNamePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatMenuModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
   templateUrl: './app.html', styleUrl: './app.scss'
 })
 export class App implements OnInit {
@@ -48,7 +49,7 @@ export class App implements OnInit {
   racePhoto?: Observable<RacePhoto | null>;
   racePhotoLoaded?: string;
   expandedRaceId?: number; expandedRaceDetails?: RaceDetail; practicalInfoLoading = false;
-  activeView: 'calendar' | 'runners' | 'regulation' | 'settings' | 'favorites' | 'standings' | 'sponsors' = 'calendar'; loading = false; error = '';
+  activeView: 'calendar' | 'runners' | 'regulation' | 'settings' | 'favorites' | 'standings' | 'sponsors' | 'photos' = 'calendar'; loading = false; error = '';
   confirmAccountDeletion = false;
   deletingAccount = false;
   accountError = '';
@@ -299,6 +300,12 @@ export class App implements OnInit {
   clearResultFilters() { this.resultQuery = ''; this.category = ''; this.gender = ''; if (this.selectedRouteId) { this.resultPage = 0; this.loadResults(this.selectedRouteId, 0); } }
   onResultsPage(e: PageEvent) { this.resultSize = e.pageSize; if (this.selectedRouteId) this.loadResults(this.selectedRouteId, e.pageIndex); }
   onRunnerPage(e: PageEvent) { this.findRunners(e.pageIndex); }
+  showPhotos() {
+    this.closeRunner();
+    this.selectedRace = undefined;
+    this.activeView = 'photos';
+  }
+
   showSponsors() {
     this.closeRunner();
     this.selectedRace = undefined;
