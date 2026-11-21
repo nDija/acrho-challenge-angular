@@ -31,6 +31,18 @@ import { TranslatePipe } from './translate.pipe';
       </ul>
     </section>
 
+    <section aria-labelledby="personal-thanks">
+      <h2 id="personal-thanks">{{ 'Remerciements personnels' | t }}</h2>
+      <ul class="official-list acknowledgements">
+        <li>
+          <div class="sponsor-logo">
+            <img src="assets/sponsors/cocoach.png" alt="" width="224" height="96" loading="lazy">
+          </div>
+          <h3 translate="no"><a href="https://cocoach.be/">Cocoach</a></h3>
+        </li>
+      </ul>
+    </section>
+
     <section aria-labelledby="sponsor-technologies">
       <h2 id="sponsor-technologies">{{ 'Technologies du projet' | t }}</h2>
       <ul class="technology-list">
@@ -80,6 +92,7 @@ import { TranslatePipe } from './translate.pipe';
       margin: 0;
       list-style: none;
     }
+    .acknowledgements { max-width: 17rem; }
     .official-list li {
       position: relative;
       padding: 1rem;
@@ -96,7 +109,6 @@ import { TranslatePipe } from './translate.pipe';
     .sponsor-logo img { width: 100%; height: 6rem; object-fit: contain; }
     .official-list a { color: inherit; text-decoration: none; }
     .official-list a::after { content: ''; position: absolute; inset: 0; border-radius: .75rem; }
-    .official-list a:hover { text-decoration: underline; }
     .official-list li:focus-within { outline: 2px solid var(--acrho-accent-dark); outline-offset: 2px; }
 
     .technology-list li, .credit-list a {
@@ -116,7 +128,7 @@ import { TranslatePipe } from './translate.pipe';
       color: inherit;
       text-decoration: none;
     }
-    .credit-list a:hover { border-color: var(--acrho-accent); }
+    .official-list li:has(a:hover), .credit-list a:hover { border-color: var(--acrho-accent); }
     .credit-list a:focus-visible { outline: 2px solid var(--acrho-accent-dark); outline-offset: 2px; }
     .avatar {
       display: grid;
@@ -160,6 +172,7 @@ export class Sponsors {
     {
       name: "Luc Sports",
       image: "luc-sports.jpg",
+      url: "https://www.facebook.com/Luc.sports.magasindesport/?locale=fr_FR",
       description: "Vente de matériel sportif",
     },
     {
