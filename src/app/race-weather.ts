@@ -15,13 +15,34 @@ interface HourlyForecast {
   time: string[];
   temperature_2m: (number | null)[];
   precipitation_probability: (number | null)[];
+  weather_code?: (number | null)[];
+  cloud_cover?: (number | null)[];
 }
 
 interface RaceForecast {
   departure: string;
   temperature: number;
   rain: number | null | undefined;
+  condition?: WeatherCondition;
+  cloudCover?: number;
 }
+
+interface WeatherCondition {
+  codes: number[];
+  icon: string;
+  label: string;
+}
+
+const weatherConditions: readonly WeatherCondition[] = [
+  { codes: [0], icon: '☀️', label: 'Ciel dégagé' },
+  { codes: [1, 2], icon: '⛅', label: 'Partiellement nuageux' },
+  { codes: [3], icon: '☁️', label: 'Couvert' },
+  { codes: [45, 48], icon: '🌫️', label: 'Brouillard' },
+  { codes: [51, 53, 55, 61, 63, 65, 80, 81, 82], icon: '🌧️', label: 'Pluie ou averses' },
+  { codes: [56, 57, 66, 67], icon: '🧊', label: 'Précipitations verglaçantes' },
+  { codes: [71, 73, 75, 77, 85, 86], icon: '❄️', label: 'Neige' },
+  { codes: [95, 96, 99], icon: '⛈️', label: 'Orage' },
+];
 
 const raceTimezone = 'Europe/Brussels';
 const dateFormat = new Intl.DateTimeFormat('sv-SE', { timeZone: raceTimezone, dateStyle: 'short' });
@@ -83,13 +104,20 @@ export class RaceWeatherService {
         timezone: raceTimezone,
         start_date: date,
         end_date: date,
-        hourly: 'temperature_2m,precipitation_probability',
+        hourly: 'temperature_2m,precipitation_probability,weather_code,cloud_cover',
       },
     }).pipe(map(({ hourly }) => departures.flatMap(departure => {
       const hour = departure.slice(0, 2);
       const index = hourly.time.indexOf(date + 'T' + hour + ':00');
       const temperature = hourly.temperature_2m[index];
-      return temperature == null ? [] : [{ departure, temperature, rain: hourly.precipitation_probability[index] }];
+      if (temperature == null) return [];
+
+      const code = hourly.weather_code?.[index];
+      const condition = code == null ? undefined : weatherConditions.find(group => group.codes.includes(code));
+      const cloudCover = condition ? undefined : hourly.cloud_cover?.[index] ?? undefined;
+      const skyCode = cloudCover == null ? undefined : cloudCover <= 20 ? 0 : cloudCover < 80 ? 2 : 3;
+      const sky = skyCode == null ? undefined : weatherConditions.find(group => group.codes.includes(skyCode));
+      return [{ departure, temperature, rain: hourly.precipitation_probability[index], condition: condition ?? sky, cloudCover }];
     })));
   }
 }
@@ -103,6 +131,14 @@ export class RaceWeatherService {
       @for (weather of departures; track weather.departure) {
         <small>
           {{ 'Météo au départ' | t }} {{ weather.departure }} ·
+          @if (weather.condition; as condition) {
+            <span aria-hidden="true">{{ condition.icon }}</span>
+            @if (weather.cloudCover != null) {
+              {{ 'Couverture nuageuse' | t }} {{ weather.cloudCover | number:'1.0-0':i18n.locale() }} % ·
+            } @else {
+              {{ condition.label | t }} ·
+            }
+          }
           {{ weather.temperature | number:'1.0-0':i18n.locale() }} °C
           @if (weather.rain != null) {
             · {{ 'Risque de précipitations' | t }} {{ weather.rain }} %
