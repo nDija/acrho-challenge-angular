@@ -28,13 +28,21 @@
   </section>
 }
 <section class="account-panel" aria-labelledby="settings-language-heading">
-  <h2 id="settings-language-heading"><label for="settings-language">{{ 'Langue' | t }}</label></h2>
-  <div class="language-picker">
-    <select id="settings-language" [ngModel]="account.i18n.language()" (ngModelChange)="account.changeLanguage($event)">
-      @for (language of account.i18n.languages; track language.value) {
-        <option [value]="language.value" [attr.lang]="language.value">{{ language.label }}</option>
-      }
-    </select>
+  <h2 id="settings-language-heading">{{ 'Langue' | t }}</h2>
+  <div class="language-cards" role="radiogroup" aria-labelledby="settings-language-heading">
+    @for (language of account.i18n.languages; track language.value) {
+      <label class="language-card">
+        <input type="radio" name="settings-language" [value]="language.value"
+               [checked]="account.i18n.language() === language.value"
+               (change)="account.changeLanguage(language.value)">
+        <span class="language-flag" [attr.data-language]="language.value" aria-hidden="true">
+          @if (language.value === 'art-x-hvy') {
+            <img src="assets/high-valyrian-flag.png" alt="">
+          }
+        </span>
+        <span [attr.lang]="language.value">{{ language.label }}</span>
+      </label>
+    }
   </div>
 </section>
 <section class="account-panel" aria-labelledby="settings-connection-heading">
