@@ -178,7 +178,7 @@ export class Sponsors {
     },
     {
       name: "Maes - Airco",
-      image: "maes-airco.jpg",
+      image: "maes-airco.png",
       url: "http://www.maesairco.be/",
       description: "Climatisation – pompe à chaleur – cave à vin – réfrigération",
     },
