@@ -1,0 +1,70 @@
+<section aria-labelledby="import-errors-title">
+  <h1 id="import-errors-title">{{ 'Erreurs d’import' | t }}</h1>
+
+  @let seasonState = seasons();
+  @let reportState = reports();
+  @if (seasonState.status === 'ready' && seasonState.data.length) {
+    <div class="import-filters">
+      <label>
+        <span>{{ 'Saison' | t }}</span>
+        <select [ngModel]="season()" (ngModelChange)="selectSeason($event)">
+          @for (year of seasonState.data; track year) {
+            <option [ngValue]="year">{{ year }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>{{ 'Course' | t }}</span>
+        <select [ngModel]="selectedRace()" (ngModelChange)="selectedRace.set($event)"
+                [disabled]="reportState.status !== 'ready' || !races().length">
+          <option [ngValue]="null">{{ 'Toutes les courses' | t }}</option>
+          @for (race of races(); track race.legacyRunId) {
+            <option [ngValue]="race.legacyRunId">{{ raceLabel(race) }}@if (race.runDate) {
+              · {{ race.runDate | date:'shortDate':undefined:i18n.locale() }}
+            }</option>
+          }
+        </select>
+      </label>
+    </div>
+  }
+
+  @if (seasonState.status === 'error' || reportState.status === 'error') {
+    <div class="error-banner" role="alert">{{ 'Impossible de charger les rapports d’import.' | t }}</div>
+  } @else if (seasonState.status === 'ready' && !seasonState.data.length) {
+    <div class="empty">{{ 'Aucun import enregistré.' | t }}</div>
+  } @else if (seasonState.status === 'loading' || reportState.status === 'loading') {
+    <div class="loading" role="status">{{ 'Chargement des imports…' | t }}</div>
+  } @else if (!visibleReports().length) {
+    <div class="empty" role="status">{{ 'Aucune erreur pour cette sélection.' | t }}</div>
+  } @else {
+    <div class="reports">
+      @for (report of visibleReports(); track report.id) {
+        <article class="report">
+          <header>
+            <div>
+              <h2>{{ raceLabel(report) }}</h2>
+              <p>
+                <time [attr.datetime]="report.createdAt">{{ report.createdAt | date:'short':undefined:i18n.locale() }}</time>
+                · {{ (report.source === 'MANUAL' ? 'Import manuel' : 'Import automatique') | t }}
+              </p>
+            </div>
+            <strong class="report-status" [class.failed]="report.status === 'FAILED'">
+              {{ (report.status === 'FAILED' ? 'Échec de l’import' : 'Anomalies d’import') | t }}
+            </strong>
+          </header>
+          @if (report.error) {
+            <p class="import-error">{{ report.error }}</p>
+          }
+          @if (report.issues.length) {
+            <ul>
+              @for (issue of report.issues; track issue.id) {
+                <li><code>{{ issue.code }}</code> {{ issue.message }}</li>
+              }
+            </ul>
+          }
+        </article>
+      }
+    </div>
+  }
+</section>

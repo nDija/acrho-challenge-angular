@@ -2,6 +2,17 @@ export type Language = 'fr' | 'en' | 'nl' | 'de';
 
 // Columns are French, English, Dutch and German.
 export const translations: readonly (readonly [string, string, string, string])[] = [
+  ['Administration', 'Administration', 'Beheer', 'Verwaltung'],
+  ['Erreurs d’import', 'Import errors', 'Importfouten', 'Importfehler'],
+  ['Toutes les courses', 'All races', 'Alle wedstrijden', 'Alle Läufe'],
+  ['Aucun import enregistré.', 'No recorded imports.', 'Geen imports geregistreerd.', 'Keine Importe erfasst.'],
+  ['Aucune erreur pour cette sélection.', 'No errors for this selection.', 'Geen fouten voor deze selectie.', 'Keine Fehler für diese Auswahl.'],
+  ['Impossible de charger les rapports d’import.', 'Could not load import reports.', 'Importrapporten konden niet worden geladen.', 'Importberichte konnten nicht geladen werden.'],
+  ['Chargement des imports…', 'Loading imports…', 'Imports laden…', 'Importe werden geladen…'],
+  ['Import automatique', 'Scheduled import', 'Geplande import', 'Geplanter Import'],
+  ['Import manuel', 'Manual import', 'Handmatige import', 'Manueller Import'],
+  ['Échec de l’import', 'Import failed', 'Import mislukt', 'Import fehlgeschlagen'],
+  ['Anomalies d’import', 'Import issues', 'Importafwijkingen', 'Importprobleme'],
   ['Inscription', 'Registration', 'Inschrijving', 'Anmeldung'],
   ['Conseils', 'Tips', 'Tips', 'Tipps'],
   ['Médias', 'Media', 'Media', 'Medien'],

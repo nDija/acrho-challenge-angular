@@ -1,3 +1,4 @@
+import { ImportAdministration } from './import-administration';
 import { Paginator } from './paginator';
 import { RacePhotoCredit } from './race-photo-credit';
 import { RunnerSeason } from './runner-season';
@@ -32,7 +33,7 @@ import type { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root', standalone: true,
-  imports: [Paginator, RacePhotoCredit, RunnerSeason, RunnerSearch, ResultFilters, AccountSettings, Regulation, Photos, Sponsors, ProjectCredits, RaceTips, RaceRegistration, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, ClubNamePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [ImportAdministration, Paginator, RacePhotoCredit, RunnerSeason, RunnerSearch, ResultFilters, AccountSettings, Regulation, Photos, Sponsors, ProjectCredits, RaceTips, RaceRegistration, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, ClubNamePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './app.html', styleUrl: './app.scss'
 })
 export class App implements OnInit {
@@ -56,7 +57,7 @@ export class App implements OnInit {
   racePhotoLoaded?: string;
   expandedRaceId?: number; expandedRaceDetails?: RaceDetail; practicalInfoLoading = false;
   mobileMenuOpen = false;
-  activeView: 'calendar' | 'runners' | 'regulation' | 'settings' | 'favorites' | 'standings' | 'sponsors' | 'photos' | 'tips' | 'registration' | 'credits' = 'calendar'; loading = false; error = '';
+  activeView: 'calendar' | 'runners' | 'regulation' | 'settings' | 'favorites' | 'standings' | 'sponsors' | 'photos' | 'tips' | 'registration' | 'credits' | 'administration' = 'calendar'; loading = false; error = '';
   confirmAccountDeletion = false;
   deletingAccount = false;
   accountError = '';
@@ -324,6 +325,13 @@ export class App implements OnInit {
     this.closeRunner();
     this.selectedRace = undefined;
     this.activeView = 'photos';
+  }
+
+  showAdministration() {
+    if (this.me?.role !== 'ADMIN') return;
+    this.selectedRace = undefined;
+    this.error = '';
+    this.activeView = 'administration';
   }
 
   showCredits() {
@@ -691,7 +699,7 @@ export class App implements OnInit {
   login() { window.location.href = this.api.loginUrl(); }
   logout() {
     this.api.logout().subscribe({
-      next: () => { this.closeRunner(); this.me = undefined; this.favorites = []; this.favoritesRequestId++; this.runners = []; this.runnerTotal = 0; this.runnerQuery = ''; this.error = ''; if (this.activeView === 'settings' || this.activeView === 'favorites') this.backToCalendar(); this.cdr.markForCheck(); },
+      next: () => { this.closeRunner(); this.me = undefined; this.favorites = []; this.favoritesRequestId++; this.runners = []; this.runnerTotal = 0; this.runnerQuery = ''; this.error = ''; if (this.activeView === 'settings' || this.activeView === 'favorites' || this.activeView === 'administration') this.backToCalendar(); this.cdr.markForCheck(); },
       error: e => { this.fail(e); this.cdr.markForCheck(); }
     });
   }

@@ -17,6 +17,18 @@ export interface RacePhoto {
 export interface RaceDetail extends Race { organizer?: string; routes: RouteInfo[]; practicalInfo?: RacePracticalInfo | null; }
 export interface Runner { id: number; firstName: string; lastName: string; gender?: string; club?: string; category?: string | null; categoryYear?: number | null; pictureUrl?: string | null; bannerColor?: string; }
 export interface Me { id: number; email: string; displayName?: string; role: 'USER' | 'ADMIN'; pictureUrl?: string | null; createdAt?: string | null; runnerId?: number | null; }
+export interface ImportReport {
+  id: number;
+  createdAt: string;
+  source: 'SCHEDULED' | 'MANUAL';
+  legacyRunId: number;
+  runName: string | null;
+  runDate: string | null;
+  status: 'IMPORTED' | 'FAILED';
+  error: string | null;
+  issues: { id: number; code: string; message: string; reviewed: boolean }[];
+}
+
 export interface Category { id: number; code: string; label: string; }
 export interface Result { overallRank?: number; categoryRank?: number; bibNumber?: number; runner: Runner; category?: string | null; timeMs?: number | null; time?: string; status?: string; points?: number | null; }
 export interface RunnerResult { raceId: number; raceName: string; raceDate: string; city?: string; routeId: number; routeLabel: string; distanceM?: number; result: Result; }
@@ -82,6 +94,14 @@ export class AcrhoApi {
   private apiUrl(path: string) { return `${environment.apiBaseUrl}${path}`; }
   health() { return this.http.get<{ status: string }>('https://acrho-challenge.ddns.net/actuator/health'); }
   seasons() { return this.http.get<Season[]>(this.apiUrl('/api/v1/seasons')); }
+  importReportSeasons() {
+    return this.http.get<number[]>(this.apiUrl('/api/v1/legacy/import-reports/seasons'));
+  }
+
+  importReports(year: number) {
+    return this.http.get<ImportReport[]>(this.apiUrl('/api/v1/legacy/import-reports'), { params: { year } });
+  }
+
   currentStandings() {
     return this.http.get<SeasonStandings>(this.apiUrl('/api/v1/standings/current'));
   }

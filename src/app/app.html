@@ -33,6 +33,13 @@
       <button class="nav-item" type="button" [class.active]="activeView === 'sponsors'" [attr.aria-current]="activeView === 'sponsors' ? 'page' : null" (click)="showSponsors()" [attr.aria-label]="'Sponsors' | t"><mat-icon>volunteer_activism</mat-icon><span class="nav-item-label">{{ 'Sponsors' | t }}</span></button>
       <button class="nav-item" type="button" [class.active]="activeView === 'credits'" [attr.aria-current]="activeView === 'credits' ? 'page' : null"
               (click)="showCredits()" [attr.aria-label]="'Crédits' | t"><mat-icon>info</mat-icon><span class="nav-item-label">{{ 'Crédits' | t }}</span></button>
+      @if (me?.role === 'ADMIN') {
+        <button class="nav-item" type="button" [class.active]="activeView === 'administration'"
+                [attr.aria-current]="activeView === 'administration' ? 'page' : null"
+                [attr.aria-label]="'Administration' | t" (click)="showAdministration()">
+          <mat-icon>admin_panel_settings</mat-icon><span class="nav-item-label">{{ 'Administration' | t }}</span>
+        </button>
+      }
       <a class="nav-item privacy-link" href="confidentialite.html" [attr.aria-label]="'Confidentialité' | t"><mat-icon>privacy_tip</mat-icon><span class="nav-item-label">{{ 'Confidentialité' | t }}</span></a>
     </nav>
     <div class="sidebar-bottom"><span class="pulse"></span> {{ "Saison" | t }} {{selectedYear}} <span class="status">{{ "ACTIVE" | t }}</span></div>
@@ -40,7 +47,7 @@
 
   <main class="main">
     <header class="topbar">
-      <div class="breadcrumb">ACRHO <span>/</span> <b>{{selectedRace ? ("DÉTAIL DE COURSE" | t) : activeView === 'standings' ? ("CLASSEMENT" | t) : activeView === 'runners' ? ("ANNUAIRE" | t) : activeView === 'photos' ? ("Médias" | t | uppercase) : activeView === 'credits' ? ("Crédits" | t | uppercase) : activeView === 'sponsors' ? ("Sponsors" | t | uppercase) : activeView === 'registration' ? ("Inscription" | t | uppercase) : activeView === 'tips' ? ("Conseils" | t | uppercase) : activeView === 'regulation' ? ("RÈGLEMENT" | t) : activeView === 'settings' ? ("PARAMÈTRES" | t) : activeView === 'favorites' ? ("FAVORIS" | t) : ("SAISON" | t)}}</b></div>
+      <div class="breadcrumb">ACRHO <span>/</span> <b>{{selectedRace ? ("DÉTAIL DE COURSE" | t) : activeView === 'standings' ? ("CLASSEMENT" | t) : activeView === 'runners' ? ("ANNUAIRE" | t) : activeView === 'photos' ? ("Médias" | t | uppercase) : activeView === 'credits' ? ("Crédits" | t | uppercase) : activeView === 'sponsors' ? ("Sponsors" | t | uppercase) : activeView === 'registration' ? ("Inscription" | t | uppercase) : activeView === 'tips' ? ("Conseils" | t | uppercase) : activeView === 'regulation' ? ("RÈGLEMENT" | t) : activeView === 'administration' ? ('Administration' | t | uppercase) : activeView === 'settings' ? ("PARAMÈTRES" | t) : activeView === 'favorites' ? ("FAVORIS" | t) : ("SAISON" | t)}}</b></div>
       <div class="top-actions"><ng-container [ngTemplateOutlet]="headerActions" /></div>
     </header>
     <section class="content">
@@ -268,6 +275,11 @@
             }
           </section>
         } @else { <div class="empty">{{ "Connecte-toi pour retrouver tes favoris." | t }}</div> }
+      }
+      @if (activeView === 'administration' && me?.role === 'ADMIN') {
+        @defer (on immediate) {
+          <app-import-administration />
+        }
       }
       @if (activeView === 'settings') {
         @defer (on immediate) {
