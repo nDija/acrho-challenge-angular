@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 
 export interface Season { id: number; year: number; }
-export interface Race { id: number; seasonId: number; name: string; raceDate: string; city?: string; coefficient?: number; status?: string; }
+export interface Race { id: number; seasonId: number; name: string; raceDate: string; city?: string; coefficient?: number; status?: string; participantCount?: number | null; }
 export interface RouteInfo { id: number; label: string; distanceM?: number; startTime?: string | null; type?: string; challenge?: boolean; }
 export interface RacePracticalInfo { details?: Record<string, unknown>; sourceUrl?: string | null; }
 export interface RacePhoto {
