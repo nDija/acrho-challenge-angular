@@ -20,7 +20,7 @@ import { Standings } from './standings';
 import { TranslatePipe } from './translate.pipe';
 import { ClubNamePipe } from './club-name.pipe';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, ViewportScroller } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, forkJoin, from, mergeMap, of, switchMap, timer, timeout, toArray } from 'rxjs';
@@ -40,6 +40,7 @@ export class App implements OnInit {
   readonly i18n = inject(LanguageService);
   private api = inject(AcrhoApi);
   private cdr = inject(ChangeDetectorRef);
+  private readonly viewport = inject(ViewportScroller);
   apiOnline = false;
   private healthCheck = timer(0, 30000).pipe(
     switchMap(() => this.api.health().pipe(timeout(10000), catchError(() => of(null)))),
@@ -185,7 +186,7 @@ export class App implements OnInit {
       this.distanceLoading = false;
       this.cdr.markForCheck();
     });
-  }  openRace(r: Race) { this.loading = true; this.error = ''; this.api.race(r.id).subscribe({ next: x => { this.selectedRace = x; this.racePhotoLoaded = undefined; this.racePhoto = x.city ? this.api.racePhoto(x.id).pipe(catchError(() => of(null))) : undefined; this.loading = false; this.results = []; this.resultPage = 0; this.selectedRouteId = undefined; if (x.routes?.length) this.loadResults(x.routes[0].id); this.cdr.markForCheck(); }, error: e => { this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
+  }  openRace(r: Race) { this.loading = true; this.error = ''; this.api.race(r.id).subscribe({ next: x => { this.selectedRace = x; this.viewport.scrollToPosition([0, 0]); this.racePhotoLoaded = undefined; this.racePhoto = x.city ? this.api.racePhoto(x.id).pipe(catchError(() => of(null))) : undefined; this.loading = false; this.results = []; this.resultPage = 0; this.selectedRouteId = undefined; if (x.routes?.length) this.loadResults(x.routes[0].id); this.cdr.markForCheck(); }, error: e => { this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
   loadResults(routeId: number, page = 0) { this.selectedRouteId = routeId; this.loading = true; this.api.results(routeId, page, this.resultSize, this.resultQuery, this.category, this.gender).subscribe({ next: x => { this.results = x.content; this.resultTotal = x.total; this.resultPage = x.page; this.loading = false; this.cdr.markForCheck(); }, error: e => { this.loading = false; this.results = []; this.resultTotal = 0; if (e.status === 404) this.error = 'Les résultats ne sont pas publiés pour cette course.'; else this.fail(e); this.cdr.markForCheck(); } }); }
   onRunnerQueryChange() {
     if (this.runnerSearchTimer) clearTimeout(this.runnerSearchTimer);
