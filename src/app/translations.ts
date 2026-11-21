@@ -3,6 +3,7 @@ export type Language = 'fr' | 'en' | 'nl' | 'de';
 // Columns are French, English, Dutch and German.
 export const translations: readonly (readonly [string, string, string, string])[] = [
   ['Médias', 'Media', 'Media', 'Medien'],
+  ['Menu de navigation', 'Navigation menu', 'Navigatiemenu', 'Navigationsmenü'],
   ['Photos', 'Photos', 'Foto’s', 'Fotos'],
   ['Reportages', 'Video reports', 'Reportages', 'Reportagen'],
   ['Année des reportages', 'Report year', 'Jaar van de reportages', 'Jahr der Reportagen'],
@@ -213,6 +214,12 @@ export const translations: readonly (readonly [string, string, string, string])[
   ['Vert', 'Green', 'Groen', 'Grün'], ['Violet', 'Purple', 'Paars', 'Violett'],
   ['Rose', 'Pink', 'Roze', 'Rosa'], ['Ardoise', 'Slate', 'Leigrijs', 'Schiefergrau'],
   ['Noir', 'Black', 'Zwart', 'Schwarz'], ['Jaune', 'Yellow', 'Geel', 'Gelb'],
+  ['Orange', 'Orange', 'Oranje', 'Orange'],
+  ['Bleu ciel', 'Sky blue', 'Hemelsblauw', 'Himmelblau'],
+  ['Or', 'Gold', 'Goud', 'Gold'],
+  ['Rouge', 'Red', 'Rood', 'Rot'],
+  ['Argent', 'Silver', 'Zilver', 'Silber'],
+  ['Bronze', 'Bronze', 'Brons', 'Bronze'],
   ['Espoirs dames', 'Promising female runner', 'Jonge dames', 'Juniorinnen'], ['Dames', 'Women', 'Dames', 'Frauen'],
   ['Aînées 1', 'Elders 1', 'Oudsten 1', 'Seniorinnen 1'], ['Aînées 2', 'Elders 2', 'Oudsten 2', 'Seniorinnen 2'],
   ['Aînées 3', 'Elders 3', 'Oudsten 3', 'Seniorinnen 3'], ['Aînées 4', 'Elders 4', 'Oudsten 4', 'Seniorinnen 4'],

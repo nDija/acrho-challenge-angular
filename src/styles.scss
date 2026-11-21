@@ -175,27 +175,32 @@ html[data-acrho-theme] .account-panel.runner-profile-banner .account-runner-resu
 
 .runner-profile-banner[data-banner-color='black'], .runner-history-card[data-banner-color='black'] { --runner-banner-start:#090909; --runner-banner-end:#262626; }
 .runner-profile-banner[data-banner-color='yellow'], .runner-history-card[data-banner-color='yellow'] { --runner-banner-start:#facc15; --runner-banner-end:#fde047; }
-html[data-acrho-theme] .page-heading .runner-profile-banner[data-banner-color='yellow'] h1,
-html[data-acrho-theme] .runner-profile-banner[data-banner-color='yellow'] p,
-html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow']>p strong,
-html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow'] h2,
-html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow'] .banner-palette>span,
-html[data-acrho-theme] .runner-profile-banner[data-banner-color='yellow'] .favorite-toggle:not(.is-favorite) mat-icon,
-html[data-acrho-theme] .banner-swatch[data-color='yellow'] mat-icon { color:#172d31; }
-html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow'] .banner-swatch { border-color:rgba(23,45,49,.5); }
-html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow'] .banner-swatch[aria-pressed='true'],
-html[data-acrho-theme] .account-panel.runner-profile-banner[data-banner-color='yellow'] .banner-swatch:focus-visible { outline-color:#172d31; }
+:is(.runner-profile-banner, .runner-history-card)[data-banner-color='orange'] { --runner-banner-start:#fb923c; --runner-banner-end:#fdba74; }
+:is(.runner-profile-banner, .runner-history-card)[data-banner-color='sky'] { --runner-banner-start:#7dd3fc; --runner-banner-end:#bae6fd; }
+:is(.runner-profile-banner, .runner-history-card)[data-banner-color='gold'] { --runner-banner-start:#d4a72c; --runner-banner-end:#efca61; }
+:is(.runner-profile-banner, .runner-history-card)[data-banner-color='red'] { --runner-banner-start:#991b1b; --runner-banner-end:#b91c1c; }
+:is(.runner-profile-banner, .runner-history-card)[data-banner-color='silver'] { --runner-banner-start:#cbd5e1; --runner-banner-end:#f1f5f9; }
+:is(.runner-profile-banner, .runner-history-card)[data-banner-color='bronze'] { --runner-banner-start:#794625; --runner-banner-end:#8b5733; }
+html[data-acrho-theme] .page-heading .runner-profile-banner:is([data-banner-color='yellow'], [data-banner-color='orange'], [data-banner-color='sky'], [data-banner-color='gold'], [data-banner-color='silver']) h1,
+html[data-acrho-theme] .runner-profile-banner:is([data-banner-color='yellow'], [data-banner-color='orange'], [data-banner-color='sky'], [data-banner-color='gold'], [data-banner-color='silver']) p,
+html[data-acrho-theme] .account-panel.runner-profile-banner:is([data-banner-color='yellow'], [data-banner-color='orange'], [data-banner-color='sky'], [data-banner-color='gold'], [data-banner-color='silver'])>p strong,
+html[data-acrho-theme] .account-panel.runner-profile-banner:is([data-banner-color='yellow'], [data-banner-color='orange'], [data-banner-color='sky'], [data-banner-color='gold'], [data-banner-color='silver']) h2,
+html[data-acrho-theme] .account-panel.runner-profile-banner:is([data-banner-color='yellow'], [data-banner-color='orange'], [data-banner-color='sky'], [data-banner-color='gold'], [data-banner-color='silver']) .banner-palette>span,
+html[data-acrho-theme] .runner-profile-banner:is([data-banner-color='yellow'], [data-banner-color='orange'], [data-banner-color='sky'], [data-banner-color='gold'], [data-banner-color='silver']) .favorite-toggle:not(.is-favorite) mat-icon,
+html[data-acrho-theme] .banner-swatch:is([data-color='yellow'], [data-color='orange'], [data-color='sky'], [data-color='gold'], [data-color='silver']) mat-icon { color:#172d31; }
+html[data-acrho-theme] .account-panel.runner-profile-banner:is([data-banner-color='yellow'], [data-banner-color='orange'], [data-banner-color='sky'], [data-banner-color='gold'], [data-banner-color='silver']) .banner-swatch { border-color:rgba(23,45,49,.5); }
+html[data-acrho-theme] .account-panel.runner-profile-banner:is([data-banner-color='yellow'], [data-banner-color='orange'], [data-banner-color='sky'], [data-banner-color='gold'], [data-banner-color='silver']) .banner-swatch[aria-pressed='true'],
+html[data-acrho-theme] .account-panel.runner-profile-banner:is([data-banner-color='yellow'], [data-banner-color='orange'], [data-banner-color='sky'], [data-banner-color='gold'], [data-banner-color='silver']) .banner-swatch:focus-visible { outline-color:#172d31; }
 
 .runner-history-body { padding:20px; }
 .runner-race-banner { padding:16px 20px; background:radial-gradient(ellipse at 100% 0%,rgba(255,255,255,.28),transparent 65%),linear-gradient(120deg,var(--runner-banner-start,var(--acrho-sidebar)),var(--runner-banner-end,#164e82)); }
 html[data-acrho-theme] .runner-history-card .runner-race-banner h3 { margin:0; color:#fff; overflow-wrap:anywhere; }
-html[data-acrho-theme] .runner-history-card[data-banner-color='yellow'] .runner-race-banner h3 { color:#172d31; }
+html[data-acrho-theme] .runner-history-card:is([data-banner-color='yellow'], [data-banner-color='orange'], [data-banner-color='sky'], [data-banner-color='gold'], [data-banner-color='silver']) .runner-race-banner h3 { color:#172d31; }
 
 .language-picker { display:inline-flex; align-items:center; gap:6px; color:var(--acrho-heading); }
-.language-picker mat-icon { width:20px; height:20px; font-size:20px; }
-.language-picker select { max-width:115px; min-height:40px; padding:6px; border:1px solid var(--acrho-border); border-radius:8px; background:#fff; color:var(--acrho-heading); font:inherit; font-size:12px; cursor:pointer; }
+.language-picker select { min-width:9rem; min-height:40px; padding:6px; border:1px solid var(--acrho-border); border-radius:8px; background:#fff; color:var(--acrho-heading); font:inherit; font-size:12px; cursor:pointer; }
 .language-picker select:focus-visible { outline:2px solid var(--acrho-accent); outline-offset:2px; }
-@media(max-width:700px) { html[data-acrho-theme] .topbar { height:auto; min-height:72px; flex-wrap:wrap; gap:12px; padding-top:12px; padding-bottom:12px; }html[data-acrho-theme] .top-actions { flex-wrap:wrap; gap:10px; }.language-picker select { max-width:105px; } }
+@media(max-width:700px) { html[data-acrho-theme] .topbar { height:auto; min-height:72px; flex-wrap:wrap; gap:12px; padding-top:12px; padding-bottom:12px; }html[data-acrho-theme] .top-actions { flex-wrap:wrap; gap:10px; } }
 
 .category-pill { padding:5px 8px;border-radius:8px;background:var(--acrho-soft);font-size:10px;font-weight:700; }
 .runner-avatar { display:grid;place-items:center;flex-shrink:0;width:42px;height:42px;overflow:hidden;border-radius:50%;background:var(--acrho-soft);color:var(--acrho-accent-dark);font-weight:800;font-size:12px; }
@@ -211,4 +216,14 @@ html:has(app-standings) { scrollbar-gutter: stable; }
 @media(max-width:700px) {
   .result-rank { width:36px;height:36px;font-size:14px; }
   .result-person strong { font-size:12px; }
+}
+
+.mobile-header-actions { display: none; }
+@media (max-width: 640px) {
+  .mobile-header-actions { display: flex; align-items: center; gap: 4px; }
+  app-root .mobile-header-actions .auth-icon-btn { width: clamp(32px, 10vw, 44px); }
+}
+
+@media (max-width: 360px) {
+  .mobile-header-actions { gap: 1px; }
 }

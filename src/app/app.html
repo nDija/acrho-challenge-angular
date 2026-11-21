@@ -1,20 +1,42 @@
+<ng-template #headerActions>
+  @if (me) { <button class="avatar profile-button" type="button" (click)="openLinkedRunner()" [disabled]="openingLinkedRunner || deletingAccount || runnerLinkSaving" [title]="me.runnerId ? (&quot;Mes résultats&quot; | t) : (&quot;Lier mon compte à un coureur&quot; | t)" [attr.aria-label]="me.runnerId ? (&quot;Mes résultats&quot; | t) : (&quot;Lier mon compte à un coureur&quot; | t)">@if (me.pictureUrl && !avatarFailed) { <img [src]="me.pictureUrl" [alt]="&quot;Photo de profil&quot; | t" referrerpolicy="no-referrer" (error)="avatarFailed = true"> } @else { {{initials}} }</button> }
+  <button class="auth-btn auth-icon-btn" type="button" (click)="showSettings()" [title]="&quot;Paramètres&quot; | t" [attr.aria-label]="&quot;Paramètres&quot; | t"><mat-icon>settings</mat-icon></button>
+  @if (me) { <button class="auth-btn auth-icon-btn" type="button" (click)="logout()" [disabled]="deletingAccount || runnerLinkSaving" [title]="&quot;Se déconnecter&quot; | t" [attr.aria-label]="&quot;Se déconnecter&quot; | t"><mat-icon>logout</mat-icon></button> } @else if (authChecked) { <button class="auth-btn auth-icon-btn" type="button" (click)="login()" [title]="&quot;Se connecter avec Google&quot; | t" [attr.aria-label]="&quot;Se connecter avec Google&quot; | t"><mat-icon>login</mat-icon></button> }
+</ng-template>
+
 <div class="shell">
   <aside class="sidebar">
+    <button #mobileMenuButton class="nav-item mobile-menu-toggle" [class.active]="mobileMenuOpen" type="button" aria-controls="sidebar-menu"
+            [attr.aria-label]="'Menu de navigation' | t" [attr.aria-expanded]="mobileMenuOpen"
+            (click)="mobileMenuOpen = !mobileMenuOpen">
+      <mat-icon aria-hidden="true">{{ mobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+    </button>
     <a class="brand" (click)="backToCalendar()"><img class="brand-mark" src="assets/acrho-logo.png" alt="Logo ACRHO"><span>acrho<span class="brand-light">.run</span><small>{{ "COURIR ENSEMBLE" | t }}</small></span></a>
+    <div class="mobile-header-actions">
+      <ng-container [ngTemplateOutlet]="headerActions" />
+    </div>
     <div class="nav-label">{{ "ESPACE PERSONNEL" | t }}</div>
-    <button class="nav-item" [class.active]="activeView === 'calendar'" (click)="activeView='calendar'; backToCalendar()" [attr.aria-label]="'Courses' | t"><mat-icon>calendar_month</mat-icon><span class="nav-item-label">{{ 'Courses' | t }}</span></button>
-    <button class="nav-item" type="button" [class.active]="activeView === 'standings'" [attr.aria-current]="activeView === 'standings' ? 'page' : null" (click)="showStandings()" [attr.aria-label]="'CLASSEMENT' | t | titlecase"><mat-icon>leaderboard</mat-icon><span class="nav-item-label">{{ 'CLASSEMENT' | t | titlecase }}</span></button>
-    <button class="nav-item" [class.active]="activeView === 'runners'" (click)="showRunners()" [attr.aria-label]="'Coureurs' | t"><mat-icon>groups</mat-icon><span class="nav-item-label">{{ 'Coureurs' | t }}</span></button>
-    @if (me) { <button class="nav-item" [class.active]="activeView === 'favorites'" (click)="showFavorites()" [attr.aria-label]="'Favoris' | t"><mat-icon>favorite</mat-icon><span class="nav-item-label">{{ 'Favoris' | t }}</span></button> }
-    <button class="nav-item" [class.active]="activeView === 'regulation'" (click)="showRegulation()" [attr.aria-label]="'Règlement' | t"><mat-icon>gavel</mat-icon><span class="nav-item-label">{{ 'Règlement' | t }}</span></button>
-    <button class="nav-item" type="button" [class.active]="activeView === 'photos'" [attr.aria-current]="activeView === 'photos' ? 'page' : null" (click)="showPhotos()" [attr.aria-label]="'Médias' | t"><mat-icon>perm_media</mat-icon><span class="nav-item-label">{{ 'Médias' | t }}</span></button>
-    <button class="nav-item" type="button" [class.active]="activeView === 'sponsors'" [attr.aria-current]="activeView === 'sponsors' ? 'page' : null" (click)="showSponsors()" [attr.aria-label]="'Sponsors' | t"><mat-icon>volunteer_activism</mat-icon><span class="nav-item-label">{{ 'Sponsors' | t }}</span></button>
-    <a class="nav-item privacy-link" href="confidentialite.html" [attr.aria-label]="'Confidentialité' | t"><mat-icon>privacy_tip</mat-icon><span class="nav-item-label">{{ 'Confidentialité' | t }}</span></a>
+    <nav id="sidebar-menu" class="sidebar-menu" [class.mobile-open]="mobileMenuOpen"
+         [attr.aria-label]="'Menu de navigation' | t"
+         (click)="mobileMenuOpen = false"
+         (keydown.escape)="mobileMenuOpen = false; mobileMenuButton.focus()">
+      <button class="nav-item" [class.active]="activeView === 'calendar'" (click)="activeView='calendar'; backToCalendar()" [attr.aria-label]="'Courses' | t"><mat-icon>calendar_month</mat-icon><span class="nav-item-label">{{ 'Courses' | t }}</span></button>
+      <button class="nav-item" type="button" [class.active]="activeView === 'standings'" [attr.aria-current]="activeView === 'standings' ? 'page' : null" (click)="showStandings()" [attr.aria-label]="'CLASSEMENT' | t | titlecase"><mat-icon>leaderboard</mat-icon><span class="nav-item-label">{{ 'CLASSEMENT' | t | titlecase }}</span></button>
+      <button class="nav-item" [class.active]="activeView === 'runners'" (click)="showRunners()" [attr.aria-label]="'Coureurs' | t"><mat-icon>groups</mat-icon><span class="nav-item-label">{{ 'Coureurs' | t }}</span></button>
+      @if (me) { <button class="nav-item" [class.active]="activeView === 'favorites'" (click)="showFavorites()" [attr.aria-label]="'Favoris' | t"><mat-icon>favorite</mat-icon><span class="nav-item-label">{{ 'Favoris' | t }}</span></button> }
+      <button class="nav-item" [class.active]="activeView === 'regulation'" (click)="showRegulation()" [attr.aria-label]="'Règlement' | t"><mat-icon>gavel</mat-icon><span class="nav-item-label">{{ 'Règlement' | t }}</span></button>
+      <button class="nav-item" type="button" [class.active]="activeView === 'photos'" [attr.aria-current]="activeView === 'photos' ? 'page' : null" (click)="showPhotos()" [attr.aria-label]="'Médias' | t"><mat-icon>perm_media</mat-icon><span class="nav-item-label">{{ 'Médias' | t }}</span></button>
+      <button class="nav-item" type="button" [class.active]="activeView === 'sponsors'" [attr.aria-current]="activeView === 'sponsors' ? 'page' : null" (click)="showSponsors()" [attr.aria-label]="'Sponsors' | t"><mat-icon>volunteer_activism</mat-icon><span class="nav-item-label">{{ 'Sponsors' | t }}</span></button>
+      <a class="nav-item privacy-link" href="confidentialite.html" [attr.aria-label]="'Confidentialité' | t"><mat-icon>privacy_tip</mat-icon><span class="nav-item-label">{{ 'Confidentialité' | t }}</span></a>
+    </nav>
     <div class="sidebar-bottom"><span class="pulse"></span> {{ "Saison" | t }} {{selectedYear}} <span class="status">{{ "ACTIVE" | t }}</span></div>
   </aside>
 
   <main class="main">
-    <header class="topbar"><div class="breadcrumb">ACRHO <span>/</span> <b>{{selectedRace ? ("DÉTAIL DE COURSE" | t) : activeView === 'standings' ? ("CLASSEMENT" | t) : activeView === 'runners' ? ("ANNUAIRE" | t) : activeView === 'photos' ? ("Médias" | t | uppercase) : activeView === 'sponsors' ? ("Sponsors" | t | uppercase) : activeView === 'regulation' ? ("RÈGLEMENT" | t) : activeView === 'settings' ? ("PARAMÈTRES" | t) : activeView === 'favorites' ? ("FAVORIS" | t) : ("SAISON" | t)}}</b></div><div class="top-actions"><label class="language-picker"><mat-icon aria-hidden="true">language</mat-icon><select [ngModel]="i18n.language()" (ngModelChange)="changeLanguage($event)" [attr.aria-label]="'Langue' | t">@for (language of i18n.languages; track language.value) { <option [value]="language.value">{{language.label}}</option> }</select></label><span class="api-status" [class.online]="apiOnline" role="status" [title]="apiOnline ? (&quot;API connectée&quot; | t) : (&quot;API indisponible&quot; | t)" [attr.aria-label]="apiOnline ? (&quot;API connectée&quot; | t) : (&quot;API indisponible&quot; | t)"><i aria-hidden="true"></i></span>@if (me) { <button class="avatar profile-button" type="button" (click)="openLinkedRunner()" [disabled]="openingLinkedRunner || deletingAccount || runnerLinkSaving" [title]="me.runnerId ? (&quot;Mes résultats&quot; | t) : (&quot;Lier mon compte à un coureur&quot; | t)" [attr.aria-label]="me.runnerId ? (&quot;Mes résultats&quot; | t) : (&quot;Lier mon compte à un coureur&quot; | t)">@if (me.pictureUrl && !avatarFailed) { <img [src]="me.pictureUrl" [alt]="&quot;Photo de profil&quot; | t" referrerpolicy="no-referrer" (error)="avatarFailed = true"> } @else { {{initials}} }</button><button class="auth-btn auth-icon-btn" type="button" (click)="showSettings()" [title]="&quot;Paramètres du compte&quot; | t" [attr.aria-label]="&quot;Paramètres du compte&quot; | t"><mat-icon>settings</mat-icon></button><button class="auth-btn auth-icon-btn" type="button" (click)="logout()" [disabled]="deletingAccount || runnerLinkSaving" [title]="&quot;Se déconnecter&quot; | t" [attr.aria-label]="&quot;Se déconnecter&quot; | t"><mat-icon>logout</mat-icon></button> } @else if (authChecked) { <button class="auth-btn auth-icon-btn" type="button" (click)="login()" [title]="&quot;Se connecter avec Google&quot; | t" [attr.aria-label]="&quot;Se connecter avec Google&quot; | t"><mat-icon>login</mat-icon></button> }</div></header>
+    <header class="topbar">
+      <div class="breadcrumb">ACRHO <span>/</span> <b>{{selectedRace ? ("DÉTAIL DE COURSE" | t) : activeView === 'standings' ? ("CLASSEMENT" | t) : activeView === 'runners' ? ("ANNUAIRE" | t) : activeView === 'photos' ? ("Médias" | t | uppercase) : activeView === 'sponsors' ? ("Sponsors" | t | uppercase) : activeView === 'regulation' ? ("RÈGLEMENT" | t) : activeView === 'settings' ? ("PARAMÈTRES" | t) : activeView === 'favorites' ? ("FAVORIS" | t) : ("SAISON" | t)}}</b></div>
+      <div class="top-actions"><ng-container [ngTemplateOutlet]="headerActions" /></div>
+    </header>
     <section class="content">
       @if (activeView === 'calendar' && !selectedRace) {
         <div class="page-heading"><div><div class="eyebrow">{{ "VOTRE CALENDRIER DE RUNNING" | t }}</div><h1>{{ "La saison," | t }} <em>{{ "en mouvement." | t }}</em></h1><p>{{ "Retrouvez les courses et résultats du challenge ACRHO." | t }}</p></div>
@@ -187,14 +209,8 @@
         } @else { <div class="empty">{{ "Connecte-toi pour retrouver tes favoris." | t }}</div> }
       }
       @if (activeView === 'settings') {
-        <div class="page-heading"><div><h1>{{ "Paramètres du compte" | t }}</h1></div></div>
+        <div class="page-heading"><div><h1>{{ "Paramètres" | t }}</h1></div></div>
         @if (me; as user) {
-          <section class="account-panel" aria-labelledby="account-profile-heading">
-            <h2 id="account-profile-heading">{{ "Profil" | t }}</h2>
-            <dl class="account-details"><div><dt>{{ "Nom" | t }}</dt><dd>{{user.displayName || ("Non renseigné" | t)}}</dd></div><div><dt>{{ "Adresse e-mail" | t }}</dt><dd>{{user.email}}</dd></div>@if (user.role !== 'USER') { <div><dt>{{ "Rôle" | t }}</dt><dd>{{user.role === 'ADMIN' ? ("Administrateur" | t) : (user.role | t)}}</dd></div> }<div><dt>{{ "Connexion" | t }}</dt><dd>Google</dd></div><div><dt>{{ "Date de création" | t }}</dt><dd>{{user.createdAt ? (user.createdAt | date:'dd MMMM yyyy':undefined:i18n.locale()) : '—'}}</dd></div></dl>
-            <p>{{ "Le nom et la photo de profil sont récupérés à chaque connexion Google." | t }}</p>
-            <a href="https://myaccount.google.com/personal-info" target="_blank" rel="noopener noreferrer">{{ "Gérer mon profil Google ↗" | t }}</a>
-          </section>
           <section class="account-panel" [class.runner-profile-banner]="!!linkedRunner" [attr.data-banner-color]="linkedRunner?.bannerColor || 'blue'" aria-labelledby="account-runner-heading">
             <h2 id="account-runner-heading">{{ "Mon coureur" | t }}</h2>
             @if (user.runnerId) {
@@ -219,6 +235,31 @@
                 <div class="account-runner-option"><div><strong>{{runner.firstName}} {{runner.lastName}}</strong><p>{{(runner.club | clubName) || ("Indépendant" | t)}}@if (runner.category) { · {{categoryLabel(runner.category)}} ({{runner.categoryYear}}) }</p></div><button mat-stroked-button type="button" [disabled]="runnerLinkSaving || deletingAccount || user.runnerId === runner.id" (click)="saveRunnerLink(runner)">{{user.runnerId === runner.id ? ("Lié" | t) : ("Lier mon compte" | t)}}</button></div>
               } @empty { <p>Aucun coureur trouvé. Essaie une recherche avec ton nom ou ton prénom.</p> }
             }
+          </section>
+        }
+        <section class="account-panel" aria-labelledby="settings-language-heading">
+          <h2 id="settings-language-heading"><label for="settings-language">{{ 'Langue' | t }}</label></h2>
+          <div class="language-picker">
+            <select id="settings-language" [ngModel]="i18n.language()" (ngModelChange)="changeLanguage($event)">
+              @for (language of i18n.languages; track language.value) {
+                <option [value]="language.value" [attr.lang]="language.value">{{ language.label }}</option>
+              }
+            </select>
+          </div>
+        </section>
+        <section class="account-panel" aria-labelledby="settings-connection-heading">
+          <h2 id="settings-connection-heading">{{ 'Connexion' | t }}</h2>
+          <div class="api-status" [class.online]="apiOnline" role="status">
+            <i aria-hidden="true"></i>
+            {{ (apiOnline ? 'API connectée' : 'API indisponible') | t }}
+          </div>
+        </section>
+        @if (me; as user) {
+          <section class="account-panel" aria-labelledby="account-profile-heading">
+            <h2 id="account-profile-heading">{{ "Profil" | t }}</h2>
+            <dl class="account-details"><div><dt>{{ "Nom" | t }}</dt><dd>{{user.displayName || ("Non renseigné" | t)}}</dd></div><div><dt>{{ "Adresse e-mail" | t }}</dt><dd>{{user.email}}</dd></div>@if (user.role !== 'USER') { <div><dt>{{ "Rôle" | t }}</dt><dd>{{user.role === 'ADMIN' ? ("Administrateur" | t) : (user.role | t)}}</dd></div> }<div><dt>{{ "Connexion" | t }}</dt><dd>Google</dd></div><div><dt>{{ "Date de création" | t }}</dt><dd>{{user.createdAt ? (user.createdAt | date:'dd MMMM yyyy':undefined:i18n.locale()) : '—'}}</dd></div></dl>
+            <p>{{ "Le nom et la photo de profil sont récupérés à chaque connexion Google." | t }}</p>
+            <a href="https://myaccount.google.com/personal-info" target="_blank" rel="noopener noreferrer">{{ "Gérer mon profil Google ↗" | t }}</a>
           </section>
           <section class="account-panel" aria-labelledby="account-delete-heading">
             <h2 id="account-delete-heading">{{ "Supprimer mon compte" | t }}</h2>

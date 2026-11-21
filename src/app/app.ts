@@ -49,6 +49,7 @@ export class App implements OnInit {
   racePhoto?: Observable<RacePhoto | null>;
   racePhotoLoaded?: string;
   expandedRaceId?: number; expandedRaceDetails?: RaceDetail; practicalInfoLoading = false;
+  mobileMenuOpen = false;
   activeView: 'calendar' | 'runners' | 'regulation' | 'settings' | 'favorites' | 'standings' | 'sponsors' | 'photos' = 'calendar'; loading = false; error = '';
   confirmAccountDeletion = false;
   deletingAccount = false;
@@ -67,6 +68,12 @@ export class App implements OnInit {
     { value: 'slate', label: 'Ardoise', color: '#334155' },
     { value: 'black', label: 'Noir', color: '#111111' },
     { value: 'yellow', label: 'Jaune', color: '#facc15' },
+    { value: 'orange', label: 'Orange', color: '#fb923c' },
+    { value: 'sky', label: 'Bleu ciel', color: '#7dd3fc' },
+    { value: 'gold', label: 'Or', color: '#d4a72c' },
+    { value: 'red', label: 'Rouge', color: '#991b1b' },
+    { value: 'silver', label: 'Argent', color: '#cbd5e1' },
+    { value: 'bronze', label: 'Bronze', color: '#794625' },
   ];
   bannerSaving = false;
   bannerError = '';
@@ -553,7 +560,6 @@ export class App implements OnInit {
     });
   }
   showSettings() {
-    if (!this.me) return;
     this.closeRunner();
     this.selectedRace = undefined;
     this.activeView = 'settings';
