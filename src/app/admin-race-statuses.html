@@ -29,6 +29,7 @@
               <time [attr.datetime]="race.raceDate">{{ race.raceDate | date:'mediumDate':undefined:i18n.locale() }}</time>
               @if (race.city) { · {{ race.city }} }
               · {{ statusLabels[race.status] | t }}
+              @if (!race.statusManuallySet) { · {{ 'Gestion automatique' | t }} }
             </div>
           </div>
           <div class="race-actions">
@@ -39,8 +40,8 @@
                 <option [value]="status">{{ statusLabels[status] | t }}</option>
               }
             </select>
-            <button type="button" class="auth-btn auth-btn-primary"
-                    [disabled]="saving() !== null || choice(race) === savedChoice(race)" (click)="save(race)">
+            <button type="button" class="save-status"
+                    [disabled]="!canSave(race)" (click)="save(race)">
               {{ (saving() === race.id ? 'Enregistrement…' : 'Enregistrer') | t }}
             </button>
           </div>

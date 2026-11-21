@@ -32,7 +32,7 @@ export class AdminRaceStatuses {
   readonly saving = signal<number | null>(null);
   readonly notice = signal<{ raceId: number; success: boolean } | null>(null);
   private readonly updated = signal<Record<number, AdminRace>>({});
-  private readonly drafts = signal<Record<number, StatusChoice>>({});
+  private readonly drafts = signal<Partial<Record<number, StatusChoice>>>({});
 
   readonly seasons = toSignal(this.api.seasons().pipe(
     map(seasons => [...seasons].sort((a, b) => b.year - a.year)),
@@ -58,12 +58,14 @@ export class AdminRaceStatuses {
     return this.updated()[race.id] ?? race;
   }
 
-  savedChoice(race: AdminRace): StatusChoice {
-    return race.statusManuallySet ? race.status : 'AUTOMATIC';
+  choice(race: AdminRace) {
+    return this.drafts()[race.id] ?? race.status;
   }
 
-  choice(race: AdminRace) {
-    return this.drafts()[race.id] ?? this.savedChoice(race);
+  canSave(race: AdminRace) {
+    const choice = this.choice(race);
+    return this.saving() === null &&
+      (choice === 'AUTOMATIC' ? race.statusManuallySet : choice !== race.status);
   }
 
   selectStatus(id: number, choice: StatusChoice) {
@@ -74,7 +76,7 @@ export class AdminRaceStatuses {
   save(race: AdminRace) {
     const choice = this.choice(race);
     const year = this.selectedYear();
-    if (year === null || this.saving() !== null || choice === this.savedChoice(race)) return;
+    if (year === null || !this.canSave(race)) return;
     this.saving.set(race.id);
     this.notice.set(null);
     this.api.updateRaceStatus(race.id, choice).pipe(
@@ -83,6 +85,7 @@ export class AdminRaceStatuses {
     ).subscribe({
       next: updated => {
         this.updated.update(races => ({ ...races, [updated.id]: updated }));
+        this.drafts.update(drafts => ({ ...drafts, [updated.id]: undefined }));
         this.notice.set({ raceId: updated.id, success: true });
         this.statusChanged.emit(year);
       },
