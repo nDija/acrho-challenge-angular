@@ -112,7 +112,7 @@ export class Photos {
       name: 'L’Avenir',
       image: 'assets/sponsors/lavenir.jpg',
       logo: true,
-      paragraphs: ['Le plus fidèle des mitrailleurs, notre président Jean-Luc Debaisieux, vous propose ses meilleures photos sur le site de L’Avenir.'],
+      paragraphs: ['Le plus fidèle des mitrailleurs, Jean-Luc Debaisieux, président de l’ACRHO, vous propose ses meilleures photos sur le site de L’Avenir.'],
       links: [
         { label: 'Galeries de jogging', url: 'http://jogging.lavenir.net/category/galeries-photos/' },
         { label: 'WapiSport', url: 'http://www.facebook.com/lavenirwapisport' },
@@ -122,7 +122,7 @@ export class Photos {
       name: 'Bernard Hache',
       image: 'assets/photos/bernard.webp',
       paragraphs: [
-        'Pour une meilleure visibilité, Bernard nous partage ses albums sous un nouveau profil Facebook, BHCrossRunningPhotos.',
+        'Pour une meilleure visibilité, Bernard partage ses albums du challenge sous un nouveau profil Facebook, BHCrossRunningPhotos.',
         'Allez jeter un œil sur les différents albums et likez ses plus belles prises :-)',
       ],
       links: [{ label: 'Voir les albums', url: 'https://www.facebook.com/groups/bhcrossrunningphotos' }],
@@ -131,14 +131,14 @@ export class Photos {
       name: 'Dany Vandenhende',
       image: 'assets/photos/dany.webp',
       imageSource: 'https://commons.wikimedia.org/wiki/File:Brussels_marathon_runners_(Unsplash).jpg',
-      paragraphs: ['Il nous mitraille déjà depuis un certain temps. Il est temps d’aller voir ses œuvres sur sa page Facebook.'],
+      paragraphs: ['Il mitraille l’ACRHO depuis un certain temps. Il est temps d’aller voir ses œuvres sur sa page Facebook.'],
       links: [{ label: 'Voir les albums', url: 'https://www.facebook.com/dany.vandenhende/photos_albums' }],
     },
     {
       name: 'Stéphanie Martinache',
       image: 'assets/photos/stephanie.webp',
       paragraphs: [
-        'Nouvelle venue sur les routes de l’ACRHO, Stéphanie nous propose ses photos sur sa page Facebook.',
+        'Nouvelle venue sur les routes de l’ACRHO, Stéphanie partage ses photos du challenge sur sa page Facebook.',
         'Visitez-la et adressez-lui mille commentaires :-)',
       ],
       links: [{ label: 'Voir les albums', url: 'https://www.facebook.com/stephanie.martinache.7/photos_albums' }],
