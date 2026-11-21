@@ -1,0 +1,22 @@
+.page-heading { margin-bottom:35px; }
+.page-heading h1 { font:800 clamp(29px,3.5vw,43px)/1.12 Manrope,sans-serif; letter-spacing:-1.8px; margin:11px 0; color:var(--acrho-heading); }
+@media(max-width:480px) {
+  .page-heading { margin-bottom:24px; }
+  .page-heading h1 { font-size:clamp(27px,8vw,34px); letter-spacing:-1.1px; }
+}
+.account-panel { max-width:850px; padding:24px; margin-bottom:22px; border:1px solid var(--acrho-border); border-radius:14px; background:#fff; }
+.account-panel h2 { margin:0 0 20px; color:var(--acrho-heading); font-size:19px; }
+.account-panel p { color:var(--acrho-text); font-size:14px; line-height:1.7; }
+.account-panel a { color:var(--acrho-accent-dark); }
+.account-details { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; }
+.account-details dt { color:var(--acrho-muted); font-size:12px; }
+.account-details dd { margin:6px 0 0; overflow-wrap:anywhere; color:var(--acrho-heading); font-weight:600; }
+.account-actions { display:flex; flex-wrap:wrap; gap:12px; }
+.account-panel .delete-account-button { color:#b42318; --mdc-filled-button-container-color:#fee4e2; --mdc-filled-button-label-text-color:#b42318; }
+
+.account-runner-option { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; padding:14px 0; border-bottom:1px solid var(--acrho-border); }
+.account-runner-option p { margin:4px 0; }
+.api-status { display:flex; align-items:center; gap:8px; }
+.api-status i { width:9px; height:9px; border-radius:50%; background:#dc2626; }
+.api-status.online i { background:#22a35a; }
+.runner-search { width:min(100%,520px); }

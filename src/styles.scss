@@ -218,6 +218,18 @@ html:has(app-standings) { scrollbar-gutter: stable; }
   .result-person strong { font-size:12px; }
 }
 
+
+app-root {
+  .loading { display:flex;justify-content:center;padding:40px; }
+  .empty { padding:28px;text-align:center;border:1px dashed var(--acrho-border);border-radius:12px;color:var(--acrho-muted);font-size:13px; }
+  .error-banner { display:flex;align-items:center;gap:10px;color:#a34f3e;background:#fff0ec;border:1px solid #f5d7ce;padding:14px;border-radius:10px;font-size:13px;margin:14px 0; }
+  .auth-btn { border:1px solid var(--acrho-sidebar); background:var(--acrho-sidebar); color:#fff; border-radius:999px; padding:8px 14px; font:inherit; font-size:12px; font-weight:700; cursor:pointer; }
+  .auth-btn:hover { background:var(--acrho-sidebar-active); border-color:var(--acrho-sidebar-active); }
+  .auth-btn-primary { margin-top:14px; }
+  .auth-icon-btn { display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; padding:0; vertical-align:middle; }
+  .auth-icon-btn mat-icon { width:22px; height:22px; font-size:22px; }
+}
+
 .mobile-header-actions { display: none; }
 @media (max-width: 640px) {
   .mobile-header-actions { display: flex; align-items: center; gap: 4px; }
@@ -226,4 +238,13 @@ html:has(app-standings) { scrollbar-gutter: stable; }
 
 @media (max-width: 360px) {
   .mobile-header-actions { gap: 1px; }
+}
+@page acrho-registration { size: A4; margin: 0; }
+@media print {
+  html:has(app-race-registration) { page: acrho-registration; }
+  html[data-acrho-theme]:has(app-race-registration) app-root { min-height: 0; }
+  app-root:has(app-race-registration) .shell .sidebar,
+  app-root:has(app-race-registration) .shell .topbar { display: none; }
+  app-root:has(app-race-registration) .shell:has(.content) { display: block; min-height: 0; }
+  app-root:has(app-race-registration) .shell .content { max-width: none; padding: 0; }
 }

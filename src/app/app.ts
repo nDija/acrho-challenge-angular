@@ -1,5 +1,10 @@
+import { AccountSettings } from './account-settings';
+import { Regulation } from './regulation';
 import { Photos } from './photos';
 import { Sponsors } from './sponsors';
+import { ProjectCredits } from './project-credits';
+import { RaceTips } from './race-tips';
+import { RaceRegistration } from './race-registration';
 import { RaceWeather } from './race-weather';
 import { LanguageService } from './language.service';
 import { RunnerStandingCard } from './runner-standing-card';
@@ -26,7 +31,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root', standalone: true,
-  imports: [Photos, Sponsors, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, ClubNamePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatMenuModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
+  imports: [AccountSettings, Regulation, Photos, Sponsors, ProjectCredits, RaceTips, RaceRegistration, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, ClubNamePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatMenuModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
   templateUrl: './app.html', styleUrl: './app.scss'
 })
 export class App implements OnInit {
@@ -50,7 +55,7 @@ export class App implements OnInit {
   racePhotoLoaded?: string;
   expandedRaceId?: number; expandedRaceDetails?: RaceDetail; practicalInfoLoading = false;
   mobileMenuOpen = false;
-  activeView: 'calendar' | 'runners' | 'regulation' | 'settings' | 'favorites' | 'standings' | 'sponsors' | 'photos' = 'calendar'; loading = false; error = '';
+  activeView: 'calendar' | 'runners' | 'regulation' | 'settings' | 'favorites' | 'standings' | 'sponsors' | 'photos' | 'tips' | 'registration' | 'credits' = 'calendar'; loading = false; error = '';
   confirmAccountDeletion = false;
   deletingAccount = false;
   accountError = '';
@@ -90,7 +95,7 @@ export class App implements OnInit {
   runnerLinkError = '';
   runnerLinkMessage = '';
   private runnerLinkRequestId = 0;
-  regulationHtml = ''; regulationLoading = false; regulationError = '';
+  regulationMarkdown = ''; regulationLoading = false; regulationError = '';
   selectedRunner?: Runner;
   runnerYear?: number;
   showRunnerVdot = false;
@@ -316,6 +321,12 @@ export class App implements OnInit {
     this.activeView = 'photos';
   }
 
+  showCredits() {
+    this.closeRunner();
+    this.selectedRace = undefined;
+    this.activeView = 'credits';
+  }
+
   showSponsors() {
     this.closeRunner();
     this.selectedRace = undefined;
@@ -424,52 +435,35 @@ export class App implements OnInit {
   }
   changeLanguage(language: string) {
     this.i18n.setLanguage(language);
-    this.regulationHtml = '';
+    this.regulationMarkdown = '';
     this.regulationError = '';
     this.regulationLoading = false;
     if (this.activeView === 'regulation') this.showRegulation();
   }
+  showRegistration() {
+    this.closeRunner();
+    this.selectedRace = undefined;
+    this.activeView = 'registration';
+  }
+
+  showTips() {
+    this.closeRunner();
+    this.selectedRace = undefined;
+    this.activeView = 'tips';
+  }
+
   showRegulation() {
     this.activeView = 'regulation';
     this.selectedRace = undefined;
     this.error = '';
-    if (this.regulationHtml || this.regulationLoading) return;
+    if (this.regulationMarkdown || this.regulationLoading) return;
     this.regulationLoading = true;
     this.regulationError = '';
     const language = this.i18n.language();
     this.api.regulation(language).subscribe({
-      next: markdown => { if (this.i18n.language() !== language) return; this.regulationHtml = this.renderRegulationMarkdown(markdown); this.regulationLoading = false; this.cdr.markForCheck(); },
+      next: markdown => { if (this.i18n.language() !== language) return; this.regulationMarkdown = markdown; this.regulationLoading = false; this.cdr.markForCheck(); },
       error: () => { if (this.i18n.language() !== language) return; this.regulationError = 'Impossible de charger le règlement.'; this.regulationLoading = false; this.cdr.markForCheck(); }
     });
-  }
-  private renderRegulationMarkdown(markdown: string): string {
-    const categoryLine = /^(ED|DA|A[1-4]|EH|SE|V[1-5])\s/;
-    return markdown.replace(/\r/g, '').trim().split(/\n\s*\n/).map(block => {
-      const lines = block.split('\n').map(line => line.trim()).filter(Boolean);
-      if (!lines.length) return '';
-      const heading = lines.length === 1 ? /^(#{1,3})\s+(.+)$/.exec(lines[0]) : null;
-      if (heading) {
-        const level = heading[1].length;
-        return `<h${level}>${this.regulationInline(heading[2])}</h${level}>`;
-      }
-      if (lines.every(line => categoryLine.test(line))) {
-        return `<ul class="regulation-categories">${lines.map(line => `<li>${this.regulationInline(line.replace(/^[A-Z][A-Z0-9]*\s+\(([^)]+)\)/, '$1'))}</li>`).join('')}</ul>`;
-      }
-      if (lines[0].startsWith('**Conditions d’âge:**') || lines[0].startsWith("**Conditions d'âge:**")) {
-        return `<h2>Conditions d’âge</h2><p>${lines.slice(1).map(line => this.regulationInline(line)).join('<br>')}</p>`;
-      }
-      if (lines.length === 1 && lines[0].startsWith('Formule de l’attribution des points:')) {
-        return `<h2>${this.regulationInline(lines[0])}</h2>`;
-      }
-      if (lines.length === 1 && lines[0].startsWith('Points =')) {
-        return `<div class="regulation-formula"><code>${this.regulationInline(lines[0])}</code></div>`;
-      }
-      return `<p>${lines.map(line => this.regulationInline(line)).join('<br>')}</p>`;
-    }).join('');
-  }
-  private regulationInline(text: string): string {
-    return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   }
   backToCalendar() { this.activeView = 'calendar'; this.selectedRace = undefined; this.error = ''; }
   private loadMe() {

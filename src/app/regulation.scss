@@ -1,0 +1,21 @@
+.page-heading { margin-bottom:35px; }
+.page-heading h1 { font:800 clamp(29px,3.5vw,43px)/1.12 Manrope,sans-serif; letter-spacing:-1.8px; margin:11px 0; color:var(--acrho-heading); }
+@media(max-width:480px) {
+  .page-heading { margin-bottom:24px; }
+  .page-heading h1 { font-size:clamp(27px,8vw,34px); letter-spacing:-1.1px; }
+}
+.eyebrow { font-size:10px; font-weight:700; letter-spacing:1.45px; color:var(--acrho-muted); }
+.page-heading h1 em { color:var(--acrho-accent); font-style:normal; }
+.page-heading p { margin:0; color:var(--acrho-muted); font-size:14px; }
+@media(max-width:480px) { .page-heading p { font-size:13px; line-height:1.45; } }
+.regulation-sheet { max-width:900px; margin:0 auto; padding:clamp(22px,4vw,42px); border:1px solid var(--acrho-border); border-radius:16px; background:#fff; box-shadow:0 10px 32px rgba(25,59,91,.05); }
+:host ::ng-deep .regulation-sheet h1 { margin:0 0 24px; padding-bottom:17px; border-bottom:1px solid var(--acrho-border); color:var(--acrho-heading); font:800 28px/1.2 Manrope,sans-serif; }
+:host ::ng-deep .regulation-sheet h2 { margin:28px 0 12px; color:var(--acrho-heading); font:750 17px/1.3 Manrope,sans-serif; }
+:host ::ng-deep .regulation-sheet p { margin:0 0 17px; color:var(--acrho-text); font-size:14px; line-height:1.75; }
+:host ::ng-deep .regulation-sheet strong { color:var(--acrho-heading); font-weight:750; }
+:host ::ng-deep .regulation-sheet .regulation-categories { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 18px; margin:5px 0 22px; padding:0; list-style:none; }
+:host ::ng-deep .regulation-sheet .regulation-categories li { padding:11px 13px; border:1px solid var(--acrho-border); border-radius:9px; background:var(--acrho-page); color:var(--acrho-text); font-size:12px; line-height:1.5; }
+:host ::ng-deep .regulation-sheet .regulation-categories li::first-letter { color:var(--acrho-accent); font-weight:800; }
+:host ::ng-deep .regulation-sheet .regulation-formula { overflow-x:auto; margin:10px 0 20px; padding:17px; border-radius:10px; background:var(--acrho-sidebar); color:#fff; }
+:host ::ng-deep .regulation-sheet .regulation-formula code { color:inherit; font:600 13px/1.6 'DM Sans',sans-serif; white-space:nowrap; }
+@media(max-width:550px) { :host ::ng-deep .regulation-sheet .regulation-categories { grid-template-columns:1fr; }.regulation-heading { margin-bottom:24px; } }

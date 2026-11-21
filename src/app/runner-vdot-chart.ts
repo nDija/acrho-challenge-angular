@@ -2,6 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { ChartData, ChartOptions, LineController, LineElement, LinearScale, PointElement, Tooltip } from 'chart.js';
 import { BaseChartDirective, provideCharts } from 'ng2-charts';
 import { catchError, from, map, mergeMap, of, scan, startWith, switchMap } from 'rxjs';
@@ -20,11 +21,21 @@ const day = 86_400_000;
 
 @Component({
   selector: 'app-runner-vdot-chart',
-  imports: [BaseChartDirective, DecimalPipe, MatButtonModule, TranslatePipe],
+  imports: [BaseChartDirective, DecimalPipe, MatButtonModule, MatIconModule, TranslatePipe],
   providers: [provideCharts({ registerables: [LineController, LineElement, LinearScale, PointElement, Tooltip] })],
   template: `
     <section aria-labelledby="runner-vdot-title">
-      <h2 id="runner-vdot-title">{{ 'VDOT de la saison' | t }} {{ year() }}</h2>
+      <div class="vdot-heading">
+        <h2 id="runner-vdot-title">{{ 'VDOT de la saison' | t }} {{ year() }}</h2>
+        <button mat-icon-button type="button" aria-controls="runner-vdot-explanation"
+                [attr.aria-label]="'Qu’est-ce que le VDOT ?' | t"
+                [attr.aria-expanded]="showExplanation()" (click)="showExplanation.set(!showExplanation())">
+          <mat-icon aria-hidden="true">info_outline</mat-icon>
+        </button>
+      </div>
+      <p id="runner-vdot-explanation" class="vdot-explanation" [hidden]="!showExplanation()">
+        {{ 'Le VDOT estime ton niveau en course à pied à partir de la distance parcourue et de ton temps de course. Plus le score est élevé, meilleure est la performance estimée. Il permet de comparer des performances sur différentes distances et de suivre ton évolution au fil de la saison.' | t }}
+      </p>
       @if (state(); as current) {
         @if (current.status === 'ready') {
           @if (current.data.statistics.validRaceCount) {
@@ -57,7 +68,9 @@ const day = 86_400_000;
   styles: `
     :host { display: block; }
     section { margin-top: 12px; padding: 16px; border: 1px solid var(--acrho-border); border-radius: 13px; background: white; }
-    h2 { margin: 0 0 10px; color: var(--acrho-heading); font: 800 1rem Manrope, sans-serif; }
+    .vdot-heading { display: flex; align-items: center; gap: .25rem; }
+    .vdot-explanation { padding: .75rem; margin: 0 0 .75rem; border-radius: .5rem; background: var(--acrho-soft); }
+    h2 { margin: 0; color: var(--acrho-heading); font: 800 1rem Manrope, sans-serif; }
     dl { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0 0 12px; }
     dt, p { color: var(--acrho-muted); font-size: .8rem; }
     dd { margin: 0; font-weight: 800; font-variant-numeric: tabular-nums; }
@@ -71,6 +84,7 @@ export class RunnerVdotChart {
   readonly year = input.required<number | undefined>();
   readonly color = input.required<string>();
   readonly results = input.required<readonly RunnerResult[]>();
+  protected readonly showExplanation = signal(false);
   private readonly retry = signal(0);
   protected readonly i18n = inject(LanguageService);
   private readonly api = inject(AcrhoApi);

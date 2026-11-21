@@ -25,8 +25,14 @@
       <button class="nav-item" [class.active]="activeView === 'runners'" (click)="showRunners()" [attr.aria-label]="'Coureurs' | t"><mat-icon>groups</mat-icon><span class="nav-item-label">{{ 'Coureurs' | t }}</span></button>
       @if (me) { <button class="nav-item" [class.active]="activeView === 'favorites'" (click)="showFavorites()" [attr.aria-label]="'Favoris' | t"><mat-icon>favorite</mat-icon><span class="nav-item-label">{{ 'Favoris' | t }}</span></button> }
       <button class="nav-item" [class.active]="activeView === 'regulation'" (click)="showRegulation()" [attr.aria-label]="'Règlement' | t"><mat-icon>gavel</mat-icon><span class="nav-item-label">{{ 'Règlement' | t }}</span></button>
+      <button class="nav-item" type="button" [class.active]="activeView === 'registration'" [attr.aria-current]="activeView === 'registration' ? 'page' : null"
+              (click)="showRegistration()" [attr.aria-label]="'Inscription' | t"><mat-icon>assignment</mat-icon><span class="nav-item-label">{{ 'Inscription' | t }}</span></button>
+      <button class="nav-item" type="button" [class.active]="activeView === 'tips'" [attr.aria-current]="activeView === 'tips' ? 'page' : null"
+              (click)="showTips()" [attr.aria-label]="'Conseils' | t"><mat-icon>lightbulb</mat-icon><span class="nav-item-label">{{ 'Conseils' | t }}</span></button>
       <button class="nav-item" type="button" [class.active]="activeView === 'photos'" [attr.aria-current]="activeView === 'photos' ? 'page' : null" (click)="showPhotos()" [attr.aria-label]="'Médias' | t"><mat-icon>perm_media</mat-icon><span class="nav-item-label">{{ 'Médias' | t }}</span></button>
       <button class="nav-item" type="button" [class.active]="activeView === 'sponsors'" [attr.aria-current]="activeView === 'sponsors' ? 'page' : null" (click)="showSponsors()" [attr.aria-label]="'Sponsors' | t"><mat-icon>volunteer_activism</mat-icon><span class="nav-item-label">{{ 'Sponsors' | t }}</span></button>
+      <button class="nav-item" type="button" [class.active]="activeView === 'credits'" [attr.aria-current]="activeView === 'credits' ? 'page' : null"
+              (click)="showCredits()" [attr.aria-label]="'Crédits' | t"><mat-icon>info</mat-icon><span class="nav-item-label">{{ 'Crédits' | t }}</span></button>
       <a class="nav-item privacy-link" href="confidentialite.html" [attr.aria-label]="'Confidentialité' | t"><mat-icon>privacy_tip</mat-icon><span class="nav-item-label">{{ 'Confidentialité' | t }}</span></a>
     </nav>
     <div class="sidebar-bottom"><span class="pulse"></span> {{ "Saison" | t }} {{selectedYear}} <span class="status">{{ "ACTIVE" | t }}</span></div>
@@ -34,7 +40,7 @@
 
   <main class="main">
     <header class="topbar">
-      <div class="breadcrumb">ACRHO <span>/</span> <b>{{selectedRace ? ("DÉTAIL DE COURSE" | t) : activeView === 'standings' ? ("CLASSEMENT" | t) : activeView === 'runners' ? ("ANNUAIRE" | t) : activeView === 'photos' ? ("Médias" | t | uppercase) : activeView === 'sponsors' ? ("Sponsors" | t | uppercase) : activeView === 'regulation' ? ("RÈGLEMENT" | t) : activeView === 'settings' ? ("PARAMÈTRES" | t) : activeView === 'favorites' ? ("FAVORIS" | t) : ("SAISON" | t)}}</b></div>
+      <div class="breadcrumb">ACRHO <span>/</span> <b>{{selectedRace ? ("DÉTAIL DE COURSE" | t) : activeView === 'standings' ? ("CLASSEMENT" | t) : activeView === 'runners' ? ("ANNUAIRE" | t) : activeView === 'photos' ? ("Médias" | t | uppercase) : activeView === 'credits' ? ("Crédits" | t | uppercase) : activeView === 'sponsors' ? ("Sponsors" | t | uppercase) : activeView === 'registration' ? ("Inscription" | t | uppercase) : activeView === 'tips' ? ("Conseils" | t | uppercase) : activeView === 'regulation' ? ("RÈGLEMENT" | t) : activeView === 'settings' ? ("PARAMÈTRES" | t) : activeView === 'favorites' ? ("FAVORIS" | t) : ("SAISON" | t)}}</b></div>
       <div class="top-actions"><ng-container [ngTemplateOutlet]="headerActions" /></div>
     </header>
     <section class="content">
@@ -42,7 +48,7 @@
         <div class="page-heading"><div><div class="eyebrow">{{ "VOTRE CALENDRIER DE RUNNING" | t }}</div><h1>{{ "La saison," | t }} <em>{{ "en mouvement." | t }}</em></h1><p>{{ "Retrouvez les courses et résultats du challenge ACRHO." | t }}</p></div>
           <mat-form-field appearance="outline" class="season-select"><mat-label>{{ "Saison" | t }}</mat-label><mat-select [(ngModel)]="selectedYear" (selectionChange)="loadRaces()"><mat-option *ngFor="let s of seasons" [value]="s.year">{{s.year}}</mat-option></mat-select></mat-form-field>
         </div>
-        <div class="stats-row"><button class="stat-card upcoming-card" [class.selected]="!showPlannedRaces && !showCancelledRaces" type="button" [attr.aria-pressed]="!showPlannedRaces && !showCancelledRaces" (click)="showPublishedRaces()"><span class="stat-icon orange"><mat-icon>directions_run</mat-icon></span><div><b>{{races.length}}</b><span>{{ "Courses dans le rétro" | t }}</span>@if (participantCount != null) { <span>{{ participantCount | number:'1.0-0':i18n.locale() }} {{ (participantCount === 1 ? "participant" : "participants") | t }}</span> }</div><mat-icon class="card-action-icon">{{showPlannedRaces || showCancelledRaces ? 'expand_more' : 'expand_less'}}</mat-icon></button><button class="stat-card upcoming-card" [class.selected]="showPlannedRaces" type="button" [attr.aria-pressed]="showPlannedRaces" (click)="togglePlannedRaces()"><span class="stat-icon mint"><mat-icon>event_available</mat-icon></span><div><b>{{upcomingCount}}</b><span>{{ "Courses à venir" | t }}</span></div><mat-icon class="card-action-icon">{{showPlannedRaces ? 'expand_less' : 'expand_more'}}</mat-icon></button><button class="stat-card upcoming-card" [class.selected]="showCancelledRaces" type="button" [attr.aria-pressed]="showCancelledRaces" (click)="toggleCancelledRaces()"><span class="stat-icon cancelled"><mat-icon>event_busy</mat-icon></span><div><b>{{cancelledRaces.length}}</b><span>{{ "Courses annulées" | t }}</span></div><mat-icon class="card-action-icon">{{showCancelledRaces ? 'expand_less' : 'expand_more'}}</mat-icon></button><button class="stat-card upcoming-card next-race-card" type="button" [disabled]="!nextUpcomingRace" [attr.aria-label]="nextUpcomingRace ? (&quot;Afficher les détails de &quot; | t) + nextUpcomingRace.name : (&quot;Aucune prochaine course planifiée&quot; | t)" (click)="showNextRaceDetails()"><span class="stat-icon mint"><mat-icon>flag</mat-icon></span><div class="next-race-copy">@if (nextUpcomingRace; as nextRace) { <b>{{nextRace.name}}</b><span>{{nextRace.raceDate | date:'EEE d MMM':undefined:i18n.locale()}}@for (route of nextUpcomingRaceRoutes; track route.id) { @if (route.startTime) { - {{route.startTime.slice(0, 5)}} } }</span><small>{{nextRace.city || ("Lieu à confirmer" | t)}}</small><small>@for (route of nextUpcomingRaceRoutes; track route.id) { @if (route.distanceM) { {{route.distanceM / 1000 | number:'1.0-1':i18n.locale()}} km@if (!$last) { / } } }</small>  } @else { <b>{{ "À définir" | t }}</b><span>{{ "Aucune prochaine course" | t }}</span> }</div></button><article class="stat-card"><span class="stat-icon blue"><mat-icon>emoji_events</mat-icon></span><div><b>{{selectedYear}}</b><span>{{ "saison sélectionnée" | t }}</span></div></article><article class="stat-card"><span class="stat-icon blue"><mat-icon>route</mat-icon></span><div><b>{{distanceLoading ? '…' : (publishedDistanceKm | number:'1.0-1':i18n.locale())}}</b><span>{{ "km avalés" | t }}</span></div></article></div>
+        <div class="stats-row"><button class="stat-card upcoming-card" [class.selected]="!showPlannedRaces && !showCancelledRaces" type="button" [attr.aria-pressed]="!showPlannedRaces && !showCancelledRaces" (click)="showPublishedRaces()"><span class="stat-icon orange"><mat-icon>directions_run</mat-icon></span><div><b>{{races.length}}</b><span>{{ "Courses dans le rétro" | t }}</span>@if (participantCount != null) { <span>{{ participantCount | number:'1.0-0':i18n.locale() }} {{ (participantCount === 1 ? "participant" : "participants") | t }}</span> }</div><mat-icon class="card-action-icon">{{showPlannedRaces || showCancelledRaces ? 'expand_more' : 'expand_less'}}</mat-icon></button><button class="stat-card upcoming-card" [class.selected]="showPlannedRaces" type="button" [attr.aria-pressed]="showPlannedRaces" (click)="togglePlannedRaces()"><span class="stat-icon mint"><mat-icon>event_available</mat-icon></span><div><b>{{upcomingCount}}</b><span>{{ "Courses à venir" | t }}</span></div><mat-icon class="card-action-icon">{{showPlannedRaces ? 'expand_less' : 'expand_more'}}</mat-icon></button><button class="stat-card upcoming-card" [class.selected]="showCancelledRaces" type="button" [attr.aria-pressed]="showCancelledRaces" (click)="toggleCancelledRaces()"><span class="stat-icon cancelled"><mat-icon>event_busy</mat-icon></span><div><b>{{cancelledRaces.length}}</b><span>{{ "Courses annulées" | t }}</span></div><mat-icon class="card-action-icon">{{showCancelledRaces ? 'expand_less' : 'expand_more'}}</mat-icon></button><button class="stat-card upcoming-card next-race-card" type="button" [disabled]="!nextUpcomingRace" [attr.aria-label]="nextUpcomingRace ? (&quot;Afficher les détails de &quot; | t) + nextUpcomingRace.name : (&quot;Aucune prochaine course planifiée&quot; | t)" [attr.aria-describedby]="nextUpcomingRace ? 'next-race-weather' : null" (click)="showNextRaceDetails()"><span class="stat-icon mint"><mat-icon>flag</mat-icon></span><div class="next-race-copy">@if (nextUpcomingRace; as nextRace) { <b>{{nextRace.name}}</b><span>{{nextRace.raceDate | date:'EEE d MMM':undefined:i18n.locale()}}@for (route of nextUpcomingRaceRoutes; track route.id) { @if (route.startTime) { - {{route.startTime.slice(0, 5)}} } }</span><small>{{nextRace.city || ("Lieu à confirmer" | t)}}</small><small>@for (route of nextUpcomingRaceRoutes; track route.id) { @if (route.distanceM) { {{route.distanceM / 1000 | number:'1.0-1':i18n.locale()}} km@if (!$last) { / } } }</small> } @else { <b>{{ "À définir" | t }}</b><span>{{ "Aucune prochaine course" | t }}</span> }</div> @if (nextUpcomingRace; as nextRace) { <app-race-weather id="next-race-weather" [race]="nextRace" [compact]="true" /> }</button><article class="stat-card"><span class="stat-icon blue"><mat-icon>emoji_events</mat-icon></span><div><b>{{selectedYear}}</b><span>{{ "saison sélectionnée" | t }}</span></div></article><article class="stat-card"><span class="stat-icon blue"><mat-icon>route</mat-icon></span><div><b>{{distanceLoading ? '…' : (publishedDistanceKm | number:'1.0-1':i18n.locale())}}</b><span>{{ "km avalés" | t }}</span></div></article></div>
         <div class="section-head"><div><div class="eyebrow">{{ "À VOS MARQUES" | t }}</div><h2>{{showPlannedRaces ? ("Courses à venir" | t) : showCancelledRaces ? ("Courses annulées" | t) : ("Les courses" | t)}} <span>({{displayedRaces.length}})</span></h2></div><span class="calendar-tag"><mat-icon>calendar_today</mat-icon> {{ "CALENDRIER" | t }} {{selectedYear}}</span></div>
         @if (loading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> }
         @if (error) { <div class="error-banner"><mat-icon>error_outline</mat-icon>{{error | t}}</div> }
@@ -183,19 +189,39 @@
         }
       }
       @if (activeView === 'standings') {
-        <app-standings (runnerSelected)="openRunner($event.runner, $event.year)" />
+        @defer (on immediate) {
+          <app-standings (runnerSelected)="openRunner($event.runner, $event.year)" />
+        }
       }
       @if (activeView === 'photos') {
-        <app-photos />
+        @defer (on immediate) {
+          <app-photos />
+        }
+      }
+      @if (activeView === 'credits') {
+        @defer (on immediate) {
+          <app-project-credits />
+        }
       }
       @if (activeView === 'sponsors') {
-        <app-sponsors />
+        @defer (on immediate) {
+          <app-sponsors />
+        }
+      }
+      @if (activeView === 'registration') {
+        @defer (on immediate) {
+          <app-race-registration />
+        }
+      }
+      @if (activeView === 'tips') {
+        @defer (on immediate) {
+          <app-race-tips />
+        }
       }
       @if (activeView === 'regulation') {
-        <div class="page-heading regulation-heading"><div><div class="eyebrow">{{ "ACRHO · INFORMATIONS" | t }}</div><h1>{{ "Le" | t }} <em>{{ "règlement." | t }}</em></h1><p>{{ "Les règles des épreuves et du challenge." | t }}</p></div></div>
-        @if (regulationLoading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> }
-        @if (regulationError) { <div class="error-banner"><mat-icon>error_outline</mat-icon>{{regulationError | t}}</div> }
-        @if (regulationHtml) { <article class="regulation-sheet" [innerHTML]="regulationHtml"></article> }
+        @defer (on immediate) {
+          <app-regulation [markdown]="regulationMarkdown" [loading]="regulationLoading" [error]="regulationError" />
+        }
       }
       @if (activeView === 'favorites') {
         <div class="page-heading"><div><h1>{{ "Mes favoris" | t }}</h1><p>{{ "Retrouve les coureurs que tu suis." | t }}</p></div></div>
@@ -247,71 +273,8 @@
         } @else { <div class="empty">{{ "Connecte-toi pour retrouver tes favoris." | t }}</div> }
       }
       @if (activeView === 'settings') {
-        <div class="page-heading"><div><h1>{{ "Paramètres" | t }}</h1></div></div>
-        @if (me; as user) {
-          <section class="account-panel" [class.runner-profile-banner]="!!linkedRunner" [attr.data-banner-color]="linkedRunner?.bannerColor || 'blue'" aria-labelledby="account-runner-heading">
-            <h2 id="account-runner-heading">{{ "Mon coureur" | t }}</h2>
-            @if (user.runnerId) {
-              <p><strong>{{linkedRunner ? linkedRunner.firstName + ' ' + linkedRunner.lastName : ("Coureur lié au compte" | t)}}</strong>@if (linkedRunner?.club | clubName; as club) { · {{club}} }</p>
-              <div class="account-actions">@if (linkedRunner; as runner) { <button mat-stroked-button class="account-runner-results" type="button" (click)="openRunner(runner)">{{ "Voir mes résultats" | t }}</button> }<button mat-icon-button class="delete-account-button" type="button" [title]="&quot;Retirer la liaison&quot; | t" [attr.aria-label]="&quot;Retirer la liaison avec le coureur&quot; | t" [disabled]="runnerLinkSaving || deletingAccount" (click)="saveRunnerLink()"><mat-icon>delete</mat-icon></button></div>
-          @if (linkedRunner; as runner) {
-            <div class="banner-palette" role="group" [attr.aria-label]="&quot;Couleur de ma bannière&quot; | t">@for (option of bannerColors; track option.value) { <button class="banner-swatch" [attr.data-color]="option.value" type="button" [style.background-color]="option.color" [attr.aria-label]="option.label | t" [title]="option.label | t" [attr.aria-pressed]="(runner.bannerColor || 'blue') === option.value" [disabled]="bannerSaving || runnerLinkLoading || runnerLinkSaving || deletingAccount" (click)="changeBanner(option.value)">@if ((runner.bannerColor || 'blue') === option.value) { <mat-icon>check</mat-icon> }</button> }</div>
-            @if (bannerError) { <div class="error-banner" role="alert">{{bannerError | t}}</div> }
-          }
-            } @else { <p>{{ "Choisis ta fiche coureur pour la lier à ton compte." | t }}</p> }
-            @if (!user.runnerId) {
-            <form class="account-actions" (ngSubmit)="loadAccountRunners()">
-              <mat-form-field appearance="outline" class="runner-search"><input matInput name="accountRunnerQuery" [(ngModel)]="accountRunnerQuery" [placeholder]="&quot;Nom ou prénom&quot; | t" [attr.aria-label]="&quot;Rechercher un coureur&quot; | t" [disabled]="runnerLinkSaving || deletingAccount"><button mat-icon-button matSuffix type="submit" [attr.aria-label]="&quot;Rechercher un coureur&quot; | t" [title]="&quot;Rechercher&quot; | t" [disabled]="runnerLinkLoading || runnerLinkSaving || deletingAccount || (accountRunnerQuery.trim().length > 0 && accountRunnerQuery.trim().length < 2)"><mat-icon>search</mat-icon></button></mat-form-field>
-            </form>
-            @if (!accountRunnerQuery.trim()) { <p>{{ "Suggestions les plus proches de ton nom Google, par ordre de ressemblance." | t }}</p> }
-            }
-            @if (runnerLinkLoading) { <div class="loading"><mat-spinner diameter="28"></mat-spinner></div> }
-            @if (runnerLinkError) { <div class="error-banner" role="alert">{{runnerLinkError | t}}</div> }
-            @if (runnerLinkMessage) { <p role="status">{{runnerLinkMessage | t}}</p> }
-            @if (!user.runnerId && !runnerLinkLoading && !runnerLinkError) {
-              @for (runner of suggestedRunners; track runner.id) {
-                <div class="account-runner-option"><div><strong>{{runner.firstName}} {{runner.lastName}}</strong><p>{{(runner.club | clubName) || ("Indépendant" | t)}}@if (runner.category) { · {{categoryLabel(runner.category)}} ({{runner.categoryYear}}) }</p></div><button mat-stroked-button type="button" [disabled]="runnerLinkSaving || deletingAccount || user.runnerId === runner.id" (click)="saveRunnerLink(runner)">{{user.runnerId === runner.id ? ("Lié" | t) : ("Lier mon compte" | t)}}</button></div>
-              } @empty { <p>Aucun coureur trouvé. Essaie une recherche avec ton nom ou ton prénom.</p> }
-            }
-          </section>
-        }
-        <section class="account-panel" aria-labelledby="settings-language-heading">
-          <h2 id="settings-language-heading"><label for="settings-language">{{ 'Langue' | t }}</label></h2>
-          <div class="language-picker">
-            <select id="settings-language" [ngModel]="i18n.language()" (ngModelChange)="changeLanguage($event)">
-              @for (language of i18n.languages; track language.value) {
-                <option [value]="language.value" [attr.lang]="language.value">{{ language.label }}</option>
-              }
-            </select>
-          </div>
-        </section>
-        <section class="account-panel" aria-labelledby="settings-connection-heading">
-          <h2 id="settings-connection-heading">{{ 'Connexion' | t }}</h2>
-          <div class="api-status" [class.online]="apiOnline" role="status">
-            <i aria-hidden="true"></i>
-            {{ (apiOnline ? 'API connectée' : 'API indisponible') | t }}
-          </div>
-        </section>
-        @if (me; as user) {
-          <section class="account-panel" aria-labelledby="account-profile-heading">
-            <h2 id="account-profile-heading">{{ "Profil" | t }}</h2>
-            <dl class="account-details"><div><dt>{{ "Nom" | t }}</dt><dd>{{user.displayName || ("Non renseigné" | t)}}</dd></div><div><dt>{{ "Adresse e-mail" | t }}</dt><dd>{{user.email}}</dd></div>@if (user.role !== 'USER') { <div><dt>{{ "Rôle" | t }}</dt><dd>{{user.role === 'ADMIN' ? ("Administrateur" | t) : (user.role | t)}}</dd></div> }<div><dt>{{ "Connexion" | t }}</dt><dd>Google</dd></div><div><dt>{{ "Date de création" | t }}</dt><dd>{{user.createdAt ? (user.createdAt | date:'dd MMMM yyyy':undefined:i18n.locale()) : '—'}}</dd></div></dl>
-            <p>{{ "Le nom et la photo de profil sont récupérés à chaque connexion Google." | t }}</p>
-            <a href="https://myaccount.google.com/personal-info" target="_blank" rel="noopener noreferrer">{{ "Gérer mon profil Google ↗" | t }}</a>
-          </section>
-          <section class="account-panel" aria-labelledby="account-delete-heading">
-            <h2 id="account-delete-heading">{{ "Supprimer mon compte" | t }}</h2>
-            <p>{{ "La suppression efface ton compte ACRHO et ses informations de connexion, puis te déconnecte. Les résultats sportifs restent dans l’historique des courses. Pour une demande concernant ces résultats, consulte la" | t }} <a href="confidentialite.html">{{ "politique de confidentialité" | t }}</a>.</p>
-            @if (accountError) { <div class="error-banner" role="alert">{{accountError | t}}</div> }
-            @if (confirmAccountDeletion) {
-              <p id="delete-account-confirmation">{{ "Confirmer la suppression définitive de ton compte ACRHO ?" | t }}</p>
-              <div class="account-actions"><button mat-flat-button class="delete-account-button" type="button" aria-describedby="delete-account-confirmation" [disabled]="deletingAccount || runnerLinkSaving" (click)="deleteAccount()">{{deletingAccount ? ("Suppression en cours…" | t) : ("Confirmer la suppression" | t)}}</button><button mat-button type="button" [disabled]="deletingAccount || runnerLinkSaving" (click)="confirmAccountDeletion = false">{{ "Annuler" | t }}</button></div>
-            } @else {
-              <button mat-stroked-button class="delete-account-button" type="button" (click)="confirmAccountDeletion = true">{{ "Supprimer mon compte" | t }}</button>
-            }
-          </section>
-        } @else {
-          <div class="empty">{{ "Connecte-toi pour accéder aux paramètres de ton compte." | t }}<br><button class="auth-btn auth-btn-primary auth-icon-btn" type="button" (click)="login()" [title]="&quot;Se connecter avec Google&quot; | t" [attr.aria-label]="&quot;Se connecter avec Google&quot; | t"><mat-icon>login</mat-icon></button></div>
+        @defer (on immediate) {
+          <app-account-settings [context]="this" />
         }
       }
     </section>

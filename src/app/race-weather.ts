@@ -128,30 +128,43 @@ export class RaceWeatherService {
   imports: [AsyncPipe, DecimalPipe, TranslatePipe],
   template: `
     @if (forecast | async; as departures) {
-      @for (weather of departures; track weather.departure) {
-        <small>
-          {{ 'Météo au départ' | t }} {{ weather.departure }} ·
-          @if (weather.condition; as condition) {
-            <span aria-hidden="true">{{ condition.icon }}</span>
-            @if (weather.cloudCover != null) {
-              {{ 'Couverture nuageuse' | t }} {{ weather.cloudCover | number:'1.0-0':i18n.locale() }} % ·
-            } @else {
-              {{ condition.label | t }} ·
+      @if (compact) {
+        @if (departures[0]; as weather) {
+          <span class="forecast-summary">
+            {{ weather.temperature | number:'1.0-0':i18n.locale() }} °C
+            @if (weather.condition; as condition) {
+              <span class="forecast-icon" role="img" [attr.aria-label]="condition.label | t"
+                    [title]="condition.label | t">{{ condition.icon }}</span>
             }
-          }
-          {{ weather.temperature | number:'1.0-0':i18n.locale() }} °C
-          @if (weather.rain != null) {
-            · {{ 'Risque de précipitations' | t }} {{ weather.rain }} %
-          }
-          · Open-Meteo
-        </small>
+          </span>
+        }
+      } @else {
+        @for (weather of departures; track weather.departure) {
+          <small>
+            {{ 'Météo au départ' | t }} {{ weather.departure }} ·
+            @if (weather.condition; as condition) {
+              <span aria-hidden="true">{{ condition.icon }}</span>
+              @if (weather.cloudCover != null) {
+                {{ 'Couverture nuageuse' | t }} {{ weather.cloudCover | number:'1.0-0':i18n.locale() }} % ·
+              } @else {
+                {{ condition.label | t }} ·
+              }
+            }
+            {{ weather.temperature | number:'1.0-0':i18n.locale() }} °C
+            @if (weather.rain != null) {
+              · {{ 'Risque de précipitations' | t }} {{ weather.rain }} %
+            }
+            · Open-Meteo
+          </small>
+        }
       }
     }
   `,
-  styles: [`:host { display: contents; } small { display: block; margin-top: .25rem; font-size: .8em; }`],
+  styles: [`:host { display: contents; } small { display: block; margin-top: .25rem; font-size: .8em; } .forecast-summary { display: inline-flex; align-items: center; flex: none; gap: .3rem; white-space: nowrap; } .forecast-icon { font-size: 1.15rem; line-height: 1; } @media (max-width: 640px) { .forecast-summary { grid-column: 1 / -1; justify-self: end; } }`],
 })
 export class RaceWeather implements OnChanges {
   @Input({ required: true }) race!: Race;
+  @Input() compact = false;
   readonly i18n = inject(LanguageService);
   private readonly weather = inject(RaceWeatherService);
   forecast?: Observable<RaceForecast[]>;

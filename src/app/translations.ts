@@ -2,6 +2,8 @@ export type Language = 'fr' | 'en' | 'nl' | 'de';
 
 // Columns are French, English, Dutch and German.
 export const translations: readonly (readonly [string, string, string, string])[] = [
+  ['Inscription', 'Registration', 'Inschrijving', 'Anmeldung'],
+  ['Conseils', 'Tips', 'Tips', 'Tipps'],
   ['Médias', 'Media', 'Media', 'Medien'],
   ['Menu de navigation', 'Navigation menu', 'Navigatiemenu', 'Navigationsmenü'],
   ['Photos', 'Photos', 'Foto’s', 'Fotos'],
@@ -25,6 +27,9 @@ export const translations: readonly (readonly [string, string, string, string])[
   ["Brasserie de Péruwelz qui produit notamment la Paix Dieu, la Bonsecours et la Stuut.","Brewery in Péruwelz that produces Paix Dieu, Bonsecours and Stuut, among others.","Brouwerij in Péruwelz die onder meer Paix Dieu, Bonsecours en Stuut brouwt.","Brauerei in Péruwelz, die unter anderem Paix Dieu, Bonsecours und Stuut braut."],
   ["Assurances, gestion des risques et investissement durable.","Insurance, risk management and sustainable investment.","Verzekeringen, risicobeheer en duurzaam beleggen.","Versicherungen, Risikomanagement und nachhaltige Anlagen."],
   ['Remerciements personnels', 'Personal thanks', 'Persoonlijke dankbetuiging', 'Persönlicher Dank'],
+  ['Hébergement et déploiement', 'Hosting and deployment', 'Hosting en implementatie', 'Hosting und Bereitstellung'],
+  ['Assistants IA', 'AI assistants', 'AI-assistenten', 'KI-Assistenten'],
+  ['Crédits', 'Credits', 'Credits', 'Danksagung'],
   ['Technologies du projet', 'Project technologies', 'Projecttechnologieën', 'Projekttechnologien'],
   ['Services et crédits', 'Services and credits', 'Diensten en bronvermelding', 'Dienste und Quellen'],
   ['Application web', 'Web app', 'Webapp', 'Web-App'],
@@ -43,6 +48,8 @@ export const translations: readonly (readonly [string, string, string, string])[
   ['Température moyenne', 'Average temperature', 'Gemiddelde temperatuur', 'Durchschnittstemperatur'],
   ['Précipitations', 'Precipitation', 'Neerslag', 'Niederschlag'],
   ['Vent maximal', 'Maximum wind speed', 'Maximale windsnelheid', 'Maximale Windgeschwindigkeit'],
+  ['Qu’est-ce que le VDOT ?', 'What is VDOT?', 'Wat is VDOT?', 'Was ist VDOT?'],
+  ['Le VDOT estime ton niveau en course à pied à partir de la distance parcourue et de ton temps de course. Plus le score est élevé, meilleure est la performance estimée. Il permet de comparer des performances sur différentes distances et de suivre ton évolution au fil de la saison.', 'VDOT estimates your running ability from your race distance and finish time. A higher score indicates a stronger estimated performance. You can use it to compare results across distances and track your progress over the season.', 'VDOT schat je loopniveau op basis van de wedstrijdafstand en je eindtijd. Een hogere score wijst op een betere geschatte prestatie. Zo kun je prestaties over verschillende afstanden vergelijken en je vooruitgang tijdens het seizoen volgen.', 'VDOT schätzt dein Leistungsniveau beim Laufen anhand der Wettkampfdistanz und deiner Zielzeit. Ein höherer Wert steht für eine bessere geschätzte Leistung. So kannst du Leistungen über verschiedene Distanzen vergleichen und deine Entwicklung im Saisonverlauf verfolgen.'],
   ['VDOT de la saison', 'Season VDOT', 'Seizoens-VDOT', 'Saison-VDOT'],
   ['Meilleur VDOT', 'Best VDOT', 'Beste VDOT', 'Bester VDOT'],
   ['Moyenne VDOT', 'Average VDOT', 'Gemiddelde VDOT', 'Durchschnittlicher VDOT'],

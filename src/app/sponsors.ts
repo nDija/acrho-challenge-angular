@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from './translate.pipe';
 
 @Component({
   selector: 'app-sponsors',
-  imports: [MatIconModule, TranslatePipe],
+  imports: [TranslatePipe],
   template: `
     <header>
       <h1>{{ 'Sponsors' | t }}</h1>
@@ -40,39 +39,6 @@ import { TranslatePipe } from './translate.pipe';
           </div>
           <h3 translate="no"><a href="https://cocoach.be/">Cocoach</a></h3>
         </li>
-      </ul>
-    </section>
-
-    <section aria-labelledby="sponsor-technologies">
-      <h2 id="sponsor-technologies">{{ 'Technologies du projet' | t }}</h2>
-      <ul class="technology-list">
-        @for (stack of technologies; track stack.name) {
-          <li>
-            <span class="avatar"><mat-icon aria-hidden="true">{{ stack.icon }}</mat-icon></span>
-            <div>
-              <h3>{{ stack.name | t }}</h3>
-              <p>{{ stack.tools }}</p>
-            </div>
-          </li>
-        }
-      </ul>
-    </section>
-
-    <section aria-labelledby="sponsor-credits">
-      <h2 id="sponsor-credits">{{ 'Services et crédits' | t }}</h2>
-      <ul class="credit-list">
-        @for (credit of credits; track credit.name) {
-          <li>
-            <a [href]="credit.url">
-              <span class="avatar"><img [src]="'assets/sponsors/' + credit.image" alt="" width="28" height="28"></span>
-              <div>
-                <h3 translate="no">{{ credit.name }}</h3>
-                <p>{{ credit.description | t }}</p>
-              </div>
-              <mat-icon class="external-icon" aria-hidden="true">arrow_outward</mat-icon>
-            </a>
-          </li>
-        }
       </ul>
     </section>
   `,
@@ -111,37 +77,7 @@ import { TranslatePipe } from './translate.pipe';
     .official-list a { color: inherit; text-decoration: none; }
     .official-list a::after { content: ''; position: absolute; inset: 0; border-radius: .75rem; }
     .official-list li:focus-within { outline: 2px solid var(--acrho-accent-dark); outline-offset: 2px; }
-
-    .technology-list li, .credit-list a {
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
-      align-items: start;
-      gap: .75rem;
-      box-sizing: border-box;
-      height: 100%;
-      padding: 1rem;
-      border: 1px solid var(--acrho-border);
-      border-radius: .75rem;
-      background: #fff;
-    }
-    .credit-list a {
-      grid-template-columns: auto minmax(0, 1fr) auto;
-      color: inherit;
-      text-decoration: none;
-    }
-    .official-list li:has(a:hover), .credit-list a:hover { border-color: var(--acrho-accent); }
-    .credit-list a:focus-visible { outline: 2px solid var(--acrho-accent-dark); outline-offset: 2px; }
-    .avatar {
-      display: grid;
-      place-items: center;
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: .65rem;
-      background: var(--acrho-soft);
-      color: var(--acrho-accent-dark);
-    }
-    .avatar img { object-fit: contain; }
-    .external-icon { width: 1rem; height: 1rem; font-size: 1rem; color: var(--acrho-accent-dark); }
+    .official-list li:has(a:hover) { border-color: var(--acrho-accent); }
   `,
 })
 export class Sponsors {
@@ -224,39 +160,6 @@ export class Sponsors {
       image: "ethias.jpg",
       url: "https://www.ethias.be/part/fr.html",
       description: "Assurances, gestion des risques et investissement durable.",
-    },
-  ];
-
-  protected readonly technologies = [
-    { name: 'Application web', icon: 'web', tools: 'Angular · Angular Material · TypeScript · RxJS · Chart.js' },
-    { name: 'Application mobile Android et iOS (projet)', icon: 'smartphone', tools: 'Kotlin Multiplatform · Compose Multiplatform · Ktor' },
-    { name: 'API commune', icon: 'dns', tools: 'Java · Spring Boot · PostgreSQL · Flyway · Docker' },
-  ];
-
-  protected readonly credits = [
-    {
-      name: 'Open-Meteo',
-      url: 'https://open-meteo.com/',
-      image: 'open-meteo.ico',
-      description: 'Prévisions au départ des courses et données météo historiques.',
-    },
-    {
-      name: 'OpenRunner',
-      url: 'https://www.openrunner.com/',
-      image: 'openrunner.ico',
-      description: 'Tracés des parcours depuis les fiches des courses.',
-    },
-    {
-      name: 'Wikimedia Commons',
-      url: 'https://commons.wikimedia.org/',
-      image: 'wikimedia-commons.png',
-      description: 'Photos des lieux de course. L’auteur et la licence figurent sur chaque photo.',
-    },
-    {
-      name: 'Pngtree',
-      url: 'https://pngtree.com/',
-      image: 'pngtree.ico',
-      description: 'Ressources graphiques.',
     },
   ];
 }
