@@ -148,6 +148,13 @@ import { RankedRunnerAvatar } from './ranked-runner-avatar';
     .standing-card:hover { border-color: var(--acrho-accent); }
     .runner-link:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
     .provisional { color: #964000; background: #fff5e9; }
+    @container (width < 680px) {
+      .standing-cards { grid-template-columns: 42px 58px minmax(0, 1fr); column-gap: 6px; }
+      .standing-card { grid-template-rows: 72px 1rem 2.5rem; }
+      .card-heading { grid-template-rows: 50px 22px; }
+      .runner-link { grid-column: 2 / 4; grid-row: 1; grid-template-columns: subgrid; }
+      .card-heading .category-pill { grid-column: 3; grid-row: 2; justify-self: start; width: auto; max-width: 100%; }
+    }
     @container (min-width: 680px) {
       .standing-cards {
         grid-template-columns: 42px minmax(0, 1fr) 6rem 5.5rem repeat(4, clamp(3rem, 6cqi, 5rem));
