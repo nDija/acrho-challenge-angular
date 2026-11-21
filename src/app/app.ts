@@ -127,6 +127,10 @@ export class App implements OnInit {
     this.api.seasons().subscribe({ next: xs => { this.seasons = xs; if (xs.length && !xs.some(s => s.year === this.selectedYear)) this.selectedYear = xs[0].year; this.loadRaces(); this.cdr.markForCheck(); }, error: e => this.fail(e) });
     this.api.categories().subscribe({ next: xs => { this.categories = xs; this.cdr.markForCheck(); }, error: () => {} });
   }
+  closeMobileMenu(): void {
+    this.mobileMenuOpen = false;
+  }
+
   loadRaces() {
     const year = this.selectedYear;
     const requestId = ++this.seasonRequestId;

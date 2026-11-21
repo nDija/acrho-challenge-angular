@@ -18,8 +18,8 @@
     <div class="nav-label">{{ "ESPACE PERSONNEL" | t }}</div>
     <nav id="sidebar-menu" class="sidebar-menu" [class.mobile-open]="mobileMenuOpen"
          [attr.aria-label]="'Menu de navigation' | t"
-         (click)="mobileMenuOpen = false"
-         (keydown.escape)="mobileMenuOpen = false; mobileMenuButton.focus()">
+         (click)="closeMobileMenu()"
+         (keydown.escape)="closeMobileMenu(); mobileMenuButton.focus()">
       <button class="nav-item" [class.active]="activeView === 'calendar'" (click)="activeView='calendar'; backToCalendar()" [attr.aria-label]="'Courses' | t"><mat-icon>calendar_month</mat-icon><span class="nav-item-label">{{ 'Courses' | t }}</span></button>
       <button class="nav-item" type="button" [class.active]="activeView === 'standings'" [attr.aria-current]="activeView === 'standings' ? 'page' : null" (click)="showStandings()" [attr.aria-label]="'CLASSEMENT' | t | titlecase"><mat-icon>leaderboard</mat-icon><span class="nav-item-label">{{ 'CLASSEMENT' | t | titlecase }}</span></button>
       <button class="nav-item" [class.active]="activeView === 'runners'" (click)="showRunners()" [attr.aria-label]="'Coureurs' | t"><mat-icon>groups</mat-icon><span class="nav-item-label">{{ 'Coureurs' | t }}</span></button>
