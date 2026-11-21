@@ -52,6 +52,7 @@ export class ImportAdministration {
       }
     }
     return [...races.values()].sort((a, b) =>
+      (b.runDate ?? '').localeCompare(a.runDate ?? '') ||
       this.raceLabel(a).localeCompare(this.raceLabel(b), this.i18n.locale()));
   });
 
