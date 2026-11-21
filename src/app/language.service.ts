@@ -25,6 +25,7 @@ export class LanguageService {
   readonly languages: readonly { value: Language; label: string }[] = [
     { value: 'fr', label: 'Français' }, { value: 'en', label: 'English' },
     { value: 'nl', label: 'Nederlands' }, { value: 'de', label: 'Deutsch' },
+    { value: 'es', label: 'Español' },
     { value: 'art-x-hvy', label: 'Haut valyrien' },
     { value: 'en-x-tengwar', label: 'Elfique' },
     { value: 'tlh', label: 'tlhIngan Hol' },
@@ -86,7 +87,7 @@ export class LanguageService {
     if (!value) return '';
     if (value.startsWith('Erreur API (')) return value.replace('Erreur API', this.t('Erreur API'));
     if (this.language() === 'art-x-hvy') return highValyrian.get(value) ?? value;
-    const index = { fr: 0, en: 1, nl: 2, de: 3 }[this.locale()];
+    const index = { fr: 0, en: 1, nl: 2, de: 3, es: 4 }[this.locale()];
     const translated = this.dictionaries.get(value)?.[index] ?? value;
     if (this.language() === 'tlh') return klingon.get(value) ?? translated;
     return this.language() === 'en-x-tengwar' ? tengwar.get(value) ?? translated : translated;
