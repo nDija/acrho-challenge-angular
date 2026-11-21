@@ -101,6 +101,9 @@ export class AcrhoApi {
   logout() { return this.http.post(this.apiUrl('/logout'), null); }
   regulation(language = 'fr') { return this.http.get(`assets/reglement${language === 'fr' ? '' : '.' + language}.md`, { responseType: 'text' }); }
   races(year: number) { return this.http.get<Race[]>(this.apiUrl(`/api/v1/seasons/year/${year}/races`)); }
+  participantCount(year: number) {
+    return this.http.get<number>(this.apiUrl(`/api/v1/seasons/year/${year}/participants/count`));
+  }
   racePhoto(id: number) { return this.http.get<RacePhoto | null>(this.apiUrl(`/api/v1/races/${id}/photo`)); }
   race(id: number) { return this.http.get<RaceDetail>(this.apiUrl(`/api/v1/races/${id}`)); }
   categories() { return this.http.get<Category[]>(this.apiUrl('/api/v1/categories')); }

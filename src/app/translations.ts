@@ -59,6 +59,8 @@ export const translations: readonly (readonly [string, string, string, string])[
   ['La saison,', 'The season,', 'Het seizoen,', 'Die Saison,'],
   ['en mouvement.', 'in motion.', 'in beweging.', 'in Bewegung.'],
   ['Retrouvez les courses et résultats du challenge ACRHO.', 'Explore ACRHO Challenge races and results.', 'Ontdek de wedstrijden en resultaten van de ACRHO Challenge.', 'Entdecke die Läufe und Ergebnisse der ACRHO Challenge.'],
+  ['participant', 'participant', 'deelnemer', 'Teilnehmender'],
+  ['participants', 'participants', 'deelnemers', 'Teilnehmende'],
   ['Courses dans le rétro', 'Completed races', 'Afgelopen wedstrijden', 'Vergangene Läufe'],
   ['Météo au départ', 'Weather at start', 'Weer bij de start', 'Wetter zum Start'],
   ['Risque de précipitations', 'Chance of precipitation', 'Kans op neerslag', 'Niederschlagswahrscheinlichkeit'],

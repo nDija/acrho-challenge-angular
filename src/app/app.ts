@@ -101,15 +101,55 @@ export class App implements OnInit {
   resultTotal = 0; resultPage = 0; resultSize = 20; selectedRouteId?: number; runnerTotal = 0; runnerPage = 0;
   private runnerSearchTimer?: ReturnType<typeof setTimeout>;
   private runnerRequestId = 0;
-  private distanceRequestId = 0;
+  private seasonRequestId = 0;
   publishedDistanceKm = 0;
+  participantCount?: number;
   distanceLoading = false;
   ngOnInit() {
     this.loadMe();
     this.api.seasons().subscribe({ next: xs => { this.seasons = xs; if (xs.length && !xs.some(s => s.year === this.selectedYear)) this.selectedYear = xs[0].year; this.loadRaces(); this.cdr.markForCheck(); }, error: e => this.fail(e) });
     this.api.categories().subscribe({ next: xs => { this.categories = xs; this.cdr.markForCheck(); }, error: () => {} });
   }
-  loadRaces() { const requestId = ++this.distanceRequestId; this.showPlannedRaces = false; this.showCancelledRaces = false; this.expandedRaceId = undefined; this.expandedRaceDetails = undefined; this.nextUpcomingRaceRoutes = []; this.publishedDistanceKm = 0; this.distanceLoading = true; this.loading = true; this.error = ''; this.selectedRace = undefined; this.api.races(this.selectedYear).subscribe({ next: xs => { this.seasonRaces = xs; this.races = xs.filter(r => r.status?.toUpperCase() === 'PUBLISHED').sort((a,b) => b.raceDate.localeCompare(a.raceDate)); this.loadNextUpcomingRaceRoutes(); this.loadPublishedDistance(this.races, requestId); this.loading = false; this.cdr.markForCheck(); }, error: e => { this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
+  loadRaces() {
+    const year = this.selectedYear;
+    const requestId = ++this.seasonRequestId;
+    this.showPlannedRaces = false;
+    this.showCancelledRaces = false;
+    this.expandedRaceId = undefined;
+    this.expandedRaceDetails = undefined;
+    this.nextUpcomingRaceRoutes = [];
+    this.publishedDistanceKm = 0;
+    this.participantCount = undefined;
+    this.distanceLoading = true;
+    this.loading = true;
+    this.error = '';
+    this.selectedRace = undefined;
+
+    this.api.races(year).subscribe({
+      next: races => {
+        if (requestId !== this.seasonRequestId) return;
+        this.seasonRaces = races;
+        this.races = races.filter(race => race.status?.toUpperCase() === 'PUBLISHED')
+          .sort((a, b) => b.raceDate.localeCompare(a.raceDate));
+        this.loadNextUpcomingRaceRoutes();
+        this.loadPublishedDistance(this.races, requestId);
+        this.loading = false;
+        this.cdr.markForCheck();
+      },
+      error: error => {
+        if (requestId !== this.seasonRequestId) return;
+        this.loading = false;
+        this.fail(error);
+        this.cdr.markForCheck();
+      },
+    });
+
+    this.api.participantCount(year).pipe(catchError(() => of(undefined))).subscribe(count => {
+      if (requestId !== this.seasonRequestId) return;
+      this.participantCount = count;
+      this.cdr.markForCheck();
+    });
+  }
   private loadPublishedDistance(races: Race[], requestId: number) {
     if (!races.length) {
       this.distanceLoading = false;
@@ -120,7 +160,7 @@ export class App implements OnInit {
       mergeMap(race => this.api.race(race.id).pipe(catchError(() => of(null))), 5),
       toArray(),
     ).subscribe(details => {
-      if (requestId !== this.distanceRequestId) return;
+      if (requestId !== this.seasonRequestId) return;
       const meters = details.flatMap(detail => detail?.routes ?? [])
         .reduce((total, route) => total + (route.distanceM ?? 0), 0);
       this.publishedDistanceKm = meters / 1000;
