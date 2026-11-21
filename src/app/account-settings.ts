@@ -12,7 +12,7 @@ import { TranslatePipe } from './translate.pipe';
 
 type AccountSettingsContext = Pick<App,
   'me' | 'linkedRunner' | 'openRunner' | 'saveRunnerLink' | 'deletingAccount' | 'runnerLinkSaving'
-  | 'bannerColors' | 'bannerSaving' | 'runnerLinkLoading' | 'changeBanner' | 'bannerError'
+  | 'runnerLinkLoading'
   | 'loadAccountRunners' | 'accountRunnerQuery' | 'runnerLinkError' | 'runnerLinkMessage'
   | 'suggestedRunners' | 'categoryLabel' | 'changeLanguage' | 'i18n' | 'apiOnline' | 'accountError'
   | 'confirmAccountDeletion' | 'deleteAccount' | 'login'>;

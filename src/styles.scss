@@ -3,7 +3,7 @@
 body { margin: 0; min-width: 320px; font-family: 'DM Sans', sans-serif; }
 button, input { font: inherit; }
 
-html[data-acrho-theme='azure-blue'] {
+html[data-acrho-theme] {
   --acrho-sidebar: #183b5b;
   --acrho-sidebar-active: #2b527a;
   --acrho-accent: #005cbb;
@@ -30,6 +30,146 @@ html[data-acrho-theme='azure-blue'] {
   --mat-sys-title-large-font: 'DM Sans';
   --mat-sys-title-medium-font: 'DM Sans';
   --mat-sys-title-small-font: 'DM Sans';
+}
+
+@font-face {
+  font-family: 'High Valyrian Regular';
+  src: url('/assets/fonts/ValyrianAdvanced.ttf') format('truetype');
+  font-display: swap;
+}
+
+html[data-acrho-theme='valyrian-red'] {
+  --acrho-sidebar: #0e0d0f;
+  --acrho-sidebar-active: #37171d;
+  --acrho-accent: #ff7b88;
+  --acrho-accent-dark: #ffa2ac;
+  --acrho-page: #161418;
+  --acrho-surface: #211e23;
+  --acrho-soft: #361e25;
+  --acrho-heading: #fff2f4;
+  --acrho-text: #f4dfe2;
+  --acrho-muted: #c9a9af;
+  --acrho-border: #513139;
+  --acrho-sidebar-text: #f2dce0;
+  --acrho-highlight: #ff7b88;
+  --mat-sys-primary: var(--acrho-accent);
+  --mat-sys-on-primary: #320a13;
+  --mat-sys-primary-container: var(--acrho-soft);
+  --mat-sys-on-primary-container: var(--acrho-accent-dark);
+}
+
+html[data-acrho-theme='klingon-red'] {
+  --acrho-sidebar: #9e0e18;
+  --acrho-sidebar-active: #221014;
+  --acrho-accent: #a41621;
+  --acrho-accent-dark: #751019;
+  --acrho-page: #fff3f3;
+  --acrho-soft: #fbe0e2;
+  --acrho-heading: #211417;
+  --acrho-text: #41262b;
+  --acrho-muted: #74555b;
+  --acrho-border: #e9c9cd;
+  --acrho-sidebar-text: #fff1f2;
+  --mat-sys-primary: var(--acrho-accent);
+  --mat-sys-on-primary: #fff;
+  --mat-sys-primary-container: var(--acrho-soft);
+  --mat-sys-on-primary-container: var(--acrho-accent-dark);
+}
+
+html:is([data-acrho-theme='valyrian-red'], [data-acrho-theme='klingon-red']) .sidebar :is(.nav-label, .sidebar-bottom) {
+  color: var(--acrho-sidebar-text);
+}
+
+html[data-acrho-theme='elvish-emerald'] {
+  --acrho-sidebar: #073d32;
+  --acrho-sidebar-active: #10614d;
+  --acrho-accent: #087654;
+  --acrho-accent-dark: #065640;
+  --acrho-page: #f2f8f3;
+  --acrho-soft: #e0efe5;
+  --acrho-heading: #123e31;
+  --acrho-text: #294c40;
+  --acrho-muted: #4f6758;
+  --acrho-border: #ceded2;
+  --acrho-sidebar-text: #f2e8c4;
+  --mat-sys-primary: var(--acrho-accent);
+  --mat-sys-on-primary: #fff;
+  --mat-sys-primary-container: var(--acrho-soft);
+  --mat-sys-on-primary-container: var(--acrho-accent-dark);
+}
+
+html[data-acrho-theme='elvish-emerald'] .sidebar :is(.brand-light, .nav-label, .sidebar-bottom, .nav-item.active) {
+  color: #f3d479;
+}
+
+html[data-acrho-theme='elvish-emerald'] :is(.page-heading h1 em, .section-head .eyebrow) {
+  color: #795710;
+}
+
+html[data-acrho-theme='rose-red'] {
+  --acrho-sidebar: #631c36;
+  --acrho-sidebar-active: #84304e;
+  --acrho-accent: #a33759;
+  --acrho-accent-dark: #77213e;
+  --acrho-page: #fff5f7;
+  --acrho-soft: #fbe5ec;
+  --acrho-heading: #541c31;
+  --acrho-text: #62394a;
+  --acrho-muted: #76525f;
+  --acrho-border: #ecd2dd;
+  --acrho-sidebar-text: #ffe2ed;
+}
+
+html[data-acrho-theme='indigo-pink'] {
+  --acrho-sidebar: #283372;
+  --acrho-sidebar-active: #414da0;
+  --acrho-accent: #4052a3;
+  --acrho-accent-dark: #303f83;
+  --acrho-page: #f6f5ff;
+  --acrho-soft: #eeebff;
+  --acrho-heading: #293366;
+  --acrho-text: #42496f;
+  --acrho-muted: #5e6382;
+  --acrho-border: #dedff3;
+  --acrho-sidebar-text: #f7e5f0;
+}
+
+html:is([data-acrho-theme='cyan-orange'], [data-acrho-theme='magenta-violet'], [data-acrho-theme='valyrian-red']) {
+  color-scheme: dark;
+  color: var(--acrho-text);
+  background: var(--acrho-page);
+}
+
+html[data-acrho-theme='cyan-orange'] {
+  --acrho-sidebar: #102930;
+  --acrho-sidebar-active: #1e454c;
+  --acrho-accent: #7de1ed;
+  --acrho-accent-dark: #a5edf3;
+  --acrho-page: #10191d;
+  --acrho-surface: #19272d;
+  --acrho-soft: #21373d;
+  --acrho-heading: #f1fbfd;
+  --acrho-text: #d9e9ec;
+  --acrho-muted: #afc3c8;
+  --acrho-border: #40565c;
+  --acrho-sidebar-text: #d2edf0;
+  --acrho-highlight: #ffb77b;
+}
+
+html[data-acrho-theme='magenta-violet'] {
+  --acrho-sidebar: #2c203d;
+  --acrho-sidebar-active: #4d325d;
+  --acrho-accent: #f2b3ef;
+  --acrho-accent-dark: #f8c9f5;
+  --acrho-page: #1b1622;
+  --acrho-surface: #292231;
+  --acrho-soft: #382b42;
+  --acrho-heading: #fff4ff;
+  --acrho-text: #eee2f2;
+  --acrho-muted: #cebad4;
+  --acrho-border: #554660;
+  --acrho-sidebar-text: #f2def6;
+  --acrho-highlight: #d4bcff;
 }
 
 /* Angular Material's prebuilt theme sets the color system; these rules align app UI too. */
@@ -120,7 +260,7 @@ html[data-acrho-theme] .runner-profile-banner {
   width:100%;
   padding:clamp(20px,3vw,36px);
   border-radius:20px;
-  background:radial-gradient(ellipse at 100% 0%,rgba(255,255,255,.28),transparent 65%),linear-gradient(120deg,var(--runner-banner-start,var(--acrho-sidebar)),var(--runner-banner-end,#164e82));
+  background:radial-gradient(ellipse at 100% 0%,rgba(255,255,255,.28),transparent 65%),linear-gradient(120deg,var(--runner-banner-start,var(--acrho-sidebar)),var(--runner-banner-end,var(--acrho-sidebar-active)));
   box-shadow:0 10px 28px rgba(24,59,91,.12);
 }
 html[data-acrho-theme] .runner-profile-banner h1 { color:#fff; margin-top:0; }
@@ -135,14 +275,10 @@ html[data-acrho-theme] .runner-profile-banner .favorite-toggle:not(.is-favorite)
 
 html[data-acrho-theme] .page-heading .runner-profile-banner h1 { color:#fff; }
 html[data-acrho-theme] .runner-profile-banner .runner-profile-info { flex:1; }
-html[data-acrho-theme] .runner-profile-banner .season-select { flex-shrink:0; margin-left:auto; margin-bottom:-22px; --mat-form-field-outlined-container-shape:12px; }
-html[data-acrho-theme] .runner-profile-banner .season-select .mat-mdc-text-field-wrapper { background:#fff; border-radius:12px; }
 @media(max-width:700px) {
   html[data-acrho-theme] .runner-profile-banner { flex-wrap:wrap; }
-  html[data-acrho-theme] .runner-profile-banner .season-select { flex-basis:100%; width:100%; margin-left:0; margin-top:12px; }
 }
 
-html[data-acrho-theme] .runner-profile-banner .season-select .mdc-floating-label { background:#fff; color:var(--acrho-heading); border-radius:6px; padding:0 6px; }
 
 .runner-profile-banner[data-banner-color='teal'], .runner-history-card[data-banner-color='teal'] { --runner-banner-start:#134e4a; --runner-banner-end:#0f766e; }
 .runner-profile-banner[data-banner-color='green'], .runner-history-card[data-banner-color='green'] { --runner-banner-start:#14532d; --runner-banner-end:#166534; }
@@ -193,7 +329,7 @@ html[data-acrho-theme] .account-panel.runner-profile-banner:is([data-banner-colo
 html[data-acrho-theme] .account-panel.runner-profile-banner:is([data-banner-color='yellow'], [data-banner-color='orange'], [data-banner-color='sky'], [data-banner-color='gold'], [data-banner-color='silver']) .banner-swatch:focus-visible { outline-color:#172d31; }
 
 .runner-history-body { padding:20px; }
-.runner-race-banner { padding:16px 20px; background:radial-gradient(ellipse at 100% 0%,rgba(255,255,255,.28),transparent 65%),linear-gradient(120deg,var(--runner-banner-start,var(--acrho-sidebar)),var(--runner-banner-end,#164e82)); }
+.runner-race-banner { padding:16px 20px; background:radial-gradient(ellipse at 100% 0%,rgba(255,255,255,.28),transparent 65%),linear-gradient(120deg,var(--runner-banner-start,var(--acrho-sidebar)),var(--runner-banner-end,var(--acrho-sidebar-active))); }
 html[data-acrho-theme] .runner-history-card .runner-race-banner h3 { margin:0; color:#fff; overflow-wrap:anywhere; }
 html[data-acrho-theme] .runner-history-card:is([data-banner-color='yellow'], [data-banner-color='orange'], [data-banner-color='sky'], [data-banner-color='gold'], [data-banner-color='silver']) .runner-race-banner h3 { color:#172d31; }
 
@@ -269,4 +405,61 @@ app-root .calendar-season select {
 app-root .calendar-season select:focus-visible {
   outline: 2px solid var(--acrho-accent);
   outline-offset: 2px;
+}
+
+@font-face {
+  font-family: 'Tengwar Telcontar OTL';
+  src: url('/assets/fonts/telcontar/tengtelcOTL.woff2') format('woff2');
+  font-display: swap;
+  unicode-range: U+E000-E0FF;
+}
+
+@font-face {
+  font-family: 'Tengwar Telcontar';
+  src: url('/assets/fonts/telcontar/tengtelc.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Tengwar Telcontar';
+  src: url('/assets/fonts/telcontar/tengtelcb.ttf') format('truetype');
+  font-weight: 600 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Klingon';
+  src: url('/assets/fonts/klingon/klingon.ttf') format('truetype');
+  font-display: swap;
+}
+
+
+html[data-acrho-language='art-x-hvy'] { --acrho-language-font: 'High Valyrian Regular'; }
+html[data-acrho-language='en-x-tengwar'] { --acrho-language-font: 'Tengwar Telcontar OTL', 'Tengwar Telcontar'; }
+html[data-acrho-language='tlh'] { --acrho-language-font: 'Klingon'; }
+
+html:is([data-acrho-language='art-x-hvy'], [data-acrho-language='en-x-tengwar'], [data-acrho-language='tlh']) {
+  body,
+  app-root :not(mat-icon, .material-icons, .material-symbols-outlined, .language-cards, .language-cards *) {
+    font-family: var(--acrho-language-font), 'DM Sans', sans-serif !important;
+  }
+}
+
+@media screen {
+  html:is([data-acrho-theme='cyan-orange'], [data-acrho-theme='magenta-violet'], [data-acrho-theme='valyrian-red']) app-root {
+    :is(.topbar, .stat-card, .race-list, .race-row, .route-card, .runner-card, .runner-history-card,
+        .result-card, .favorite-card, .filter-panel, .filter-toggle, .account-panel, .language-card,
+        .practical-info-section, .regulation-sheet, .report, .race, .sponsor-card, .photo-card,
+        .credit-card, .tip-card, .calendar-season select, select, input:not([type='radio']):not([type='checkbox'])) {
+      background-color: var(--acrho-surface);
+      color: var(--acrho-heading);
+    }
+
+    :is(.race-row:hover, .language-card:has(input:checked)) { background-color: var(--acrho-soft); }
+    :is(.race-row, .calendar-tag) { border-color: var(--acrho-border); }
+    .page-heading h1 em { color: var(--acrho-highlight); }
+    :is(.auth-btn-primary, .filter-panel .apply-filter) { color: var(--acrho-page); }
+    :is(.auth-btn-primary, .filter-panel .apply-filter) mat-icon { color: inherit; }
+  }
 }

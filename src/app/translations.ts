@@ -1,5 +1,5 @@
 export type SupportedLocale = 'fr' | 'en' | 'nl' | 'de';
-export type Language = SupportedLocale | 'art-x-hvy';
+export type Language = SupportedLocale | 'art-x-hvy' | 'en-x-tengwar' | 'tlh';
 
 // Columns are French, English, Dutch and German.
 export const translations: readonly (readonly [string, string, string, string])[] = [
@@ -16,6 +16,16 @@ export const translations: readonly (readonly [string, string, string, string])[
   ['Chargement…', 'Loading…', 'Laden…', 'Wird geladen…'],
   ['Enregistrement…', 'Saving…', 'Opslaan…', 'Wird gespeichert…'],
   ['Résultats reçus', 'Results received', 'Resultaten ontvangen', 'Ergebnisse erhalten'],
+  ['Thème', 'Theme', 'Thema', 'Design'],
+  ['Thème automatique', 'Automatic theme', 'Automatisch thema', 'Automatisches Design'],
+  ['Rose et rouge', 'Rose and red', 'Roze en rood', 'Rosé und Rot'],
+  ['Cyan et orange (sombre)', 'Cyan and orange (dark)', 'Cyaan en oranje (donker)', 'Cyan und Orange (dunkel)'],
+  ['Magenta et violet (sombre)', 'Magenta and violet (dark)', 'Magenta en violet (donker)', 'Magenta und Violett (dunkel)'],
+  ['Indigo et rose', 'Indigo and pink', 'Indigo en roze', 'Indigo und Rosa'],
+  ['Bleu azur', 'Azure blue', 'Azurenblauw', 'Azurblau'],
+  ['Noir et rouge', 'Black and red', 'Zwart en rood', 'Schwarz und Rot'],
+  ['Rouge et noir', 'Red and black', 'Rood en zwart', 'Rot und Schwarz'],
+  ['Émeraude et or', 'Emerald and gold', 'Smaragd en goud', 'Smaragd und Gold'],
   ['Haut valyrien', 'High Valyrian', 'Hoog-Valyrisch', 'Hochvalyrisch'],
   ['Administration', 'Administration', 'Beheer', 'Verwaltung'],
   ['Erreurs d’import', 'Import errors', 'Importfouten', 'Importfehler'],
