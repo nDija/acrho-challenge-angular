@@ -91,6 +91,7 @@ export class AcrhoApi {
   loginUrl() { return this.apiUrl('/oauth2/authorization/google'); }
   /** The X-XSRF-TOKEN header is added by Angular from the XSRF-TOKEN cookie (same origin). */
   favorites() { return this.http.get<Runner[]>(this.apiUrl('/api/v1/me/favorites')); }
+  favoriteSuggestions() { return this.http.get<Runner[]>(this.apiUrl('/api/v1/me/favorites/suggestions')); }
   addFavorite(id: number) { return this.http.put<void>(this.apiUrl(`/api/v1/me/favorites/${id}`), null); }
   removeFavorite(id: number) { return this.http.delete<void>(this.apiUrl(`/api/v1/me/favorites/${id}`)); }
   changeBanner(color: string) { return this.http.put<void>(this.apiUrl('/api/v1/me/runner/banner'), { color }); }

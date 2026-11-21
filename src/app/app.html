@@ -206,6 +206,39 @@
           <div class="runner-grid">@for (runner of favorites; track runner.id) {
             <article class="favorite-card"><button class="runner-card runner-card-link" type="button" (click)="openRunner(runner)"><div class="runner-avatar">@if (runner.pictureUrl && !failedRunnerPictures.has(runner.pictureUrl)) { <img [src]="runner.pictureUrl" alt="" loading="lazy" referrerpolicy="no-referrer" (error)="failedRunnerPictures.add(runner.pictureUrl)"> } @else { {{runner.firstName?.[0]}}{{runner.lastName?.[0]}} }</div><div><b>{{runner.firstName}} {{runner.lastName}}</b><span>{{(runner.club | clubName) || ("Indépendant" | t)}}</span>@if (runner.category) { <small>{{categoryLabel(runner.category)}} · {{runner.categoryYear}}</small> }</div></button><button mat-icon-button class="favorite-remove" type="button" [title]="&quot;Retirer des favoris&quot; | t" [disabled]="favoritesLoading || !!favoritesError || savingFavorites.has(runner.id)" (click)="toggleFavorite(runner)" [attr.aria-label]="(&quot;Retirer &quot; | t) + runner.firstName + ' ' + runner.lastName + (&quot; des favoris&quot; | t)"><mat-icon>delete</mat-icon></button></article>
           }</div>
+          <section aria-labelledby="favorite-suggestions-heading">
+            <h2 id="favorite-suggestions-heading">{{ "Suggestions de ton club" | t }}</h2>
+            @if (!me.runnerId) {
+              <p>{{ "Lie ta fiche coureur dans les paramètres pour recevoir des suggestions de ton club." | t }}</p>
+            } @else if (favoriteSuggestionsError) {
+              <p role="status">{{ "Impossible de charger les suggestions de ton club." | t }}</p>
+            } @else if (favoriteSuggestions; as suggestions) {
+              @if (!suggestions.length) {
+                <p>{{ "Aucune suggestion pour ton club pour le moment." | t }}</p>
+              }
+              <div class="runner-grid">
+                @for (runner of suggestions; track runner.id) {
+                  @if (!isFavorite(runner.id)) {
+                    <article class="favorite-card">
+                      <button class="runner-card runner-card-link" type="button" (click)="openRunner(runner)">
+                        <div class="runner-avatar">
+                          @if (runner.pictureUrl && !failedRunnerPictures.has(runner.pictureUrl)) {
+                            <img [src]="runner.pictureUrl" alt="" loading="lazy" referrerpolicy="no-referrer"
+                                 (error)="failedRunnerPictures.add(runner.pictureUrl)">
+                          } @else { {{ runner.firstName[0] }}{{ runner.lastName[0] }} }
+                        </div>
+                        <div><b>{{ runner.firstName }} {{ runner.lastName }}</b><span>{{ runner.club | clubName }}</span></div>
+                      </button>
+                      <button mat-icon-button class="favorite-remove" type="button" [title]="'Ajouter aux favoris' | t"
+                              [attr.aria-label]="('Ajouter aux favoris' | t) + ' · ' + runner.firstName + ' ' + runner.lastName"
+                              [disabled]="favoritesLoading || !!favoritesError || savingFavorites.has(runner.id)"
+                              (click)="toggleFavorite(runner)"><mat-icon>favorite_border</mat-icon></button>
+                    </article>
+                  }
+                }
+              </div>
+            }
+          </section>
         } @else { <div class="empty">{{ "Connecte-toi pour retrouver tes favoris." | t }}</div> }
       }
       @if (activeView === 'settings') {

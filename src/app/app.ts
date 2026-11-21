@@ -55,6 +55,8 @@ export class App implements OnInit {
   deletingAccount = false;
   accountError = '';
   favorites: Runner[] = [];
+  favoriteSuggestions?: Runner[];
+  favoriteSuggestionsError = false;
   favoritesLoading = false;
   favoritesError = '';
   savingFavorites = new Set<number>();
@@ -495,6 +497,7 @@ export class App implements OnInit {
     const requestId = ++this.favoritesRequestId;
     this.favoritesLoading = true;
     this.favoritesError = '';
+    if (this.activeView === 'favorites') this.loadFavoriteSuggestions(requestId);
     this.api.favorites().subscribe({
       next: runners => {
         if (this.me?.id !== userId || requestId !== this.favoritesRequestId) return;
@@ -507,6 +510,25 @@ export class App implements OnInit {
         this.favoritesLoading = false;
         this.favoritesError = 'Impossible de charger les favoris.';
         if (error.status === 401) this.fail(error);
+        this.cdr.markForCheck();
+      },
+    });
+  }
+  private loadFavoriteSuggestions(requestId: number) {
+    const userId = this.me?.id;
+    this.favoriteSuggestions = undefined;
+    this.favoriteSuggestionsError = false;
+    if (!this.me?.runnerId) return;
+
+    this.api.favoriteSuggestions().subscribe({
+      next: runners => {
+        if (this.me?.id !== userId || requestId !== this.favoritesRequestId) return;
+        this.favoriteSuggestions = runners;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        if (this.me?.id !== userId || requestId !== this.favoritesRequestId) return;
+        this.favoriteSuggestionsError = true;
         this.cdr.markForCheck();
       },
     });
@@ -527,6 +549,7 @@ export class App implements OnInit {
         this.favorites = this.favorites.filter(favorite => favorite.id !== runner.id);
         if (!remove) this.favorites.push(runner);
         this.favorites.sort((a, b) => a.lastName.localeCompare(b.lastName) || a.firstName.localeCompare(b.firstName));
+        if (this.activeView === 'favorites') this.loadFavoriteSuggestions(this.favoritesRequestId);
         this.cdr.markForCheck();
       },
       error: (error: HttpErrorResponse) => {
