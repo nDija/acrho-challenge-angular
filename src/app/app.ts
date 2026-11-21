@@ -473,7 +473,7 @@ export class App implements OnInit {
     this.regulationLoading = true;
     this.regulationError = '';
     const language = this.i18n.language();
-    this.api.regulation(language).subscribe({
+    this.api.regulation(this.i18n.locale()).subscribe({
       next: markdown => { if (this.i18n.language() !== language) return; this.regulationMarkdown = markdown; this.regulationLoading = false; this.cdr.markForCheck(); },
       error: () => { if (this.i18n.language() !== language) return; this.regulationError = 'Impossible de charger le règlement.'; this.regulationLoading = false; this.cdr.markForCheck(); }
     });

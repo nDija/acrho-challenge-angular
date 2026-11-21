@@ -1,4 +1,5 @@
-export type Language = 'fr' | 'en' | 'nl' | 'de';
+export type SupportedLocale = 'fr' | 'en' | 'nl' | 'de';
+export type Language = SupportedLocale | 'art-x-hvy';
 
 // Columns are French, English, Dutch and German.
 export const translations: readonly (readonly [string, string, string, string])[] = [
@@ -15,6 +16,7 @@ export const translations: readonly (readonly [string, string, string, string])[
   ['Chargement…', 'Loading…', 'Laden…', 'Wird geladen…'],
   ['Enregistrement…', 'Saving…', 'Opslaan…', 'Wird gespeichert…'],
   ['Résultats reçus', 'Results received', 'Resultaten ontvangen', 'Ergebnisse erhalten'],
+  ['Haut valyrien', 'High Valyrian', 'Hoog-Valyrisch', 'Hochvalyrisch'],
   ['Administration', 'Administration', 'Beheer', 'Verwaltung'],
   ['Erreurs d’import', 'Import errors', 'Importfouten', 'Importfehler'],
   ['Toutes les courses', 'All races', 'Alle wedstrijden', 'Alle Läufe'],
