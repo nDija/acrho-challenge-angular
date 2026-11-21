@@ -213,11 +213,11 @@
             } @else if (favoriteSuggestionsError) {
               <p role="status">{{ "Impossible de charger les suggestions de ton club." | t }}</p>
             } @else if (favoriteSuggestions; as suggestions) {
-              @if (!suggestions.length) {
+              @if (!suggestions.total) {
                 <p>{{ "Aucune suggestion pour ton club pour le moment." | t }}</p>
               }
               <div class="runner-grid">
-                @for (runner of suggestions; track runner.id) {
+                @for (runner of suggestions.content; track runner.id) {
                   @if (!isFavorite(runner.id)) {
                     <article class="favorite-card">
                       <button class="runner-card runner-card-link" type="button" (click)="openRunner(runner)">
@@ -237,6 +237,11 @@
                   }
                 }
               </div>
+              @if (suggestions.total > suggestions.size) {
+                <mat-paginator [attr.aria-label]="'Suggestions de ton club' | t"
+                               [length]="suggestions.total" [pageIndex]="suggestions.page" [pageSize]="suggestions.size"
+                               [hidePageSize]="true" (page)="loadFavoriteSuggestions($event.pageIndex)" />
+              }
             }
           </section>
         } @else { <div class="empty">{{ "Connecte-toi pour retrouver tes favoris." | t }}</div> }

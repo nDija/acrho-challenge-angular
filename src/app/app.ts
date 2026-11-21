@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, forkJoin, from, mergeMap, of, switchMap, timer, timeout, toArray } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AcrhoApi, Category, Me, Race, RaceDetail, RacePhoto, Result, RouteInfo, Runner, RunnerResult, Season } from './acrho-api.service';
+import { AcrhoApi, Category, Me, Page, Race, RaceDetail, RacePhoto, Result, RouteInfo, Runner, RunnerResult, Season } from './acrho-api.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -55,7 +55,8 @@ export class App implements OnInit {
   deletingAccount = false;
   accountError = '';
   favorites: Runner[] = [];
-  favoriteSuggestions?: Runner[];
+  favoriteSuggestions?: Page<Runner>;
+  private favoriteSuggestionsRequestId = 0;
   favoriteSuggestionsError = false;
   favoritesLoading = false;
   favoritesError = '';
@@ -497,7 +498,10 @@ export class App implements OnInit {
     const requestId = ++this.favoritesRequestId;
     this.favoritesLoading = true;
     this.favoritesError = '';
-    if (this.activeView === 'favorites') this.loadFavoriteSuggestions(requestId);
+    if (this.activeView === 'favorites') {
+      this.favoriteSuggestions = undefined;
+      this.loadFavoriteSuggestions(0);
+    }
     this.api.favorites().subscribe({
       next: runners => {
         if (this.me?.id !== userId || requestId !== this.favoritesRequestId) return;
@@ -514,20 +518,28 @@ export class App implements OnInit {
       },
     });
   }
-  private loadFavoriteSuggestions(requestId: number) {
+  loadFavoriteSuggestions(page: number) {
     const userId = this.me?.id;
-    this.favoriteSuggestions = undefined;
+    const runnerId = this.me?.runnerId;
+    const requestId = ++this.favoriteSuggestionsRequestId;
     this.favoriteSuggestionsError = false;
-    if (!this.me?.runnerId) return;
+    if (!runnerId) return;
 
-    this.api.favoriteSuggestions().subscribe({
-      next: runners => {
-        if (this.me?.id !== userId || requestId !== this.favoritesRequestId) return;
-        this.favoriteSuggestions = runners;
+    const isCurrent = () => this.me?.id === userId && this.me?.runnerId === runnerId
+      && requestId === this.favoriteSuggestionsRequestId;
+    this.api.favoriteSuggestions(page).subscribe({
+      next: suggestions => {
+        if (!isCurrent()) return;
+        const lastPage = Math.max(0, Math.ceil(suggestions.total / suggestions.size) - 1);
+        if (suggestions.page > lastPage) {
+          this.loadFavoriteSuggestions(lastPage);
+          return;
+        }
+        this.favoriteSuggestions = suggestions;
         this.cdr.markForCheck();
       },
       error: () => {
-        if (this.me?.id !== userId || requestId !== this.favoritesRequestId) return;
+        if (!isCurrent()) return;
         this.favoriteSuggestionsError = true;
         this.cdr.markForCheck();
       },
@@ -549,7 +561,7 @@ export class App implements OnInit {
         this.favorites = this.favorites.filter(favorite => favorite.id !== runner.id);
         if (!remove) this.favorites.push(runner);
         this.favorites.sort((a, b) => a.lastName.localeCompare(b.lastName) || a.firstName.localeCompare(b.firstName));
-        if (this.activeView === 'favorites') this.loadFavoriteSuggestions(this.favoritesRequestId);
+        if (this.activeView === 'favorites') this.loadFavoriteSuggestions(this.favoriteSuggestions?.page ?? 0);
         this.cdr.markForCheck();
       },
       error: (error: HttpErrorResponse) => {
