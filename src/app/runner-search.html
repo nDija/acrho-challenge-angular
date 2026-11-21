@@ -1,6 +1,10 @@
 @let app = context();
+<mat-button-toggle-group [value]="app.runnerSearchMode" (change)="app.setRunnerSearchMode($event.value)" [attr.aria-label]="'Recherche' | t">
+  <mat-button-toggle value="name">{{ 'Nom ou prénom' | t }}</mat-button-toggle>
+  <mat-button-toggle value="club">{{ 'Club' | t }}</mat-button-toggle>
+</mat-button-toggle-group>
 <mat-form-field appearance="outline">
-  <mat-label>{{ 'Nom, prénom ou club (2 caractères minimum)' | t }}</mat-label>
+  <mat-label>{{ (app.runnerSearchMode === 'club' ? 'Club (2 caractères minimum)' : 'Nom ou prénom (2 caractères minimum)') | t }}</mat-label>
   <input matInput [(ngModel)]="app.runnerQuery" (ngModelChange)="app.onRunnerQueryChange()" (keyup.enter)="app.findRunners()">
   <button mat-icon-button matSuffix type="button" (click)="app.findRunners()" [attr.aria-label]="'Rechercher un coureur' | t">
     <mat-icon>search</mat-icon>

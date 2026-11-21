@@ -22,7 +22,7 @@
          (keydown.escape)="closeMobileMenu(); mobileMenuButton.focus()">
       <button class="nav-item" [class.active]="activeView === 'calendar'" (click)="activeView='calendar'; backToCalendar()" [attr.aria-label]="'Courses' | t"><mat-icon>calendar_month</mat-icon><span class="nav-item-label">{{ 'Courses' | t }}</span></button>
       <button class="nav-item" type="button" [class.active]="activeView === 'standings'" [attr.aria-current]="activeView === 'standings' ? 'page' : null" (click)="showStandings()" [attr.aria-label]="'CLASSEMENT' | t | titlecase"><mat-icon>leaderboard</mat-icon><span class="nav-item-label">{{ 'CLASSEMENT' | t | titlecase }}</span></button>
-      <button class="nav-item" [class.active]="activeView === 'runners'" (click)="showRunners()" [attr.aria-label]="'Coureurs' | t"><mat-icon>groups</mat-icon><span class="nav-item-label">{{ 'Coureurs' | t }}</span></button>
+      <button class="nav-item" [class.active]="activeView === 'runners'" (click)="showRunners()" [attr.aria-label]="'Recherche' | t"><mat-icon>search</mat-icon><span class="nav-item-label">{{ 'Recherche' | t }}</span></button>
       @if (me) { <button class="nav-item" [class.active]="activeView === 'favorites'" (click)="showFavorites()" [attr.aria-label]="'Favoris' | t"><mat-icon>favorite</mat-icon><span class="nav-item-label">{{ 'Favoris' | t }}</span></button> }
       <button class="nav-item" [class.active]="activeView === 'regulation'" (click)="showRegulation()" [attr.aria-label]="'Règlement' | t"><mat-icon>gavel</mat-icon><span class="nav-item-label">{{ 'Règlement' | t }}</span></button>
       <button class="nav-item" type="button" [class.active]="activeView === 'registration'" [attr.aria-current]="activeView === 'registration' ? 'page' : null"
@@ -131,7 +131,7 @@
       }
       @if (activeView === 'runners') {
         @if (!selectedRunner || !me) {
-        <div class="page-heading"><div><div class="eyebrow">{{ "COMMUNAUTÉ ACRHO" | t }}</div><h1>{{ "Tous les coureurs," | t }} <em>{{ "un même départ." | t }}</em></h1><p>{{ "Recherchez un participant dans les saisons importées." | t }}</p></div></div>
+        <div class="page-heading"><h1>{{ 'Recherche' | t }}</h1></div>
         }
         @if (me) {
         @if (selectedRunner; as runner) {

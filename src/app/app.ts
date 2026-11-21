@@ -112,6 +112,7 @@ export class App implements OnInit {
   runnerDetailLoading = false;
   runnerDetailError = '';
   private runnerDetailRequestId = 0;
+  runnerSearchMode: 'name' | 'club' = 'name';
   runnerQuery = ''; resultQuery = ''; category = ''; gender = ''; showResultFilters = false;
   resultTotal = 0; resultPage = 0; resultSize = 20; selectedRouteId?: number; runnerTotal = 0; runnerPage = 0;
   private runnerSearchTimer?: ReturnType<typeof setTimeout>;
@@ -188,6 +189,15 @@ export class App implements OnInit {
     });
   }  openRace(r: Race) { this.loading = true; this.error = ''; this.api.race(r.id).subscribe({ next: x => { this.selectedRace = x; this.viewport.scrollToPosition([0, 0]); this.racePhotoLoaded = undefined; this.racePhoto = x.city ? this.api.racePhoto(x.id).pipe(catchError(() => of(null))) : undefined; this.loading = false; this.results = []; this.resultPage = 0; this.selectedRouteId = undefined; if (x.routes?.length) this.loadResults(x.routes[0].id); this.cdr.markForCheck(); }, error: e => { this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
   loadResults(routeId: number, page = 0) { this.selectedRouteId = routeId; this.loading = true; this.api.results(routeId, page, this.resultSize, this.resultQuery, this.category, this.gender).subscribe({ next: x => { this.results = x.content; this.resultTotal = x.total; this.resultPage = x.page; this.loading = false; this.cdr.markForCheck(); }, error: e => { this.loading = false; this.results = []; this.resultTotal = 0; if (e.status === 404) this.error = 'Les résultats ne sont pas publiés pour cette course.'; else this.fail(e); this.cdr.markForCheck(); } }); }
+  setRunnerSearchMode(mode: 'name' | 'club') {
+    if (this.runnerSearchMode === mode) return;
+    this.runnerSearchMode = mode;
+    this.runnerQuery = '';
+    this.runnerPage = 0;
+    this.error = '';
+    this.onRunnerQueryChange();
+  }
+
   onRunnerQueryChange() {
     if (this.runnerSearchTimer) clearTimeout(this.runnerSearchTimer);
     const query = this.runnerQuery.trim();
@@ -202,7 +212,7 @@ export class App implements OnInit {
     if (!this.me) return;
     this.runnerSearchTimer = setTimeout(() => this.findRunners(), 300);
   }
-  findRunners(page = 0) { if (this.runnerSearchTimer) clearTimeout(this.runnerSearchTimer); if (!this.me) return; const q = this.runnerQuery.trim(); if (q.length < 2) { this.runners = []; this.runnerTotal = 0; return; } this.activeView = 'runners'; this.loading = true; const requestId = ++this.runnerRequestId; this.api.runners(q, page, 20, true).subscribe({ next: x => { if (requestId !== this.runnerRequestId) return; this.runners = x.content; this.runnerTotal = x.total; this.runnerPage = x.page; this.loading = false; this.cdr.markForCheck(); }, error: e => { if (requestId !== this.runnerRequestId) return; this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
+  findRunners(page = 0) { if (this.runnerSearchTimer) clearTimeout(this.runnerSearchTimer); if (!this.me) return; const q = this.runnerQuery.trim(); if (q.length < 2) { this.runners = []; this.runnerTotal = 0; return; } this.activeView = 'runners'; this.loading = true; const requestId = ++this.runnerRequestId; this.api.runners(q, page, 20, this.runnerSearchMode === 'club').subscribe({ next: x => { if (requestId !== this.runnerRequestId) return; this.runners = x.content; this.runnerTotal = x.total; this.runnerPage = x.page; this.loading = false; this.cdr.markForCheck(); }, error: e => { if (requestId !== this.runnerRequestId) return; this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
   get firstRace() { return this.races[0]; }
   displayTime(time?: string | null): string {
     if (!time) return '—';
