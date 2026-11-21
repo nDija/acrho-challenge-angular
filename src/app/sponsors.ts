@@ -227,7 +227,7 @@ export class Sponsors {
 
   protected readonly technologies = [
     { name: 'Application web', icon: 'web', tools: 'Angular · Angular Material · TypeScript · RxJS · Chart.js' },
-    { name: 'Application mobile Android et iOS', icon: 'smartphone', tools: 'Kotlin Multiplatform · Compose Multiplatform · Ktor' },
+    { name: 'Application mobile Android et iOS (projet)', icon: 'smartphone', tools: 'Kotlin Multiplatform · Compose Multiplatform · Ktor' },
     { name: 'API commune', icon: 'dns', tools: 'Java · Spring Boot · PostgreSQL · Flyway · Docker' },
   ];
 
