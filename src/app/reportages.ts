@@ -1,11 +1,13 @@
-import { Component, computed, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { LanguageService } from './language.service';
 import { TranslatePipe } from './translate.pipe';
 import { REPORTAGE_ARCHIVES } from './reportage-archives';
 
 @Component({
   selector: 'app-reportages',
-  imports: [MatIconModule, TranslatePipe],
+  imports: [DatePipe, MatIconModule, TranslatePipe],
   template: `
     <section aria-labelledby="reportages-title">
       <h2 id="reportages-title">{{ 'Reportages' | t }}</h2>
@@ -19,10 +21,14 @@ import { REPORTAGE_ARCHIVES } from './reportage-archives';
         @for (reportage of reportages(); track reportage.title) {
           <li>
             <a [href]="reportage.url">
-              <mat-icon aria-hidden="true">{{ reportage.archive ? 'article' : 'play_circle' }}</mat-icon>
+              <img class="publisher-logo" src="assets/photos/notele.png"
+                   alt="" width="44" height="44">
               <div>
                 <h3 lang="fr">{{ reportage.title }}</h3>
-                <span>{{ (reportage.archive ? 'Archive ACRHO' : 'notélé') | t }}</span>
+                <div class="reportage-meta">
+                  <span translate="no">notélé</span>
+                  <time [attr.datetime]="reportage.publishedOn">{{ reportage.publishedOn | date:'longDate':undefined:i18n.locale() }}</time>
+                </div>
               </div>
               <mat-icon class="external" aria-hidden="true">arrow_outward</mat-icon>
             </a>
@@ -68,12 +74,14 @@ import { REPORTAGE_ARCHIVES } from './reportage-archives';
     a:hover { border-color: var(--acrho-accent); }
     a:focus-visible, select:focus-visible { outline: 2px solid var(--acrho-accent-dark); outline-offset: 2px; }
     h3 { margin: 0 0 .25rem; font-size: .95rem; }
-    span { color: var(--acrho-muted); font-size: .8rem; }
+    .reportage-meta { display: flex; flex-wrap: wrap; gap: .25rem .65rem; color: var(--acrho-muted); font-size: .8rem; }
+    .publisher-logo { object-fit: contain; }
     mat-icon { color: var(--acrho-accent-dark); }
     .external { width: 1rem; height: 1rem; font-size: 1rem; }
   `,
 })
 export class Reportages {
+  protected readonly i18n = inject(LanguageService);
   protected readonly archives = REPORTAGE_ARCHIVES;
   protected readonly selectedYear = signal(this.archives[0].year);
   protected readonly reportages = computed(() =>

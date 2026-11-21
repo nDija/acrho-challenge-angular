@@ -6,7 +6,6 @@ export const translations: readonly (readonly [string, string, string, string])[
   ['Photos', 'Photos', 'Foto’s', 'Fotos'],
   ['Reportages', 'Video reports', 'Reportages', 'Reportagen'],
   ['Année des reportages', 'Report year', 'Jaar van de reportages', 'Jahr der Reportagen'],
-  ['Archive ACRHO', 'ACRHO archive', 'ACRHO-archief', 'ACRHO-Archiv'],
   ['Galeries de jogging', 'Running galleries', 'Hardloopgalerijen', 'Laufgalerien'],
   ['Voir les albums', 'View albums', 'Bekijk albums', 'Alben ansehen'],
   ['Sponsors', 'Sponsors', 'Sponsors', 'Sponsoren'],
