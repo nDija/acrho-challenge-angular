@@ -16,7 +16,7 @@ import { TranslatePipe } from './translate.pipe';
         @for (sponsor of officialSponsors; track sponsor.name) {
           <li>
             <div class="sponsor-logo">
-              <img [src]="'assets/sponsors/' + sponsor.image" alt="" width="224" height="96" loading="lazy">
+              <img [src]="'assets/sponsors/' + sponsor.image" [class.logo-dark]="sponsor.darkBackground" alt="" width="224" height="96" loading="lazy">
             </div>
             <h3 translate="no">
               @if (sponsor.url; as url) {
@@ -107,6 +107,7 @@ import { TranslatePipe } from './translate.pipe';
       background: #fff;
     }
     .sponsor-logo img { width: 100%; height: 6rem; object-fit: contain; }
+    .sponsor-logo img.logo-dark { box-sizing: border-box; padding: .25rem; background: #000; }
     .official-list a { color: inherit; text-decoration: none; }
     .official-list a::after { content: ''; position: absolute; inset: 0; border-radius: .75rem; }
     .official-list li:focus-within { outline: 2px solid var(--acrho-accent-dark); outline-offset: 2px; }
@@ -144,10 +145,10 @@ import { TranslatePipe } from './translate.pipe';
   `,
 })
 export class Sponsors {
-  protected readonly officialSponsors: readonly { name: string; image: string; url?: string; description: string }[] = [
+  protected readonly officialSponsors: readonly { name: string; image: string; url?: string; description: string; darkBackground?: boolean }[] = [
     {
       name: "Thiebaut",
-      image: "thiebaut.jpg",
+      image: "thiebaut.png",
       url: "http://www.thiebaut.be/",
       description: "Matériaux – location de matériel – terrassement – transport",
     },
@@ -196,18 +197,19 @@ export class Sponsors {
     {
       name: "PRImmo",
       image: "primmo.png",
+      darkBackground: true,
       url: "https://primmo.be/",
       description: "Agence immobilière",
     },
     {
       name: "Rudi Kilowatts",
-      image: "rudi-kilowatts.jpg",
+      image: "rudi-kilowatts.png",
       url: "https://rudikilowatts.be/",
       description: "Électricité, nouvelle installation, rénovation et remise en conformité",
     },
     {
       name: "Optimum Training",
-      image: "optimum-training.png",
+      image: "optimum-training.jpg",
       url: "https://www.optimumtraining.be/",
       description: "Laboratoire de physiologie de l’effort et du métabolisme au repos et à l’effort. Eric Navez, Sophie Houdou et Christophe Dauge vous accompagnent.",
     },
