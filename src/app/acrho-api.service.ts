@@ -169,8 +169,8 @@ export class AcrhoApi {
   runnerResults(id: number, year: number) {
     return this.http.get<RunnerResult[]>(this.apiUrl(`/api/v1/runners/${id}/results`), { params: { year } });
   }
-  runners(q: string, page = 0, size = 20) {
-    return this.http.get<Page<Runner>>(this.apiUrl('/api/v1/runners'), { params: { q, page, size } });
+  runners(q: string, page = 0, size = 20, includeClub = false) {
+    return this.http.get<Page<Runner>>(this.apiUrl('/api/v1/runners'), { params: { q, page, size, ...(includeClub ? { includeClub } : {}) } });
   }
 }
 

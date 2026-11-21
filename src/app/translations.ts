@@ -247,6 +247,7 @@ export const translations: readonly (readonly [string, string, string, string, s
   ['Allure (min/km)', 'Pace (min/km)', 'Tempo (min/km)', 'Tempo (min/km)', "Ritmo (min/km)"],
   ['Dossard', 'Bib number', 'Startnummer', 'Startnummer', "Número de dorsal"],
   ['Statut', 'Status', 'Status', 'Status', "Estado"],
+  ['Nom, prénom ou club (2 caractères minimum)', 'First name, last name or club (at least 2 characters)', 'Voornaam, achternaam of club (minimaal 2 tekens)', 'Vorname, Nachname oder Verein (mindestens 2 Zeichen)', 'Nombre, apellido o club (al menos 2 caracteres)'],
   ['Nom ou prénom (2 caractères minimum)', 'First or last name (at least 2 characters)', 'Voor- of achternaam (minimaal 2 tekens)', 'Vor- oder Nachname (mindestens 2 Zeichen)', "Nombre o apellido (al menos 2 caracteres)"],
   ['Aucun coureur trouvé pour «', 'No runners found for “', 'Geen lopers gevonden voor “', 'Keine Läufer gefunden für „', "No se encontraron corredores para «"],
   ['L’annuaire des coureurs est réservé aux membres connectés.', 'The runner directory is available to signed-in members.', 'De loperslijst is beschikbaar voor ingelogde leden.', 'Das Läuferverzeichnis ist für angemeldete Mitglieder verfügbar.', "El directorio de corredores está disponible para los usuarios que han iniciado sesión."],
