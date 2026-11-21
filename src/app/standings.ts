@@ -70,36 +70,53 @@ import { RankedRunnerAvatar } from './ranked-runner-avatar';
     }
   `,
   styles: `
+    :host { display: block; container-type: inline-size; }
     h1 { margin-block: 0 1rem; }
     mat-form-field { width: min(100%, 19rem); }
     .standing-cards {
       display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 12px;
+      grid-template-columns: max-content minmax(0, 1fr) fit-content(6rem);
+      gap: 12px 8px;
       padding: 0;
       margin: 0 0 12px;
       list-style: none;
     }
     .standing-card {
       display: grid;
-      align-content: start;
-      gap: 10px;
+      grid-column: 1 / -1;
+      grid-template-columns: subgrid;
+      row-gap: 10px;
       padding: 14px;
       border: 1px solid var(--acrho-border);
       border-radius: 12px;
       background: #fff;
       color: var(--acrho-heading);
     }
-    .card-heading { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; }
-    .card-heading .category-pill { max-width: 6rem; overflow-wrap: anywhere; }
-    .provisional-label { font-size: .75rem; font-weight: 700; }
-    dl { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0; }
-    dl > div { display: flex; align-items: baseline; gap: 4px; }
-    dl > div:not(.score-total) dd { order: -1; }
-    dt abbr { text-decoration: none; }
+    .card-heading {
+      display: grid;
+      grid-column: 1 / 4;
+      grid-template-columns: subgrid;
+      align-items: center;
+    }
+    .result-rank { font-variant-numeric: tabular-nums; }
+    .card-heading .category-pill { justify-self: start; overflow-wrap: anywhere; }
+    .provisional-label { grid-column: 2 / -1; font-size: .75rem; font-weight: 700; }
+    dl {
+      display: grid;
+      grid-column: 1 / -1;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin: 0;
+    }
+    dl > div { text-align: end; }
     dt { font-size: .75rem; }
+    dt abbr { text-decoration: none; }
     dd { margin: 0; font-variant-numeric: tabular-nums; }
     .runner-link {
+      display: grid;
+      grid-template-columns: 58px minmax(0, 1fr);
+      justify-items: start;
+      gap: 6px;
       padding: 0;
       border: 0;
       background: transparent;
@@ -108,26 +125,20 @@ import { RankedRunnerAvatar } from './ranked-runner-avatar';
       text-align: start;
       cursor: pointer;
     }
+    .runner-link app-ranked-runner-avatar { justify-self: center; }
     .runner-link strong { font-size: clamp(1rem, 2.5vw, 1.125rem); line-height: 1.25; white-space: normal; overflow-wrap: anywhere; }
     .standing-card:hover { border-color: var(--acrho-accent); }
     .runner-link:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
     .provisional { color: #964000; background: #fff5e9; }
-    @media (width > 700px) {
-      .standing-card {
-        grid-template-columns: minmax(0, 1fr) auto auto;
-        align-items: center;
-        column-gap: clamp(8px, 1.5vw, 20px);
-        padding-block: 8px;
+    @container (min-width: 680px) {
+      .standing-cards {
+        grid-template-columns: max-content minmax(0, 1fr) fit-content(6rem) max-content repeat(4, max-content);
+        column-gap: clamp(8px, 1.5cqi, 20px);
       }
-      .runner-link strong, .card-heading .category-pill { white-space: nowrap; }
-      .card-heading .category-pill { overflow: hidden; text-overflow: ellipsis; }
-      .provisional-label { grid-column: 2; }
-      dl {
-        grid-column: 3;
-        grid-template-columns: repeat(4, auto);
-        gap: clamp(8px, 1.5vw, 20px);
-      }
-      dl > div { white-space: nowrap; }
+      .standing-card { align-items: center; padding-block: 8px; }
+      .card-heading, .provisional-label, dl { grid-row: 1; }
+      .provisional-label { grid-column: 4; }
+      dl { grid-column: 5 / -1; grid-template-columns: subgrid; column-gap: inherit; }
     }
   `,
 })
