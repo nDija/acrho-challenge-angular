@@ -20,6 +20,7 @@
 .api-status i { width:9px; height:9px; border-radius:50%; background:#dc2626; }
 .api-status.online i { background:#22a35a; }
 .runner-search { width:min(100%,520px); }
+.account-runner-search-icon:not(:disabled) mat-icon { color:var(--acrho-accent-dark); }
 
 .language-cards {
   font-family: 'DM Sans', sans-serif;
@@ -109,7 +110,3 @@
 
   .language-card { min-height: 54px; }
 }
-
-.account-runner-search { flex-wrap: wrap; align-items: flex-start; }
-.account-runner-search .runner-search { flex: 1 1 220px; min-width: 0; }
-.account-runner-search button { min-height: 44px; }

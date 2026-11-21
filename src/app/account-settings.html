@@ -6,23 +6,44 @@
     @if (user.runnerId) {
       <p><strong>{{account.linkedRunner ? account.linkedRunner.firstName + ' ' + account.linkedRunner.lastName : ("Coureur lié au compte" | t)}}</strong>@if (account.linkedRunner?.club | clubName; as club) { · {{club}} }</p>
       <div class="account-actions">@if (account.linkedRunner; as runner) { <button mat-stroked-button class="account-runner-results" type="button" (click)="account.openRunner(runner)">{{ "Voir mes résultats" | t }}</button> }<button mat-icon-button class="delete-account-button" type="button" [title]="&quot;Retirer la liaison&quot; | t" [attr.aria-label]="&quot;Retirer la liaison avec le coureur&quot; | t" [disabled]="account.runnerLinkSaving || account.deletingAccount" (click)="account.saveRunnerLink()"><mat-icon>delete</mat-icon></button></div>
+      <p>{{ "Tu peux aussi cliquer sur ton avatar pour accéder à ta fiche coureur." | t }}</p>
     } @else { <p>{{ "Choisis ta fiche coureur pour la lier à ton compte." | t }}</p> }
     @if (!user.runnerId) {
-    <form class="account-actions account-runner-search" (ngSubmit)="account.loadAccountRunners()">
-      <mat-form-field appearance="outline" class="runner-search"><input matInput name="accountRunnerQuery" [(ngModel)]="account.accountRunnerQuery" [placeholder]="&quot;Nom ou prénom&quot; | t" [attr.aria-label]="&quot;Rechercher un coureur&quot; | t" [disabled]="account.runnerLinkSaving || account.deletingAccount"></mat-form-field>
-      <button mat-stroked-button type="submit"
-              [disabled]="account.runnerLinkLoading || account.runnerLinkSaving || account.deletingAccount || (account.accountRunnerQuery.trim().length > 0 && account.accountRunnerQuery.trim().length < 2)">
-        <mat-icon aria-hidden="true">search</mat-icon>{{ 'Rechercher un coureur' | t }}
-      </button>
+    <form (ngSubmit)="account.loadAccountRunners()">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="runner-search">
+        <input matInput name="accountRunnerQuery" [(ngModel)]="account.accountRunnerQuery"
+               [placeholder]="'Nom ou prénom' | t" [attr.aria-label]="'Rechercher un coureur' | t"
+               [disabled]="account.runnerLinkSaving || account.deletingAccount">
+        <button mat-icon-button matSuffix class="account-runner-search-icon" type="submit" [attr.aria-label]="'Rechercher un coureur' | t"
+                [disabled]="account.runnerLinkLoading || account.runnerLinkSaving || account.deletingAccount || (account.accountRunnerQuery.trim().length > 0 && account.accountRunnerQuery.trim().length < 2)">
+          <mat-icon aria-hidden="true">search</mat-icon>
+        </button>
+      </mat-form-field>
     </form>
     @if (!account.accountRunnerQuery.trim()) { <p>{{ "Suggestions les plus proches de ton nom Google, par ordre de ressemblance." | t }}</p> }
     }
     @if (account.runnerLinkLoading) { <div class="loading"><mat-spinner diameter="28"></mat-spinner></div> }
-    @if (account.runnerLinkError) { <div class="error-banner" role="alert">{{account.runnerLinkError | t}}</div> }
+    @if (account.runnerLinkError) {
+      <div class="error-banner" role="alert">
+        <span>
+          {{ account.runnerLinkError | t }}
+          @if (account.runnerLinkError === 'Ce coureur est déjà lié à un autre compte Google.') {
+            {{ 'Si cette fiche est la vôtre, envoyez un e-mail à' | t }}
+            <a href="mailto:acrho.challenge@gmail.com">acrho.challenge@gmail.com</a>.
+          }
+        </span>
+      </div>
+    }
     @if (account.runnerLinkMessage) { <p role="status">{{account.runnerLinkMessage | t}}</p> }
     @if (!user.runnerId && !account.runnerLinkLoading && !account.runnerLinkError) {
+      @if (account.suggestedRunners.length) {
+        <div id="runner-link-warning" class="error-banner">
+          <mat-icon aria-hidden="true" style="flex-shrink: 0">warning</mat-icon>
+          <strong>{{ "Attention : si vous liez votre compte à un coureur, aucun autre compte ne pourra être lié à cette fiche tant que vous n’aurez pas retiré la liaison." | t }}</strong>
+        </div>
+      }
       @for (runner of account.suggestedRunners; track runner.id) {
-        <div class="account-runner-option"><div><strong>{{runner.firstName}} {{runner.lastName}}</strong><p>{{(runner.club | clubName) || ("Indépendant" | t)}}@if (runner.category) { · {{account.categoryLabel(runner.category)}} ({{runner.categoryYear}}) }</p></div><button mat-stroked-button type="button" [disabled]="account.runnerLinkSaving || account.deletingAccount || user.runnerId === runner.id" (click)="account.saveRunnerLink(runner)">{{user.runnerId === runner.id ? ("Lié" | t) : ("Lier mon compte" | t)}}</button></div>
+        <div class="account-runner-option"><div><strong>{{runner.firstName}} {{runner.lastName}}</strong><p>{{(runner.club | clubName) || ("Indépendant" | t)}}@if (runner.category) { · {{account.categoryLabel(runner.category)}} ({{runner.categoryYear}}) }</p></div><button mat-stroked-button type="button" [disabled]="account.runnerLinkSaving || account.deletingAccount || user.runnerId === runner.id" aria-describedby="runner-link-warning" (click)="account.saveRunnerLink(runner)">{{user.runnerId === runner.id ? ("Lié" | t) : ("Lier mon compte" | t)}}</button></div>
       } @empty { <p>{{ 'Aucun coureur trouvé. Essaie une recherche avec ton nom ou ton prénom.' | t }}</p> }
     }
   </section>
