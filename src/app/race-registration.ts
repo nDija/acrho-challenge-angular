@@ -6,54 +6,54 @@ import { TranslatePipe } from './translate.pipe';
   selector: 'app-race-registration',
   imports: [MatIconModule, TranslatePipe],
   template: `
-    <article lang="fr">
+    <article>
       <h1>{{ 'Inscription' | t }} ACRHO 2026</h1>
-      <p class="screen-only">Remplissez la fiche dans votre navigateur, puis imprimez-la et signez-la pour la remettre sur place. Les données saisies ne sont pas envoyées au serveur.</p>
-      <p class="screen-only"><a href="assets/acrho-inscription-2026-fr.pdf" download>Télécharger le formulaire officiel (PDF)</a></p>
+      <p class="screen-only">{{ 'Remplissez la fiche dans votre navigateur, puis imprimez-la et signez-la pour la remettre sur place. Les données saisies ne sont pas envoyées au serveur.' | t }}</p>
+      <p class="screen-only"><a href="assets/acrho-inscription-2026-fr.pdf" download>{{ 'Télécharger le formulaire officiel (PDF)' | t }}</a></p>
 
       <section aria-labelledby="registration-rules">
-        <h2 id="registration-rules">À lire avant de remplir la fiche</h2>
+        <h2 id="registration-rules">{{ 'À lire avant de remplir la fiche' | t }}</h2>
         <ul>
-          <li>Une inscription par an suffit. Le numéro de dossard et le club renseigné restent valables pour toute la saison.</li>
-          <li>En 2026, la première inscription coûte 6 € pour les nouveaux inscrits. Les courses suivantes coûtent 5 €, comme chaque course pour les coureurs classés en 2025. Le remplacement d’un dossard endommagé coûte 6 €.</li>
-          <li>Portez le dossard sur la poitrine, partez derrière la ligne pour être détecté et restituez le dossard après chaque course, même en cas d’abandon. Le classement utilise le temps net. Les réclamations se font via le site dans les 15 jours.</li>
-          <li>Âge minimum de 10 ans pour 8 km, 12 ans pour 12 km et 16 ans à partir de 15 km. Les chiens et les poussettes sont interdits sur le parcours.</li>
-          <li>L’organisateur peut annuler l’épreuve en cas de force majeure ou si la sécurité est compromise. Consultez le <a href="https://www.acrho.org/web/reglement/1011306065/list1187970089/f1.html">règlement de l’ACRHO</a>.</li>
+          <li>{{ 'Une inscription par an suffit. Le numéro de dossard et le club renseigné restent valables pour toute la saison.' | t }}</li>
+          <li>{{ 'En 2026, la première inscription coûte 6 € pour les nouveaux inscrits. Les courses suivantes coûtent 5 €, comme chaque course pour les coureurs classés en 2025. Le remplacement d’un dossard endommagé coûte 6 €.' | t }}</li>
+          <li>{{ 'Portez le dossard sur la poitrine, partez derrière la ligne pour être détecté et restituez le dossard après chaque course, même en cas d’abandon. Le classement utilise le temps net. Les réclamations se font via le site dans les 15 jours.' | t }}</li>
+          <li>{{ 'Âge minimum de 10 ans pour 8 km, 12 ans pour 12 km et 16 ans à partir de 15 km. Les chiens et les poussettes sont interdits sur le parcours.' | t }}</li>
+          <li>{{ 'L’organisateur peut annuler l’épreuve en cas de force majeure ou si la sécurité est compromise.' | t }} <a href="https://www.acrho.org/web/reglement/1011306065/list1187970089/f1.html">{{ 'Consulter le règlement de l’ACRHO.' | t }}</a></li>
         </ul>
       </section>
 
       <form #registrationForm ngNoForm (input)="refreshValidity(registrationForm)"
             (change)="refreshValidity(registrationForm)" (submit)="print($event)">
-        <h2>Fiche d’inscription</h2>
-        <p class="screen-only">Les champs marqués d’un astérisque sont obligatoires.</p>
+        <h2>{{ 'Fiche d’inscription' | t }}</h2>
+        <p class="screen-only">{{ 'Les champs marqués d’un astérisque sont obligatoires.' | t }}</p>
         <div class="fields">
-          <label>Numéro de dossard <input type="text" readonly aria-describedby="bib-number-note">
-            <small id="bib-number-note" class="screen-only">Réservé à l’organisation.</small>
+          <label>{{ 'Numéro de dossard' | t }} <input type="text" readonly aria-describedby="bib-number-note">
+            <small id="bib-number-note" class="screen-only">{{ 'Réservé à l’organisation.' | t }}</small>
           </label>
-          <label>Date de naissance * <input type="date" [max]="latestBirthDate" required></label>
-          <label>Nom * <input type="text" required autocomplete="family-name"></label>
-          <label>Prénom * <input type="text" required autocomplete="given-name"></label>
-          <label>Club <input type="text"></label>
-          <label>E-mail <input type="email" autocomplete="email"></label>
+          <label>{{ 'Date de naissance' | t }} * <input type="date" [max]="latestBirthDate" required></label>
+          <label>{{ 'Nom de famille' | t }} * <input type="text" required autocomplete="family-name"></label>
+          <label>{{ 'Prénom' | t }} * <input type="text" required autocomplete="given-name"></label>
+          <label>{{ 'Club' | t }} <input type="text"></label>
+          <label>{{ 'E-mail' | t }} <input type="email" autocomplete="email"></label>
           <fieldset>
-            <legend>Sexe *</legend>
-            <label><input type="radio" name="sexe" value="homme" required> Homme</label>
-            <label><input type="radio" name="sexe" value="femme" required> Femme</label>
+            <legend>{{ 'Sexe' | t }} *</legend>
+            <label><input type="radio" name="sexe" value="homme" required> {{ 'Homme' | t }}</label>
+            <label><input type="radio" name="sexe" value="femme" required> {{ 'Femme' | t }}</label>
           </fieldset>
-          <label>Taille *
+          <label>{{ 'Taille' | t }} *
             <select required>
               <option value="">—</option>
               @for (size of sizes; track size) { <option [value]="size">{{ size }}</option> }
             </select>
           </label>
         </div>
-        <p>Je déclare avoir pris connaissance des informations ci-dessus. Je déclare être physiquement apte à la pratique de la course à pied en compétition et dégage les organisateurs de toute responsabilité.</p>
-        <p><strong>Droit à l’image</strong> — J’autorise l’ACRHO asbl à prendre des photos de moi avant, pendant et après l’une des courses organisées par celle-ci. Je renonce à toute rémunération et droit à la propriété du fait des utilisations des photos réalisées. Ces photos seront prises par l’un des photographes de l’ACRHO asbl dont le nom est repris sur <a href="https://www.acrho.org/">acrho.org</a>. L’ACRHO asbl s’engage à faire de ce droit un usage promotionnel et non commercial.</p>
+        <p>{{ 'Je déclare avoir pris connaissance des informations ci-dessus. Je déclare être physiquement apte à la pratique de la course à pied en compétition et dégage les organisateurs de toute responsabilité.' | t }}</p>
+        <p><strong>{{ 'Droit à l’image' | t }}</strong> — {{ 'J’autorise l’ACRHO asbl à prendre des photos de moi avant, pendant et après l’une des courses organisées par celle-ci. Je renonce à toute rémunération et droit à la propriété du fait des utilisations des photos réalisées. Ces photos seront prises par l’un des photographes de l’ACRHO asbl dont le nom est repris sur' | t }} <a href="https://www.acrho.org/">acrho.org</a>. {{ 'L’ACRHO asbl s’engage à faire de ce droit un usage promotionnel et non commercial.' | t }}</p>
         <div class="fields signatures">
-          <label>Date d’inscription * <input type="date" [value]="registrationDate" required></label>
-          <div class="signature">Signature obligatoire<span aria-hidden="true"></span></div>
+          <label>{{ 'Date d’inscription' | t }} * <input type="date" [value]="registrationDate" required></label>
+          <div class="signature">{{ 'Signature obligatoire' | t }}<span aria-hidden="true"></span></div>
         </div>
-        <button class="screen-only" type="submit" [disabled]="!formValid()"><mat-icon aria-hidden="true">print</mat-icon> Imprimer la fiche</button>
+        <button class="screen-only" type="submit" [disabled]="!formValid()"><mat-icon aria-hidden="true">print</mat-icon> {{ 'Imprimer la fiche' | t }}</button>
       </form>
     </article>
   `,
