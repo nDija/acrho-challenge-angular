@@ -200,6 +200,7 @@ html[data-acrho-theme] .runner-history-card[data-banner-color='yellow'] .runner-
 .category-pill { padding:5px 8px;border-radius:8px;background:var(--acrho-soft);font-size:10px;font-weight:700; }
 .runner-avatar { display:grid;place-items:center;flex-shrink:0;width:42px;height:42px;overflow:hidden;border-radius:50%;background:var(--acrho-soft);color:var(--acrho-accent-dark);font-weight:800;font-size:12px; }
 .runner-avatar img { display:block; width:100%; height:100%; object-fit:cover; }
+html:has(app-standings) { scrollbar-gutter: stable; }
 .result-rank { display:grid; place-items:center; width:42px; height:42px; border-radius:13px; background:var(--acrho-soft); color:var(--acrho-accent-dark); font:800 16px Manrope,sans-serif; }
 .result-person { display:flex; align-items:center; gap:10px; min-width:0; }
 .result-person-copy { min-width:0; }

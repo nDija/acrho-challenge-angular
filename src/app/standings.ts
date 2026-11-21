@@ -75,7 +75,7 @@ import { RankedRunnerAvatar } from './ranked-runner-avatar';
     mat-form-field { width: min(100%, 19rem); }
     .standing-cards {
       display: grid;
-      grid-template-columns: max-content minmax(0, 1fr) fit-content(6rem);
+      grid-template-columns: 42px minmax(0, 1fr) clamp(3.25rem, 19cqi, 6rem);
       gap: 12px 8px;
       padding: 0;
       margin: 0 0 12px;
@@ -85,7 +85,8 @@ import { RankedRunnerAvatar } from './ranked-runner-avatar';
       display: grid;
       grid-column: 1 / -1;
       grid-template-columns: subgrid;
-      row-gap: 10px;
+      grid-template-rows: 50px 1rem 2.5rem;
+      row-gap: 4px;
       padding: 14px;
       border: 1px solid var(--acrho-border);
       border-radius: 12px;
@@ -95,15 +96,23 @@ import { RankedRunnerAvatar } from './ranked-runner-avatar';
     .card-heading {
       display: grid;
       grid-column: 1 / 4;
+      grid-row: 1;
       grid-template-columns: subgrid;
       align-items: center;
     }
     .result-rank { font-variant-numeric: tabular-nums; }
-    .card-heading .category-pill { justify-self: start; overflow-wrap: anywhere; }
-    .provisional-label { grid-column: 2 / -1; font-size: .75rem; font-weight: 700; }
+    .card-heading .category-pill {
+      box-sizing: border-box;
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .provisional-label { grid-column: 2 / -1; grid-row: 2; font-size: .75rem; line-height: 1rem; font-weight: 700; }
     dl {
       display: grid;
       grid-column: 1 / -1;
+      grid-row: 3;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 8px;
       margin: 0;
@@ -116,6 +125,7 @@ import { RankedRunnerAvatar } from './ranked-runner-avatar';
       display: grid;
       grid-template-columns: 58px minmax(0, 1fr);
       justify-items: start;
+      height: 100%;
       gap: 6px;
       padding: 0;
       border: 0;
@@ -126,19 +136,27 @@ import { RankedRunnerAvatar } from './ranked-runner-avatar';
       cursor: pointer;
     }
     .runner-link app-ranked-runner-avatar { justify-self: center; }
-    .runner-link strong { font-size: clamp(1rem, 2.5vw, 1.125rem); line-height: 1.25; white-space: normal; overflow-wrap: anywhere; }
+    .runner-link strong {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      font-size: clamp(1rem, 2.5vw, 1.125rem);
+      line-height: 1.25;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
     .standing-card:hover { border-color: var(--acrho-accent); }
     .runner-link:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
     .provisional { color: #964000; background: #fff5e9; }
     @container (min-width: 680px) {
       .standing-cards {
-        grid-template-columns: max-content minmax(0, 1fr) fit-content(6rem) max-content repeat(4, max-content);
+        grid-template-columns: 42px minmax(0, 1fr) 6rem 5.5rem repeat(4, clamp(3rem, 6cqi, 5rem));
         column-gap: clamp(8px, 1.5cqi, 20px);
       }
-      .standing-card { align-items: center; padding-block: 8px; }
+      .standing-card { grid-template-rows: 50px; align-items: stretch; padding-block: 8px; }
       .card-heading, .provisional-label, dl { grid-row: 1; }
-      .provisional-label { grid-column: 4; }
-      dl { grid-column: 5 / -1; grid-template-columns: subgrid; column-gap: inherit; }
+      .provisional-label { grid-column: 4; align-self: center; }
+      dl { grid-column: 5 / -1; grid-template-columns: subgrid; align-content: center; column-gap: inherit; }
     }
   `,
 })
