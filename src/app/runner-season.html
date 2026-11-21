@@ -1,0 +1,10 @@
+@let app = context();
+<mat-form-field appearance="outline">
+  <mat-label>{{ 'Saison' | t }}</mat-label>
+  <mat-select [(ngModel)]="app.runnerYear" [disabled]="app.runnerDetailLoading || !app.runnerSeasons.length"
+              (selectionChange)="app.loadRunnerResults()">
+    @for (year of app.runnerSeasons; track year) {
+      <mat-option [value]="year">{{ year }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>

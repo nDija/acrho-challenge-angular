@@ -1,0 +1,29 @@
+@let app = context();
+<div class="filter-fields">
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'Rechercher un coureur' | t }}</mat-label>
+    <input matInput [(ngModel)]="app.resultQuery" (keyup.enter)="app.applyResultFilters()">
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'Catégorie' | t }}</mat-label>
+    <mat-select [(ngModel)]="app.category">
+      <mat-option value="">{{ 'Toutes' | t }}</mat-option>
+      @for (category of app.categories; track category.id) {
+        <mat-option [value]="category.id">{{ category.label | t }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'Sexe' | t }}</mat-label>
+    <mat-select [(ngModel)]="app.gender">
+      <mat-option value="">{{ 'Tous' | t }}</mat-option>
+      <mat-option value="M">{{ 'Hommes' | t }}</mat-option>
+      <mat-option value="F">{{ 'Femmes' | t }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+<button mat-icon-button class="apply-filter" type="button"
+        [attr.aria-label]="'Appliquer les filtres' | t" [title]="'Appliquer les filtres' | t"
+        (click)="app.applyResultFilters()">
+  <mat-icon>search</mat-icon>
+</button>

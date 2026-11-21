@@ -1,0 +1,8 @@
+.filter-fields { display: flex; gap: 12px; }
+.filter-fields mat-form-field { flex: 1; min-width: 0; }
+.apply-filter { display: flex; align-items: center; justify-content: center; width: 100%; height: 48px; margin-bottom: 8px; border-radius: 12px; background: var(--acrho-accent); color: #fff; }
+.apply-filter mat-icon { color: inherit; }
+@media (max-width: 480px) {
+  .filter-fields { flex-direction: column; gap: 0; }
+  .filter-fields mat-form-field { width: 100%; }
+}

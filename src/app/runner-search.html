@@ -1,0 +1,8 @@
+@let app = context();
+<mat-form-field appearance="outline">
+  <mat-label>{{ 'Nom ou prénom (2 caractères minimum)' | t }}</mat-label>
+  <input matInput [(ngModel)]="app.runnerQuery" (ngModelChange)="app.onRunnerQueryChange()" (keyup.enter)="app.findRunners()">
+  <button mat-icon-button matSuffix type="button" (click)="app.findRunners()" [attr.aria-label]="'Rechercher un coureur' | t">
+    <mat-icon>search</mat-icon>
+  </button>
+</mat-form-field>

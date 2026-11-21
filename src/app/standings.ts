@@ -8,12 +8,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { Subject, catchError, of, startWith, switchMap } from 'rxjs';
 import { AcrhoApi, Runner, StandingEntry } from './acrho-api.service';
+import { localizedPaginatorProvider } from './paginator-intl';
 import { LanguageService } from './language.service';
 import { TranslatePipe } from './translate.pipe';
 import { RankedRunnerAvatar } from './ranked-runner-avatar';
 
 @Component({
   selector: 'app-standings',
+  providers: [localizedPaginatorProvider],
   imports: [RankedRunnerAvatar, DecimalPipe, TranslatePipe, MatButtonModule, MatFormFieldModule, MatSelectModule, MatProgressSpinnerModule, MatPaginatorModule],
   template: `
     <h1 id="standings-title">{{ 'Classement de la saison' | t }} @if (standings(); as data) { {{ data.year }} }</h1>

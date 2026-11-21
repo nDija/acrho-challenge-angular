@@ -1,3 +1,8 @@
+import { Paginator } from './paginator';
+import { RacePhotoCredit } from './race-photo-credit';
+import { RunnerSeason } from './runner-season';
+import { RunnerSearch } from './runner-search';
+import { ResultFilters } from './result-filters';
 import { AccountSettings } from './account-settings';
 import { Regulation } from './regulation';
 import { Photos } from './photos';
@@ -22,16 +27,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AcrhoApi, Category, Me, Page, Race, RaceDetail, RacePhoto, Result, RouteInfo, Runner, RunnerResult, Season } from './acrho-api.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import type { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root', standalone: true,
-  imports: [AccountSettings, Regulation, Photos, Sponsors, ProjectCredits, RaceTips, RaceRegistration, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, ClubNamePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatMenuModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatProgressSpinnerModule, MatPaginatorModule],
+  imports: [Paginator, RacePhotoCredit, RunnerSeason, RunnerSearch, ResultFilters, AccountSettings, Regulation, Photos, Sponsors, ProjectCredits, RaceTips, RaceRegistration, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, ClubNamePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './app.html', styleUrl: './app.scss'
 })
 export class App implements OnInit {

@@ -1,0 +1,16 @@
+@let credit = photo();
+<button class="race-hero-credit" type="button" [matMenuTriggerFor]="photoCredits"
+        [attr.aria-label]="'Crédits de la photo' | t">
+  <mat-icon aria-hidden="true">info_outline</mat-icon>
+</button>
+<mat-menu #photoCredits="matMenu" xPosition="before">
+  @if (credit.author) {
+    <div class="race-hero-credit-text">{{ credit.author }}</div>
+  }
+  <a mat-menu-item [href]="credit.sourceUrl" target="_blank" rel="noopener noreferrer" translate="no">Wikimedia Commons</a>
+  @if (credit.licenseUrl) {
+    <a mat-menu-item [href]="credit.licenseUrl" target="_blank" rel="noopener noreferrer">{{ credit.license }}</a>
+  } @else {
+    <div class="race-hero-credit-text">{{ credit.license }}</div>
+  }
+</mat-menu>

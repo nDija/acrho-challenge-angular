@@ -1,6 +1,5 @@
 import { DOCUMENT } from '@angular/common';
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
-import { MatPaginatorIntl } from '@angular/material/paginator';
 import { Language, translations } from './translations';
 
 @Injectable({ providedIn: 'root' })
@@ -12,23 +11,11 @@ export class LanguageService {
   readonly language = signal<Language>(this.savedLanguage());
   readonly locale = computed(() => this.language());
   private readonly document = inject(DOCUMENT);
-  private readonly paginator = inject(MatPaginatorIntl);
   private readonly dictionaries = new Map(translations.map(row => [row[0], row]));
 
   constructor() {
     effect(() => {
       this.document.documentElement.lang = this.language();
-      this.paginator.itemsPerPageLabel = this.t('Éléments par page');
-      this.paginator.nextPageLabel = this.t('Page suivante');
-      this.paginator.previousPageLabel = this.t('Page précédente');
-      this.paginator.firstPageLabel = this.t('Première page');
-      this.paginator.lastPageLabel = this.t('Dernière page');
-      this.paginator.getRangeLabel = (page, size, length) => {
-        const start = length === 0 || size === 0 ? 0 : page * size + 1;
-        const end = Math.min((page + 1) * size, length);
-        return `${start}–${end} ${this.t('sur')} ${length}`;
-      };
-      this.paginator.changes.next();
     });
   }
 
