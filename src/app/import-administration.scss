@@ -29,4 +29,5 @@ h2 { margin: 0 0 4px; color: var(--acrho-heading); font-size: 1.1rem; }
 .import-error { color: #842929; }
 ul { padding-inline-start: 22px; margin-bottom: 0; }
 li + li { margin-top: 6px; }
+.issue-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 8px; }
 @media (max-width: 480px) { .import-filters { grid-template-columns: 1fr; } }

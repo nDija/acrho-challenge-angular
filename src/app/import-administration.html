@@ -29,6 +29,12 @@
     </div>
   }
 
+  @if (reviewFeedback() === 'success') {
+    <p role="status">{{ 'Anomalie marquée comme traitée.' | t }}</p>
+  } @else if (reviewFeedback() === 'error') {
+    <div class="error-banner" role="alert">{{ 'Impossible de traiter cette anomalie. Actualisez les rapports et réessayez.' | t }}</div>
+  }
+
   @if (seasonState.status === 'error' || reportState.status === 'error') {
     <div class="error-banner" role="alert">{{ 'Impossible de charger les rapports d’import.' | t }}</div>
   } @else if (seasonState.status === 'ready' && !seasonState.data.length) {
@@ -59,7 +65,19 @@
           @if (report.issues.length) {
             <ul>
               @for (issue of report.issues; track issue.id) {
-                <li><code>{{ issue.code }}</code> {{ issue.message }}</li>
+                <li>
+                  <code>{{ issue.code }}</code> {{ issue.message }}
+                  @if (issue.code === 'GENDER_MISMATCH') {
+                    <div class="issue-actions">
+                      @if (issue.canModifyGender) {
+                        <button mat-stroked-button type="button" [disabled]="reviewing()"
+                                (click)="reviewGenderMismatch(issue.id, 'MODIFY')">{{ 'Modifier le genre' | t }}</button>
+                      }
+                      <button mat-stroked-button type="button" [disabled]="reviewing()"
+                              (click)="reviewGenderMismatch(issue.id, 'REVIEW')">{{ 'Marquer comme traité' | t }}</button>
+                    </div>
+                  }
+                </li>
               }
             </ul>
           }

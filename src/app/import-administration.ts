@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { catchError, map, of, startWith, switchMap } from 'rxjs';
 import { AcrhoApi, type ImportReport } from './acrho-api.service';
 import { LanguageService } from './language.service';
@@ -13,7 +14,7 @@ type LoadState<T> =
 
 @Component({
   selector: 'app-import-administration',
-  imports: [DatePipe, FormsModule, TranslatePipe],
+  imports: [DatePipe, FormsModule, MatButtonModule, TranslatePipe],
   templateUrl: './import-administration.html',
   styleUrl: './import-administration.scss',
 })
@@ -22,6 +23,9 @@ export class ImportAdministration {
   readonly i18n = inject(LanguageService);
   private readonly selectedSeason = signal<number | null>(null);
   readonly selectedRace = signal<number | null>(null);
+  readonly reviewing = signal(false);
+  readonly reviewFeedback = signal<'success' | 'error' | null>(null);
+  private readonly reviewedIssues = signal<ReadonlySet<number>>(new Set());
 
   readonly seasons = toSignal(this.api.importReportSeasons().pipe(
     map((data): LoadState<number[]> => ({ status: 'ready', data })),
@@ -59,12 +63,32 @@ export class ImportAdministration {
   readonly visibleReports = computed(() => {
     const state = this.reports();
     const race = this.selectedRace();
-    return state.status === 'ready' ? state.data.filter(report =>
-      (race === null || report.legacyRunId === race) &&
-      (report.status === 'FAILED' || report.error || report.issues.length > 0)) : [];
+    const reviewed = this.reviewedIssues();
+    return state.status === 'ready' ? state.data
+      .filter(report => race === null || report.legacyRunId === race)
+      .map(report => ({ ...report, issues: report.issues.filter(issue => !reviewed.has(issue.id)) }))
+      .filter(report => report.status === 'FAILED' || report.error || report.issues.length > 0) : [];
   });
 
+  reviewGenderMismatch(id: number, action: 'MODIFY' | 'REVIEW') {
+    if (this.reviewing()) return;
+    this.reviewing.set(true);
+    this.reviewFeedback.set(null);
+    this.api.reviewImportGenderMismatch(id, action).subscribe({
+      next: () => {
+        this.reviewedIssues.update(issues => new Set([...issues, id]));
+        this.reviewFeedback.set('success');
+        this.reviewing.set(false);
+      },
+      error: () => {
+        this.reviewFeedback.set('error');
+        this.reviewing.set(false);
+      },
+    });
+  }
+
   selectSeason(year: number) {
+    this.reviewFeedback.set(null);
     this.selectedRace.set(null);
     this.selectedSeason.set(year);
   }
