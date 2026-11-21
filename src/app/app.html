@@ -278,7 +278,7 @@
       }
       @if (activeView === 'administration' && me?.role === 'ADMIN') {
         @defer (on immediate) {
-          <app-import-administration />
+          <app-administration (statusChanged)="$event === selectedYear && loadRaces()" />
         }
       }
       @if (activeView === 'settings') {

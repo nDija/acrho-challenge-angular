@@ -1,4 +1,4 @@
-import { ImportAdministration } from './import-administration';
+import { Administration } from './administration';
 import { Paginator } from './paginator';
 import { RacePhotoCredit } from './race-photo-credit';
 import { RunnerSeason } from './runner-season';
@@ -33,7 +33,7 @@ import type { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root', standalone: true,
-  imports: [ImportAdministration, Paginator, RacePhotoCredit, RunnerSeason, RunnerSearch, ResultFilters, AccountSettings, Regulation, Photos, Sponsors, ProjectCredits, RaceTips, RaceRegistration, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, ClubNamePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [Administration, Paginator, RacePhotoCredit, RunnerSeason, RunnerSearch, ResultFilters, AccountSettings, Regulation, Photos, Sponsors, ProjectCredits, RaceTips, RaceRegistration, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, ClubNamePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './app.html', styleUrl: './app.scss'
 })
 export class App implements OnInit {

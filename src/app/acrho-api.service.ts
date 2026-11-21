@@ -17,6 +17,17 @@ export interface RacePhoto {
 export interface RaceDetail extends Race { organizer?: string; routes: RouteInfo[]; practicalInfo?: RacePracticalInfo | null; }
 export interface Runner { id: number; firstName: string; lastName: string; gender?: string; club?: string; category?: string | null; categoryYear?: number | null; pictureUrl?: string | null; bannerColor?: string; }
 export interface Me { id: number; email: string; displayName?: string; role: 'USER' | 'ADMIN'; pictureUrl?: string | null; createdAt?: string | null; runnerId?: number | null; }
+export type RaceStatus = 'PLANNED' | 'RESULTS_RECEIVED' | 'PUBLISHED' | 'CANCELLED';
+
+export interface AdminRace {
+  id: number;
+  name: string;
+  raceDate: string;
+  city: string | null;
+  status: RaceStatus;
+  statusManuallySet: boolean;
+}
+
 export interface ImportReport {
   id: number;
   createdAt: string;
@@ -94,6 +105,16 @@ export class AcrhoApi {
   private apiUrl(path: string) { return `${environment.apiBaseUrl}${path}`; }
   health() { return this.http.get<{ status: string }>('https://acrho-challenge.ddns.net/actuator/health'); }
   seasons() { return this.http.get<Season[]>(this.apiUrl('/api/v1/seasons')); }
+  adminRaces(year: number) {
+    return this.http.get<AdminRace[]>(this.apiUrl('/api/v1/admin/races'), { params: { year } });
+  }
+
+  updateRaceStatus(id: number, status: RaceStatus | 'AUTOMATIC') {
+    const url = this.apiUrl(`/api/v1/admin/races/${id}/status`);
+    return status === 'AUTOMATIC' ? this.http.delete<AdminRace>(url) :
+      this.http.put<AdminRace>(url, null, { params: { status } });
+  }
+
   importReportSeasons() {
     return this.http.get<number[]>(this.apiUrl('/api/v1/legacy/import-reports/seasons'));
   }

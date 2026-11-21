@@ -2,6 +2,19 @@ export type Language = 'fr' | 'en' | 'nl' | 'de';
 
 // Columns are French, English, Dutch and German.
 export const translations: readonly (readonly [string, string, string, string])[] = [
+  ['Statut des courses', 'Race status', 'Wedstrijdstatus', 'Laufstatus'],
+  ['Statut de la course', 'Race status', 'Wedstrijdstatus', 'Laufstatus'],
+  ['Gestion automatique', 'Automatic management', 'Automatisch beheer', 'Automatische Verwaltung'],
+  ['Statut enregistré.', 'Status saved.', 'Status opgeslagen.', 'Status gespeichert.'],
+  ['Impossible de modifier le statut.', 'Could not change the status.', 'Status kon niet worden gewijzigd.', 'Status konnte nicht geändert werden.'],
+  ['Impossible de charger les courses.', 'Could not load races.', 'Wedstrijden konden niet worden geladen.', 'Läufe konnten nicht geladen werden.'],
+  ['Au calendrier', 'Scheduled', 'Gepland', 'Geplant'],
+  ['Publiée', 'Published', 'Gepubliceerd', 'Veröffentlicht'],
+  ['Annulée', 'Cancelled', 'Afgelast', 'Abgesagt'],
+  ['Aucune course pour cette saison.', 'No races for this season.', 'Geen wedstrijden in dit seizoen.', 'Keine Läufe in dieser Saison.'],
+  ['Chargement…', 'Loading…', 'Laden…', 'Wird geladen…'],
+  ['Enregistrement…', 'Saving…', 'Opslaan…', 'Wird gespeichert…'],
+  ['Résultats reçus', 'Results received', 'Resultaten ontvangen', 'Ergebnisse erhalten'],
   ['Administration', 'Administration', 'Beheer', 'Verwaltung'],
   ['Erreurs d’import', 'Import errors', 'Importfouten', 'Importfehler'],
   ['Toutes les courses', 'All races', 'Alle wedstrijden', 'Alle Läufe'],

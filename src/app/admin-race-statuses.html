@@ -1,0 +1,58 @@
+<section aria-labelledby="race-status-title">
+  <h1 id="race-status-title">{{ 'Statut des courses' | t }}</h1>
+  @let years = seasons();
+  @let races = raceList();
+  @if (years?.length) {
+    <label class="season-filter">
+      {{ 'Saison' | t }}
+      <select [ngModel]="selectedYear()" (ngModelChange)="selectYear($event)" [disabled]="saving() !== null">
+        @for (season of years; track season.year) {
+          <option [ngValue]="season.year">{{ season.year }}</option>
+        }
+      </select>
+    </label>
+  }
+  @if (years === null || races === null) {
+    <div class="error-banner" role="alert">{{ 'Impossible de charger les courses.' | t }}</div>
+  } @else if (years === undefined || races === undefined) {
+    <div class="loading" role="status">{{ 'Chargement…' | t }}</div>
+  } @else if (!races.length) {
+    <div class="empty">{{ 'Aucune course pour cette saison.' | t }}</div>
+  } @else {
+    <ul class="races">
+      @for (entry of races; track entry.id) {
+        @let race = currentRace(entry);
+        <li class="race">
+          <div>
+            <h2>{{ race.name }}</h2>
+            <div class="race-meta">
+              <time [attr.datetime]="race.raceDate">{{ race.raceDate | date:'mediumDate':undefined:i18n.locale() }}</time>
+              @if (race.city) { · {{ race.city }} }
+              · {{ statusLabels[race.status] | t }}
+            </div>
+          </div>
+          <div class="race-actions">
+            <select [ngModel]="choice(race)" (ngModelChange)="selectStatus(race.id, $event)"
+                    [disabled]="saving() !== null" [attr.aria-label]="('Statut de la course' | t) + ' · ' + race.name">
+              <option value="AUTOMATIC">{{ 'Gestion automatique' | t }}</option>
+              @for (status of statuses; track status) {
+                <option [value]="status">{{ statusLabels[status] | t }}</option>
+              }
+            </select>
+            <button type="button" class="auth-btn auth-btn-primary"
+                    [disabled]="saving() !== null || choice(race) === savedChoice(race)" (click)="save(race)">
+              {{ (saving() === race.id ? 'Enregistrement…' : 'Enregistrer') | t }}
+            </button>
+          </div>
+          @if (notice(); as feedback) {
+            @if (feedback.raceId === race.id) {
+              <p class="notice" [class.is-error]="!feedback.success" [attr.role]="feedback.success ? 'status' : 'alert'">
+                {{ (feedback.success ? 'Statut enregistré.' : 'Impossible de modifier le statut.') | t }}
+              </p>
+            }
+          }
+        </li>
+      }
+    </ul>
+  }
+</section>
