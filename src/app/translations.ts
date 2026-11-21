@@ -60,6 +60,8 @@ export const translations: readonly (readonly [string, string, string, string])[
   ['en mouvement.', 'in motion.', 'in beweging.', 'in Bewegung.'],
   ['Retrouvez les courses et résultats du challenge ACRHO.', 'Explore ACRHO Challenge races and results.', 'Ontdek de wedstrijden en resultaten van de ACRHO Challenge.', 'Entdecke die Läufe und Ergebnisse der ACRHO Challenge.'],
   ['Courses dans le rétro', 'Completed races', 'Afgelopen wedstrijden', 'Vergangene Läufe'],
+  ['Météo au départ', 'Weather at start', 'Weer bij de start', 'Wetter zum Start'],
+  ['Risque de précipitations', 'Chance of precipitation', 'Kans op neerslag', 'Niederschlagswahrscheinlichkeit'],
   ['Courses à venir', 'Upcoming races', 'Komende wedstrijden', 'Kommende Läufe'],
   ['Courses annulées', 'Cancelled races', 'Afgelaste wedstrijden', 'Abgesagte Läufe'],
   ['Afficher les détails de ', 'Show details for ', 'Details tonen van ', 'Details anzeigen für '],
