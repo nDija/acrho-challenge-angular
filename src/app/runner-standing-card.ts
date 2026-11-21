@@ -54,7 +54,7 @@ import { TranslatePipe } from './translate.pipe';
     dl > div { display: flex; flex-direction: column-reverse; }
     dd { margin: 0; font: 800 22px Manrope, sans-serif; font-variant-numeric: tabular-nums; }
     p { margin: 4px 0 0; }
-    @media (max-width: 800px) {
+    @media (641px <= width <= 800px) {
       :host > div { width: 100%; min-width: 0; }
       .heading { flex-wrap: wrap; justify-content: center; gap: 1px 4px; }
       h2 { font-size: .75rem; }

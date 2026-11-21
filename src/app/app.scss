@@ -208,7 +208,10 @@
 .runner-season-summary { display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 1fr); gap:16px; margin:20px 0 24px; }
 .runner-season-summary > .stat-card { width:100%; min-width:0; overflow-wrap:anywhere; }
 .runner-season-summary .stat-icon { flex-shrink:0; }
-@media (max-width: 800px) {
+@media (max-width: 640px) {
+  .runner-season-summary { grid-template-columns:minmax(0, 1fr); gap:10px; }
+}
+@media (641px <= width <= 800px) {
   .runner-season-summary { gap:6px; }
   .runner-season-summary > .stat-card { flex-direction:column; justify-content:flex-start; align-items:center; gap:5px; padding:8px 4px; text-align:center; }
   .runner-season-summary .stat-icon,

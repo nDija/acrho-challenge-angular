@@ -151,11 +151,9 @@ import { RankedRunnerAvatar } from './ranked-runner-avatar';
     .runner-link:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
     .provisional { color: #964000; background: #fff5e9; }
     @container (width < 680px) {
-      .standing-cards { grid-template-columns: 42px 58px minmax(0, 1fr); column-gap: 6px; }
-      .standing-card { grid-template-rows: 72px 1rem 2.5rem; }
-      .card-heading { grid-template-rows: 50px 22px; }
-      .runner-link { grid-column: 2 / 4; grid-row: 1; grid-template-columns: subgrid; }
-      .card-heading .category-pill { grid-column: 3; grid-row: 2; justify-self: start; width: auto; max-width: 100%; }
+      .standing-cards { grid-template-columns: 42px minmax(0, 1fr) clamp(3.25rem, 19cqi, 6rem); column-gap: 6px; }
+      .runner-link strong { font-size: clamp(.8rem, 3.5cqi, 1rem); }
+      .card-heading .category-pill { text-align: center; padding-inline: 3px; }
     }
     @container (min-width: 680px) {
       .standing-cards {
