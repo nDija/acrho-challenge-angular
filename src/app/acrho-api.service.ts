@@ -119,8 +119,8 @@ export class AcrhoApi {
     return this.http.get<number[]>(this.apiUrl('/api/v1/legacy/import-reports/seasons'));
   }
 
-  reviewImportGenderMismatch(id: number, action: 'MODIFY' | 'REVIEW') {
-    return this.http.put<void>(this.apiUrl('/api/v1/legacy/import-reports/issues/' + id + '/gender-review'), null, { params: { action } });
+  reviewImportIssue(id: number, action: 'MODIFY' | 'REVIEW') {
+    return this.http.put<void>(this.apiUrl('/api/v1/legacy/import-reports/issues/' + id + '/review'), null, { params: { action } });
   }
   importReports(year: number) {
     return this.http.get<ImportReport[]>(this.apiUrl('/api/v1/legacy/import-reports'), { params: { year } });

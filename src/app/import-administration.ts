@@ -70,11 +70,11 @@ export class ImportAdministration {
       .filter(report => report.status === 'FAILED' || report.error || report.issues.length > 0) : [];
   });
 
-  reviewGenderMismatch(id: number, action: 'MODIFY' | 'REVIEW') {
+  reviewIssue(id: number, action: 'MODIFY' | 'REVIEW') {
     if (this.reviewing()) return;
     this.reviewing.set(true);
     this.reviewFeedback.set(null);
-    this.api.reviewImportGenderMismatch(id, action).subscribe({
+    this.api.reviewImportIssue(id, action).subscribe({
       next: () => {
         this.reviewedIssues.update(issues => new Set([...issues, id]));
         this.reviewFeedback.set('success');

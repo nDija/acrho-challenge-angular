@@ -67,14 +67,14 @@
               @for (issue of report.issues; track issue.id) {
                 <li>
                   <code>{{ issue.code }}</code> {{ issue.message }}
-                  @if (issue.code === 'GENDER_MISMATCH') {
+                  @if (issue.code === 'GENDER_MISMATCH' || issue.code === 'CATEGORY_MISMATCH') {
                     <div class="issue-actions">
-                      @if (issue.canModifyGender) {
+                      @if (issue.code === 'GENDER_MISMATCH' && issue.canModifyGender) {
                         <button mat-stroked-button type="button" [disabled]="reviewing()"
-                                (click)="reviewGenderMismatch(issue.id, 'MODIFY')">{{ 'Modifier le genre' | t }}</button>
+                                (click)="reviewIssue(issue.id, 'MODIFY')">{{ 'Modifier le genre' | t }}</button>
                       }
                       <button mat-stroked-button type="button" [disabled]="reviewing()"
-                              (click)="reviewGenderMismatch(issue.id, 'REVIEW')">{{ 'Marquer comme traité' | t }}</button>
+                              (click)="reviewIssue(issue.id, 'REVIEW')">{{ 'Marquer comme traité' | t }}</button>
                     </div>
                   }
                 </li>
