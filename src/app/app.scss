@@ -205,9 +205,18 @@
 .favorite-card .runner-card { flex:1; min-width:0; border:0; background:transparent; }
 .favorite-card .runner-card>div:last-child { min-width:0; overflow-wrap:anywhere; }
 .favorite-remove { flex-shrink:0; }
-.runner-season-summary { display:flex; flex-wrap:wrap; gap:16px; margin:20px 0 24px; }
+.runner-season-summary { display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 1fr); gap:16px; margin:20px 0 24px; }
+.runner-season-summary > .stat-card { width:100%; min-width:0; overflow-wrap:anywhere; }
 .runner-season-summary .stat-icon { flex-shrink:0; }
-.runner-season-summary .runner-vdot-toggle { width:auto; }
+@media (max-width: 800px) {
+  .runner-season-summary { gap:6px; }
+  .runner-season-summary > .stat-card { flex-direction:column; justify-content:flex-start; align-items:center; gap:5px; padding:8px 4px; text-align:center; }
+  .runner-season-summary .stat-icon,
+  .runner-season-summary .card-action-icon { display:none; }
+  .runner-season-summary > .runner-season-card { display:block; }
+  .runner-season-summary > .runner-vdot-toggle { justify-content:center; }
+  .runner-season-summary .stat-card b { font-size:clamp(14px, 4vw, 20px); }
+}
 .runner-vdot-toggle:disabled { cursor:default; opacity:.75; border-color:var(--acrho-border); box-shadow:none; }
 .runner-meta-row { display:flex; align-items:center; gap:10px; }
 .runner-meta-row .favorite-toggle { display:inline-flex; align-items:center; justify-content:center; align-self:center; flex-shrink:0; padding:0; width:48px; height:48px; }

@@ -106,11 +106,6 @@ export class App implements OnInit {
     return this.seasons.find(season => season.year === this.runnerYear)?.id;
   }
 
-  get runnerBannerColor(): string {
-    return this.bannerColors.find(option => option.value === this.selectedRunner?.bannerColor)?.color
-      ?? this.bannerColors[0].color;
-  }
-
   runnerSeasons: number[] = [];
   runnerResults: RunnerResult[] = [];
   runnerDetailLoading = false;
@@ -622,8 +617,8 @@ export class App implements OnInit {
     this.suggestedRunners = [];
     this.linkedRunner = undefined;
     const query = this.accountRunnerQuery.trim();
-    const candidates = query.length >= 2
-      ? this.api.runners(query, 0, 5).pipe(switchMap(page => of(page.content)))
+    const candidates = this.me.runnerId ? of([])
+      : query.length >= 2 ? this.api.runners(query, 0, 5).pipe(switchMap(page => of(page.content)))
       : this.api.runnerSuggestions();
     forkJoin({
       candidates,
@@ -661,6 +656,10 @@ export class App implements OnInit {
         this.me = { ...this.me, runnerId: runner?.id ?? null };
         this.linkedRunner = runner;
         this.runnerLinkMessage = runner ? 'Ton compte est lié à ce coureur.' : 'La liaison a été retirée.';
+        if (!runner) {
+          this.accountRunnerQuery = '';
+          this.loadAccountRunners();
+        }
         this.cdr.markForCheck();
       },
       error: (error: HttpErrorResponse) => {

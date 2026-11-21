@@ -92,7 +92,7 @@ import { RankedRunnerAvatar } from './ranked-runner-avatar';
       padding: 14px;
       border: 1px solid var(--acrho-border);
       border-radius: 12px;
-      background: #fff;
+      background: var(--acrho-surface, color-mix(in srgb, #fff 85%, var(--acrho-soft)));
       color: var(--acrho-heading);
     }
     .card-heading {

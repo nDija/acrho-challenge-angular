@@ -137,12 +137,17 @@
         @if (selectedRunner; as runner) {
           <button class="back-link" type="button" (click)="closeRunner()"><mat-icon>arrow_back</mat-icon> {{ "Retour aux coureurs" | t }}</button>
           <div class="page-heading">
-            <div class="runner-profile-heading runner-profile-banner" [attr.data-banner-color]="runner.bannerColor || 'blue'"><div class="runner-avatar runner-profile-avatar">@if (runner.pictureUrl && !failedRunnerPictures.has(runner.pictureUrl)) { <img [src]="runner.pictureUrl" alt="" referrerpolicy="no-referrer" (error)="failedRunnerPictures.add(runner.pictureUrl)"> } @else { {{runner.firstName?.[0]}}{{runner.lastName?.[0]}} }</div><div class="runner-profile-info"><h1>{{runner.firstName}} {{runner.lastName}}</h1><div class="runner-meta-row"><div><p>{{(runner.club | clubName) || ("Indépendant" | t)}}</p>@if (runner.category) { <p>{{categoryLabel(runner.category)}} ({{runner.categoryYear}})</p> }</div><button mat-icon-button class="favorite-toggle" [class.is-favorite]="isFavorite(runner.id)" type="button" [disabled]="favoritesLoading || !!favoritesError || savingFavorites.has(runner.id)" [attr.aria-pressed]="isFavorite(runner.id)" [attr.aria-label]="isFavorite(runner.id) ? (&quot;Retirer des favoris&quot; | t) : (&quot;Ajouter aux favoris&quot; | t)" [title]="isFavorite(runner.id) ? (&quot;Retirer des favoris&quot; | t) : (&quot;Ajouter aux favoris&quot; | t)" (click)="toggleFavorite(runner)"><mat-icon>{{isFavorite(runner.id) ? 'favorite' : 'favorite_border'}}</mat-icon></button></div></div>@defer (on immediate) { <app-runner-season class="season-select" [context]="this" /> }</div>
+            <div class="runner-profile-heading runner-profile-banner" [attr.data-banner-color]="runner.bannerColor || 'blue'"><div class="runner-avatar runner-profile-avatar">@if (runner.pictureUrl && !failedRunnerPictures.has(runner.pictureUrl)) { <img [src]="runner.pictureUrl" alt="" referrerpolicy="no-referrer" (error)="failedRunnerPictures.add(runner.pictureUrl)"> } @else { {{runner.firstName?.[0]}}{{runner.lastName?.[0]}} }</div><div class="runner-profile-info"><h1>{{runner.firstName}} {{runner.lastName}}</h1><div class="runner-meta-row"><div><p>{{(runner.club | clubName) || ("Indépendant" | t)}}</p>@if (runner.category) { <p>{{categoryLabel(runner.category)}} ({{runner.categoryYear}})</p> }</div><button mat-icon-button class="favorite-toggle" [class.is-favorite]="isFavorite(runner.id)" type="button" [disabled]="favoritesLoading || !!favoritesError || savingFavorites.has(runner.id)" [attr.aria-pressed]="isFavorite(runner.id)" [attr.aria-label]="isFavorite(runner.id) ? (&quot;Retirer des favoris&quot; | t) : (&quot;Ajouter aux favoris&quot; | t)" [title]="isFavorite(runner.id) ? (&quot;Retirer des favoris&quot; | t) : (&quot;Ajouter aux favoris&quot; | t)" (click)="toggleFavorite(runner)"><mat-icon>{{isFavorite(runner.id) ? 'favorite' : 'favorite_border'}}</mat-icon></button></div></div></div>
           </div>
 
           @if (favoritesError) { <div class="error-banner" role="alert">{{favoritesError | t}}<button mat-button type="button" (click)="loadFavorites()">{{ "Réessayer" | t }}</button></div> }
           @let vdotSeasonId = runnerVdotSeasonId;
           <div class="runner-season-summary">
+            <article class="stat-card runner-season-card">
+              @defer (on immediate) {
+                <app-runner-season [context]="this" />
+              }
+            </article>
             @if (!runnerDetailError) {
               <article class="stat-card">
                 <span class="stat-icon blue"><mat-icon>route</mat-icon></span>
@@ -164,7 +169,7 @@
             @if (showRunnerVdot && vdotSeasonId != null) {
               @defer (when showRunnerVdot) {
                 <app-runner-vdot-chart [runnerId]="runner.id" [year]="runnerYear"
-                  [seasonId]="vdotSeasonId" [color]="runnerBannerColor" [results]="runnerResults" />
+                  [seasonId]="vdotSeasonId" [results]="runnerResults" />
               } @loading {
                 <p role="status">{{ 'Chargement du VDOT…' | t }}</p>
               }

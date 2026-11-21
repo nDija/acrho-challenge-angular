@@ -54,9 +54,13 @@ import { TranslatePipe } from './translate.pipe';
     dl > div { display: flex; flex-direction: column-reverse; }
     dd { margin: 0; font: 800 22px Manrope, sans-serif; font-variant-numeric: tabular-nums; }
     p { margin: 4px 0 0; }
-    @media (max-width: 600px) {
-      dd { font-size: 19px; }
-      dt { font-size: 10px; }
+    @media (max-width: 800px) {
+      :host > div { width: 100%; min-width: 0; }
+      .heading { flex-wrap: wrap; justify-content: center; gap: 1px 4px; }
+      h2 { font-size: .75rem; }
+      dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+      dd { font-size: .85rem; }
+      dt { font-size: 9px; }
     }
     .provisional { color: #964000; }
   `,

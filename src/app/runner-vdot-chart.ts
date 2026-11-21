@@ -1,5 +1,5 @@
-import { DecimalPipe } from '@angular/common';
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { DecimalPipe, DOCUMENT } from '@angular/common';
+import { afterRenderEffect, Component, computed, inject, input, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -67,7 +67,8 @@ const day = 86_400_000;
   `,
   styles: `
     :host { display: block; }
-    section { margin-top: 12px; padding: 16px; border: 1px solid var(--acrho-border); border-radius: 13px; background: white; }
+    section { margin-top: 12px; padding: 16px; border: 1px solid var(--acrho-border); border-radius: 13px; background: var(--acrho-surface, #fff); color: var(--acrho-heading); }
+    a { color: var(--acrho-accent-dark); }
     .vdot-heading { display: flex; align-items: center; gap: .25rem; }
     .vdot-explanation { padding: .75rem; margin: 0 0 .75rem; border-radius: .5rem; background: var(--acrho-soft); }
     h2 { margin: 0; color: var(--acrho-heading); font: 800 1rem Manrope, sans-serif; }
@@ -82,11 +83,12 @@ export class RunnerVdotChart {
   readonly runnerId = input.required<number>();
   readonly seasonId = input.required<number>();
   readonly year = input.required<number | undefined>();
-  readonly color = input.required<string>();
   readonly results = input.required<readonly RunnerResult[]>();
   protected readonly showExplanation = signal(false);
   private readonly retry = signal(0);
   protected readonly i18n = inject(LanguageService);
+  private readonly document = inject(DOCUMENT);
+  private readonly palette = signal({ accent: '#005cbb', text: '#304b68', grid: '#dce5ef', surface: '#fff' });
   private readonly api = inject(AcrhoApi);
   private readonly weatherService = inject(RaceWeatherService);
   private readonly request = computed(() => ({
@@ -103,6 +105,21 @@ export class RunnerVdotChart {
     const response = this.response();
     return response && response.request === this.request() ? response : { status: 'loading' as const };
   });
+  constructor() {
+    afterRenderEffect({ read: () => {
+      this.i18n.language();
+      this.i18n.theme();
+      const style = this.document.defaultView?.getComputedStyle(this.document.documentElement);
+      if (!style) return;
+      this.palette.set({
+        accent: style.getPropertyValue('--acrho-accent').trim(),
+        text: style.getPropertyValue('--acrho-text').trim(),
+        grid: style.getPropertyValue('--acrho-border').trim(),
+        surface: style.getPropertyValue('--acrho-surface').trim() || '#fff',
+      });
+    } });
+  }
+
   protected retryRequest() {
     this.retry.update(value => value + 1);
   }
@@ -139,9 +156,9 @@ export class RunnerVdotChart {
   protected readonly chartData = computed<ChartData<'line', VdotPoint[]>>(() => ({
     datasets: [{
       data: this.points(),
-      borderColor: this.color(),
-      backgroundColor: this.color(),
-      pointBorderColor: '#334155',
+      borderColor: this.palette().accent,
+      backgroundColor: this.palette().accent,
+      pointBorderColor: this.palette().surface,
       pointStyle: this.points().map(point => point.race.reliability === 'ESTIMATED' ? 'rectRot' : 'circle'),
       pointRadius: 5,
       pointHoverRadius: 7,
@@ -150,6 +167,8 @@ export class RunnerVdotChart {
   }));
   protected readonly chartOptions = computed<ChartOptions<'line'>>(() => {
     const locale = this.i18n.locale();
+    const { text, grid, surface } = this.palette();
+    const scaleColors = { grid: { color: grid }, border: { color: grid } };
     const tickDate = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', timeZone: 'UTC' });
     const raceDate = new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeZone: 'UTC' });
     const number = new Intl.NumberFormat(locale, { maximumFractionDigits: 2 });
@@ -166,13 +185,19 @@ export class RunnerVdotChart {
           type: 'linear',
           suggestedMin: sameDay ? firstDay - 1 : firstDay,
           suggestedMax: sameDay ? firstDay + 1 : lastDay,
-          ticks: { precision: 0, maxTicksLimit: 7, callback: value => tickDate.format(Number(value) * day) },
+          ...scaleColors,
+          ticks: { color: text, precision: 0, maxTicksLimit: 7, callback: value => tickDate.format(Number(value) * day) },
         },
-        y: { title: { display: true, text: 'VDOT' } },
+        y: { ...scaleColors, ticks: { color: text }, title: { display: true, text: 'VDOT', color: text } },
       },
       plugins: {
         legend: { display: false },
         tooltip: {
+          backgroundColor: surface,
+          titleColor: text,
+          bodyColor: text,
+          borderColor: grid,
+          borderWidth: 1,
           callbacks: {
             title: items => (items[0]?.raw as VdotPoint | undefined)?.race.raceName ?? '',
             label: ({ raw }) => {
