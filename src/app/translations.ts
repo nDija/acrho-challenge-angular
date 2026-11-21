@@ -2,6 +2,16 @@ export type Language = 'fr' | 'en' | 'nl' | 'de';
 
 // Columns are French, English, Dutch and German.
 export const translations: readonly (readonly [string, string, string, string])[] = [
+  ['Sponsors', 'Sponsors', 'Sponsors', 'Sponsoren'],
+  ['Technologies du projet', 'Project technologies', 'Projecttechnologieën', 'Projekttechnologien'],
+  ['Services et crédits', 'Services and credits', 'Diensten en bronvermelding', 'Dienste und Quellen'],
+  ['Application web', 'Web app', 'Webapp', 'Web-App'],
+  ['Application mobile Android et iOS', 'Android and iOS app', 'Android- en iOS-app', 'Android- und iOS-App'],
+  ['API commune', 'Shared API', 'Gedeelde API', 'Gemeinsame API'],
+  ['Prévisions au départ des courses et données météo historiques.', 'Race-start forecasts and historical weather data.', 'Voorspellingen bij de start en historische weergegevens.', 'Wettervorhersagen zum Start und historische Wetterdaten.'],
+  ['Tracés des parcours depuis les fiches des courses.', 'Course maps linked from race details.', 'Parcourskaarten via de wedstrijdinformatie.', 'Streckenkarten in den Veranstaltungsdetails.'],
+  ['Photos des lieux de course. L’auteur et la licence figurent sur chaque photo.', 'Photos of race locations, with the author and licence shown for each photo.', 'Foto’s van wedstrijdlocaties, met per foto de auteur en licentie.', 'Fotos der Veranstaltungsorte mit Angaben zu Urheber und Lizenz.'],
+  ['Ressources graphiques.', 'Graphic resources.', 'Grafisch materiaal.', 'Grafikressourcen.'],
   ['COURIR ENSEMBLE', 'RUN TOGETHER', 'SAMEN LOPEN', 'GEMEINSAM LAUFEN'],
   ['ESPACE PERSONNEL', 'PERSONAL SPACE', 'PERSOONLIJKE RUIMTE', 'PERSÖNLICHER BEREICH'],
   ['Courses', 'Races', 'Wedstrijden', 'Läufe'],
