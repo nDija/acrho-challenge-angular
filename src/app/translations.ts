@@ -37,6 +37,7 @@ export const translations: readonly (readonly [string, string, string, string, s
   ['Import automatique', 'Scheduled import', 'Geplande import', 'Geplanter Import', "Importación programada"],
   ['Import manuel', 'Manual import', 'Handmatige import', 'Manueller Import', "Importación manual"],
   ['Échec de l’import', 'Import failed', 'Import mislukt', 'Import fehlgeschlagen', "La importación ha fallado"],
+  ["Modifier la catégorie", "Update category", "Categorie wijzigen", "Kategorie ändern", "Cambiar la categoría"],
   ["Modifier le genre", "Update gender", "Geslacht wijzigen", "Geschlecht ändern", "Cambiar el género"],
   ["Marquer comme traité", "Mark as reviewed", "Markeren als afgehandeld", "Als erledigt markieren", "Marcar como revisado"],
   ["Anomalie marquée comme traitée.", "Issue marked as reviewed.", "Afwijking gemarkeerd als afgehandeld.", "Abweichung als erledigt markiert.", "Incidencia marcada como revisada."],

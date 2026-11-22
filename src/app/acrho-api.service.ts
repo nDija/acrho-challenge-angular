@@ -37,7 +37,7 @@ export interface ImportReport {
   runDate: string | null;
   status: 'IMPORTED' | 'FAILED';
   error: string | null;
-  issues: { id: number; code: string; message: string; reviewed: boolean; canModifyGender: boolean }[];
+  issues: { id: number; code: string; message: string; reviewed: boolean; canModifyGender: boolean; proposedCategory: string | null }[];
 }
 
 export interface Category { id: number; code: string; label: string; }
@@ -119,7 +119,7 @@ export class AcrhoApi {
     return this.http.get<number[]>(this.apiUrl('/api/v1/legacy/import-reports/seasons'));
   }
 
-  reviewImportIssue(id: number, action: 'MODIFY' | 'REVIEW') {
+  reviewImportIssue(id: number, action: 'MODIFY' | 'MODIFY_CATEGORY' | 'REVIEW') {
     return this.http.put<void>(this.apiUrl('/api/v1/legacy/import-reports/issues/' + id + '/review'), null, { params: { action } });
   }
   importReports(year: number) {
