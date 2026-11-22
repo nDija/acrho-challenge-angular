@@ -161,6 +161,7 @@ export class ProjectCredits {
         { name: 'Claude', logo: 'claude.svg' },
         { name: 'Codex', logo: 'codex.svg' },
         { name: 'ChatGPT', logo: 'chatgpt.png' },
+        { name: 'Gemini', logo: 'gemini.svg' },
       ],
     },
   ];
