@@ -67,6 +67,45 @@
               @for (issue of report.issues; track issue.id) {
                 <li>
                   <code>{{ issue.code }}</code> {{ issue.message }}
+                  @if (issue.code === 'CLUB_TRUNCATED' && issue.canCorrectClub) {
+                    @if (clubIssue() === issue.id) {
+                      @let suggestions = clubSuggestions();
+                      <form class="club-correction" (ngSubmit)="saveClubCorrection(issue.id)">
+                        <label>
+                          {{ 'Clubs proches' | t }}
+                          <select name="suggestedClub" [ngModel]="clubChoice()" (ngModelChange)="clubChoice.set($event)"
+                                  [disabled]="reviewing() || suggestions?.status !== 'ready'">
+                            <option value="">{{ 'Aucun choix' | t }}</option>
+                            @if (suggestions?.status === 'ready') {
+                              @for (club of suggestions.data; track club) {
+                                <option [value]="club">{{ club }}</option>
+                              }
+                            }
+                          </select>
+                        </label>
+                        <label>
+                          {{ 'Nom du club' | t }}
+                          <input name="clubName" maxlength="150" [ngModel]="clubName()"
+                                 (ngModelChange)="clubName.set($event)" [disabled]="reviewing()">
+                        </label>
+                        <button mat-stroked-button type="submit"
+                                [disabled]="reviewing() || !clubToSave() || clubToSave().length > 150">
+                          {{ 'Valider' | t }}
+                        </button>
+                        <button mat-button type="button" [disabled]="reviewing()" (click)="clubIssue.set(null)">
+                          {{ 'Annuler' | t }}
+                        </button>
+                        @if (suggestions?.status === 'error') {
+                          <small role="status">{{ 'Suggestions indisponibles. Saisissez le nom du club.' | t }}</small>
+                        }
+                      </form>
+                    } @else {
+                      <div class="issue-actions">
+                        <button mat-stroked-button type="button" [disabled]="reviewing()"
+                                (click)="openClubCorrection(issue.id)">{{ 'Corriger le club' | t }}</button>
+                      </div>
+                    }
+                  }
                   @if (issue.code === 'GENDER_MISMATCH' || issue.code === 'CATEGORY_MISMATCH') {
                     <div class="issue-actions">
                       @if (issue.code === 'GENDER_MISMATCH' && issue.canModifyGender) {

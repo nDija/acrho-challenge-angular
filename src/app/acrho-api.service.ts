@@ -37,7 +37,7 @@ export interface ImportReport {
   runDate: string | null;
   status: 'IMPORTED' | 'FAILED';
   error: string | null;
-  issues: { id: number; code: string; message: string; reviewed: boolean; canModifyGender: boolean; proposedCategory: string | null }[];
+  issues: { id: number; code: string; message: string; reviewed: boolean; canModifyGender: boolean; proposedCategory: string | null; canCorrectClub: boolean }[];
 }
 
 export interface Category { id: number; code: string; label: string; }
@@ -121,6 +121,12 @@ export class AcrhoApi {
 
   reviewImportIssue(id: number, action: 'MODIFY' | 'MODIFY_CATEGORY' | 'REVIEW') {
     return this.http.put<void>(this.apiUrl('/api/v1/legacy/import-reports/issues/' + id + '/review'), null, { params: { action } });
+  }
+  importClubSuggestions(issueId: number) {
+    return this.http.get<string[]>(this.apiUrl(`/api/v1/legacy/import-reports/issues/${issueId}/club-suggestions`));
+  }
+  correctImportClub(issueId: number, clubName: string) {
+    return this.http.put<void>(this.apiUrl(`/api/v1/legacy/import-reports/issues/${issueId}/club`), { clubName });
   }
   importReports(year: number) {
     return this.http.get<ImportReport[]>(this.apiUrl('/api/v1/legacy/import-reports'), { params: { year } });

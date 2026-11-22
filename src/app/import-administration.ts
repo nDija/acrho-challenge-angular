@@ -3,7 +3,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { catchError, map, of, startWith, switchMap } from 'rxjs';
+import { catchError, map, of, startWith, switchMap, type Observable } from 'rxjs';
 import { AcrhoApi, type ImportReport } from './acrho-api.service';
 import { LanguageService } from './language.service';
 import { TranslatePipe } from './translate.pipe';
@@ -24,6 +24,17 @@ export class ImportAdministration {
   private readonly selectedSeason = signal<number | null>(null);
   readonly selectedRace = signal<number | null>(null);
   readonly reviewing = signal(false);
+  readonly clubIssue = signal<number | null>(null);
+  readonly clubChoice = signal('');
+  readonly clubName = signal('');
+  readonly clubToSave = computed(() => this.clubChoice() || this.clubName().trim());
+  readonly clubSuggestions = toSignal(toObservable(this.clubIssue).pipe(
+    switchMap(id => id === null ? of(null) : this.api.importClubSuggestions(id).pipe(
+      map((data): LoadState<string[]> => ({ status: 'ready', data })),
+      catchError(() => of<LoadState<string[]>>({ status: 'error' })),
+      startWith<LoadState<string[]>>({ status: 'loading' }),
+    )),
+  ));
   readonly reviewFeedback = signal<'success' | 'error' | null>(null);
   private readonly reviewedIssues = signal<ReadonlySet<number>>(new Set());
 
@@ -70,13 +81,32 @@ export class ImportAdministration {
       .filter(report => report.status === 'FAILED' || report.error || report.issues.length > 0) : [];
   });
 
+  openClubCorrection(id: number) {
+    this.clubChoice.set('');
+    this.clubName.set('');
+    this.reviewFeedback.set(null);
+    this.clubIssue.set(id);
+  }
+
+  saveClubCorrection(id: number) {
+    const name = this.clubToSave();
+    if (name && name.length <= 150) {
+      this.saveIssue(id, this.api.correctImportClub(id, name));
+    }
+  }
+
   reviewIssue(id: number, action: 'MODIFY' | 'MODIFY_CATEGORY' | 'REVIEW') {
+    this.saveIssue(id, this.api.reviewImportIssue(id, action));
+  }
+
+  private saveIssue(id: number, request: Observable<void>) {
     if (this.reviewing()) return;
     this.reviewing.set(true);
     this.reviewFeedback.set(null);
-    this.api.reviewImportIssue(id, action).subscribe({
+    request.subscribe({
       next: () => {
         this.reviewedIssues.update(issues => new Set([...issues, id]));
+        if (this.clubIssue() === id) this.clubIssue.set(null);
         this.reviewFeedback.set('success');
         this.reviewing.set(false);
       },
@@ -89,6 +119,7 @@ export class ImportAdministration {
 
   selectSeason(year: number) {
     this.reviewFeedback.set(null);
+    this.clubIssue.set(null);
     this.selectedRace.set(null);
     this.selectedSeason.set(year);
   }
