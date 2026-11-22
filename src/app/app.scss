@@ -89,6 +89,11 @@
 }
 
 .result-cards { display:flex; flex-direction:column; gap:9px; }
+.result-boost-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:6px; align-items:center; }
+.result-boost-row .result-card { min-width:0; }
+.result-boost { display:flex; align-items:center; gap:4px; color:var(--acrho-heading); }
+.boost-button img { width:26px; height:26px; border-radius:5px; vertical-align:middle; }
+.boost-button:disabled img { opacity:.5; }
 .result-card { display:grid; grid-template-columns:52px minmax(0,1fr) auto; align-items:center; gap:14px; min-height:76px; padding:12px 16px; border:1px solid var(--acrho-border); border-radius:12px; background:#fff; }
 
 

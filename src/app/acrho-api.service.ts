@@ -40,6 +40,12 @@ export interface ImportReport {
   issues: { id: number; code: string; message: string; reviewed: boolean; canModifyGender: boolean; proposedCategory: string | null; canCorrectClub: boolean }[];
 }
 
+export interface RaceBoostState {
+  limit: number;
+  sentTo: number[];
+  participants: { runnerId: number; received: number }[];
+}
+
 export interface Category { id: number; code: string; label: string; }
 export interface Result { overallRank?: number; categoryRank?: number; bibNumber?: number; runner: Runner; category?: string | null; timeMs?: number | null; time?: string; status?: string; points?: number | null; }
 export interface RunnerResult { raceId: number; raceName: string; raceDate: string; city?: string; routeId: number; routeLabel: string; distanceM?: number; result: Result; }
@@ -159,6 +165,13 @@ export class AcrhoApi {
   }
   racePhoto(id: number) { return this.http.get<RacePhoto | null>(this.apiUrl(`/api/v1/races/${id}/photo`)); }
   race(id: number) { return this.http.get<RaceDetail>(this.apiUrl(`/api/v1/races/${id}`)); }
+  raceBoosts(raceId: number) {
+    return this.http.get<RaceBoostState>(this.apiUrl(`/api/v1/me/race-boosts/${raceId}`));
+  }
+  toggleRaceBoost(raceId: number, runnerId: number, send: boolean) {
+    const url = this.apiUrl(`/api/v1/me/race-boosts/${raceId}/${runnerId}`);
+    return send ? this.http.put<RaceBoostState>(url, null) : this.http.delete<RaceBoostState>(url);
+  }
   categories() { return this.http.get<Category[]>(this.apiUrl('/api/v1/categories')); }
   results(routeId: number, page = 0, size = 20, q = '', category = '', gender = ''): Observable<Page<Result>> {
     let params = new HttpParams().set('page', page).set('size', size).set('sort', 'overallRank,asc');

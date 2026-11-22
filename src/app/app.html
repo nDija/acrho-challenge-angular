@@ -125,7 +125,37 @@
         <div class="filter-toolbar"><button class="filter-toggle" type="button" [attr.aria-expanded]="showResultFilters" aria-controls="results-filter-panel" (click)="showResultFilters = !showResultFilters"><mat-icon>tune</mat-icon><span>{{ "Filtres de recherche" | t }}</span><mat-icon class="filter-chevron">{{showResultFilters ? 'expand_less' : 'expand_more'}}</mat-icon></button><button mat-icon-button class="clear-filters" type="button" [attr.aria-label]="&quot;Effacer les filtres&quot; | t" [title]="&quot;Effacer les filtres&quot; | t" (click)="clearResultFilters()"><mat-icon>delete</mat-icon></button></div>
         @if (showResultFilters) { <div class="filter-panel" id="results-filter-panel">@defer (on immediate) { <app-result-filters [context]="this" /> }</div> }
         @if (loading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> }
-        @if (results.length) { <div class="result-cards">@for (result of results; track result.runner.id) { <button class="result-card result-card-link" type="button" (click)="openRunnerFromResult(result)" [attr.aria-label]="(&quot;Voir les résultats de &quot; | t) + result.runner.firstName + ' ' + result.runner.lastName"><div class="result-rank">{{result.overallRank ?? '—'}}</div><div class="result-person"><app-ranked-runner-avatar [runner]="result.runner" [rank]="result.overallRank" [failedPictures]="failedRunnerPictures" /><div class="result-person-copy"><strong>{{result.runner.firstName}} {{result.runner.lastName}}</strong><span>{{(result.runner.club | clubName) || ("Indépendant" | t)}}</span></div></div><div class="result-details"><span class="category-pill">{{categoryLabel(result.category)}}</span><span class="result-time-wrap"><small class="result-points">{{result.points != null ? (result.points + ' pts') : '— pts'}}</small><b class="result-time">{{displayTime(result.time)}}</b>@if (pacePerKm(result); as pace) { <small class="result-pace">{{pace}}</small> }</span></div></button> }</div>@defer (on immediate) { <app-paginator [length]="resultTotal" [pageSize]="resultSize" [pageIndex]="resultPage" [pageSizeOptions]="[20,50,100]" (page)="onResultsPage($event)" /> } }
+        <app-race-boosts #boosts="raceBoosts" [raceId]="selectedRace.status === 'PUBLISHED' ? selectedRace.id : null"
+                         [senderId]="me?.runnerId ?? null">
+          @if (results.length) {
+            <div class="result-cards">
+              @for (result of results; track result.runner.id) {
+                @let count = boosts.receivedBy(result.runner.id);
+                @let sent = boosts.hasBoosted(result.runner.id);
+                <div class="result-boost-row">
+                  <button class="result-card result-card-link" type="button" (click)="openRunnerFromResult(result)" [attr.aria-label]="(&quot;Voir les résultats de &quot; | t) + result.runner.firstName + ' ' + result.runner.lastName"><div class="result-rank">{{result.overallRank ?? '—'}}</div><div class="result-person"><app-ranked-runner-avatar [runner]="result.runner" [rank]="result.overallRank" [failedPictures]="failedRunnerPictures" /><div class="result-person-copy"><strong>{{result.runner.firstName}} {{result.runner.lastName}}</strong><span>{{(result.runner.club | clubName) || ("Indépendant" | t)}}</span></div></div><div class="result-details"><span class="category-pill">{{categoryLabel(result.category)}}</span><span class="result-time-wrap"><small class="result-points">{{result.points != null ? (result.points + ' pts') : '— pts'}}</small><b class="result-time">{{displayTime(result.time)}}</b>@if (pacePerKm(result); as pace) { <small class="result-pace">{{pace}}</small> }</span></div></button>
+                  @if (count !== undefined || sent) {
+                    <div class="result-boost">
+                      @if (result.runner.id !== me?.runnerId) {
+                        @let action = (sent ? 'Retirer le Boost' : 'Envoyer un Boost') | t;
+                        <button mat-icon-button type="button" class="boost-button" [disabled]="!boosts.canToggle(result.runner.id)"
+                                [attr.aria-pressed]="sent" [title]="action"
+                                [attr.aria-label]="action + ' · ' + result.runner.firstName + ' ' + result.runner.lastName"
+                                (click)="boosts.toggle(result.runner.id)">
+                          <img [src]="sent ? 'assets/boost-sent.png' : 'assets/boost-send.png'" alt="" width="26" height="26">
+                        </button>
+                      }
+                      @if (count !== undefined) {
+                        <span [attr.aria-label]="('Boosts reçus' | t) + ' · ' + count" [title]="'Boosts reçus' | t">{{ count }}</span>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+            @defer (on immediate) { <app-paginator [length]="resultTotal" [pageSize]="resultSize" [pageIndex]="resultPage" [pageSizeOptions]="[20,50,100]" (page)="onResultsPage($event)" /> }
+          }
+        </app-race-boosts>
         @if (!loading && !results.length && !error) { <div class="empty">{{ "Sélectionnez un parcours pour consulter les résultats." | t }}</div> }
         @if (error) { <div class="error-banner"><mat-icon>info</mat-icon>{{error | t}}</div> }
       }
