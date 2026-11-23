@@ -15,52 +15,61 @@
     }
     @case ('ready') {
       @if (unlocked().length) {
-        <ul class="badges">
-          @for (badge of unlocked(); track badge.code) {
-            <li>
-              <img [src]="'assets/achievements/' + badge.image" alt="" width="72" height="72" loading="lazy">
-              <div><strong>{{ badge.title }}</strong><p>{{ badge.description }}</p></div>
-            </li>
-          }
-        </ul>
+        <ng-container *ngTemplateOutlet="badgeList; context: { $implicit: unlocked() }" />
       } @else {
         <p>{{ 'Aucun succès débloqué pour cette saison.' | t }}</p>
       }
       @if (nextBadges().length) {
         <details>
           <summary>{{ 'Prochains succès' | t }}</summary>
-          <ul class="badges">
-            @for (badge of nextBadges(); track badge.code) {
-              <li>
-                <img [src]="'assets/achievements/' + badge.image" alt="" width="72" height="72" loading="lazy">
-                <div>
-                  <strong>{{ badge.title }}</strong>
-                  <p>{{ badge.condition }}</p>
-                  @switch (badge.group) {
-                    @case ('DISTANCE') {
-                      <progress [max]="badge.target" [value]="badge.progress" [attr.aria-label]="badge.title"></progress>
-                      <small>{{ badge.progress / 1000 | number:'1.0-3':i18n.locale() }} /
-                        {{ badge.target / 1000 | number:'1.0-3':i18n.locale() }} km</small>
-                    }
-                    @case ('PARTICIPATION') {
-                      <progress [max]="badge.target" [value]="badge.progress" [attr.aria-label]="badge.title"></progress>
-                      <small>{{ badge.progress }} / {{ badge.target }}</small>
-                    }
-                    @case ('CLUB') {
-                      <progress [max]="badge.target" [value]="badge.progress" [attr.aria-label]="badge.title"></progress>
-                      <small>{{ badge.progress }} / {{ badge.target }}</small>
-                    }
-                    @case ('BOOST') {
-                      <progress [max]="badge.target" [value]="badge.progress" [attr.aria-label]="badge.title"></progress>
-                      <small>{{ badge.progress }} / {{ badge.target }}</small>
-                    }
-                  }
-                </div>
-              </li>
-            }
-          </ul>
+          <ng-container *ngTemplateOutlet="badgeList; context: { $implicit: nextBadges() }" />
         </details>
       }
     }
   }
 </section>
+
+<ng-template #badgeList let-badges>
+  <ul class="badges">
+    @for (badge of badges; track badge.code) {
+      <li>
+        @let open = activeBadge() === badge.code;
+        <button type="button" class="badge-trigger" cdkOverlayOrigin #badgeOrigin="cdkOverlayOrigin"
+                [attr.aria-label]="badge.title" [attr.aria-expanded]="open"
+                [attr.aria-describedby]="open ? 'achievement-' + badge.code : null"
+                (pointerenter)="previewBadge($event, badge.code)" (pointerleave)="leaveBadge($event, badge.code)"
+                (focus)="showBadge(badge.code)" (blur)="scheduleClose(badge.code)"
+                (click)="showBadge(badge.code)" (keydown.escape)="closeBadge()">
+          <img [src]="'assets/achievements/' + badge.image" alt="" width="64" height="64" loading="lazy">
+        </button>
+
+        <ng-template cdkConnectedOverlay
+                     [cdkConnectedOverlayOrigin]="badgeOrigin"
+                     [cdkConnectedOverlayOpen]="open"
+                     [cdkConnectedOverlayPush]="true"
+                     [cdkConnectedOverlayViewportMargin]="12"
+                     (overlayOutsideClick)="closeBadge(badge.code)"
+                     (detach)="closeBadge(badge.code)">
+          <div class="badge-preview" [id]="'achievement-' + badge.code"
+               (pointerenter)="previewBadge($event, badge.code)" (pointerleave)="leaveBadge($event, badge.code)">
+            <img [src]="'assets/achievements/' + badge.image" alt="" width="112" height="112">
+            <strong>{{ badge.title }}</strong>
+            <p>{{ badge.description }}</p>
+            <p class="badge-condition">{{ badge.condition }}</p>
+            @if (!badge.unlocked && ['PARTICIPATION', 'DISTANCE', 'CLUB', 'BOOST'].includes(badge.group)) {
+              <progress [max]="badge.target" [value]="badge.progress" [attr.aria-label]="badge.title"></progress>
+              <small>
+                @if (badge.group === 'DISTANCE') {
+                  {{ badge.progress / 1000 | number:'1.0-3':i18n.locale() }} /
+                  {{ badge.target / 1000 | number:'1.0-3':i18n.locale() }} km
+                } @else {
+                  {{ badge.progress }} / {{ badge.target }}
+                }
+              </small>
+            }
+          </div>
+        </ng-template>
+      </li>
+    }
+  </ul>
+</ng-template>

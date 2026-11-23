@@ -10,29 +10,45 @@
 header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 h2 { margin: 0; font-size: 1.25rem; }
 .earned-count, p, small { color: var(--acrho-muted); }
-.badges {
+.badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+.badge-trigger {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-  margin: 12px 0 0;
-  padding: 0;
-  gap: 10px;
-  list-style: none;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  padding: 2px;
+  cursor: pointer;
 }
-li {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px;
-  border: 1px solid var(--acrho-border);
-  border-radius: 10px;
-}
-li > div { min-width: 0; overflow-wrap: anywhere; }
-img { flex: none; object-fit: contain; }
-li p { margin: 4px 0 0; font-size: .875rem; }
+.badge-trigger:focus-visible { outline: 2px solid var(--acrho-accent); outline-offset: 2px; }
+img { display: block; object-fit: contain; }
 details { margin-top: 16px; }
 summary { cursor: pointer; width: fit-content; font-weight: 600; }
-progress { display: block; width: 100%; max-width: 11rem; margin-block: 8px 2px; accent-color: var(--acrho-accent); }
+
+.badge-preview {
+  box-sizing: border-box;
+  width: min(520px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  overflow: auto;
+  padding: 16px;
+  border: 1px solid var(--acrho-border);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 24%);
+  background: var(--acrho-surface, #fff);
+  color: var(--acrho-heading);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.badge-preview img {
+  width: 100%;
+  height: auto;
+  max-height: 60dvh;
+  margin: 0 auto 8px;
+}
+.badge-preview p { margin: 6px 0 0; font-size: .875rem; }
+.badge-preview .badge-condition { color: var(--acrho-heading); font-weight: 600; }
+progress { display: block; width: 100%; margin: 8px 0 2px; accent-color: var(--acrho-accent); }
 @media (max-width: 480px) {
   .achievements { padding: 14px; }
-  img { width: 56px; height: 56px; }
+  .badge-trigger img { width: 54px; height: 54px; }
 }

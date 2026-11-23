@@ -1,5 +1,6 @@
-import { DecimalPipe } from '@angular/common';
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
+import { Component, computed, DestroyRef, inject, input, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { catchError, map, of, startWith, switchMap } from 'rxjs';
@@ -9,7 +10,7 @@ import { TranslatePipe } from './translate.pipe';
 
 @Component({
   selector: 'app-runner-achievements',
-  imports: [DecimalPipe, MatButtonModule, TranslatePipe],
+  imports: [DecimalPipe, NgTemplateOutlet, MatButtonModule, OverlayModule, TranslatePipe],
   templateUrl: './runner-achievements.html',
   styleUrl: './runner-achievements.scss',
 })
@@ -51,6 +52,38 @@ export class RunnerAchievements {
     }
     return [...firstByGroup.values(), ...finalPlacements];
   });
+
+  readonly activeBadge = signal<string | null>(null);
+  private closeTimer?: ReturnType<typeof setTimeout>;
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => clearTimeout(this.closeTimer));
+  }
+
+  showBadge(code: string) {
+    clearTimeout(this.closeTimer);
+    this.activeBadge.set(code);
+  }
+
+  previewBadge(event: PointerEvent, code: string) {
+    if (event.pointerType === 'mouse') this.showBadge(code);
+  }
+
+  leaveBadge(event: PointerEvent, code: string) {
+    if (event.pointerType === 'mouse') this.scheduleClose(code);
+  }
+
+  scheduleClose(code: string) {
+    if (this.activeBadge() !== code) return;
+    clearTimeout(this.closeTimer);
+    this.closeTimer = setTimeout(() => this.closeBadge(code), 160);
+  }
+
+  closeBadge(code = this.activeBadge()) {
+    if (this.activeBadge() !== code) return;
+    clearTimeout(this.closeTimer);
+    this.activeBadge.set(null);
+  }
 
   retry() {
     this.refresh.update(value => value + 1);
