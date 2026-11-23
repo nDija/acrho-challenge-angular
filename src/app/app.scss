@@ -94,7 +94,7 @@
 .result-boost { display:grid; grid-template-columns:2.5rem minmax(0,1fr); align-items:center; gap:4px; padding-inline-end:8px; color:var(--acrho-heading); }
 .result-boost .boost-button { grid-column:1; display:grid; place-items:center; width:2.5rem; height:2.5rem; padding:0; }
 .boost-count { grid-column:2; grid-row:1; text-align:center; font-variant-numeric:tabular-nums; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.boost-button img { width:26px; height:26px; border-radius:5px; vertical-align:middle; filter:hue-rotate(180deg) saturate(1.5) brightness(1.25); }
+.boost-button img, .runner-season-boosts img { width:26px; height:26px; border-radius:5px; vertical-align:middle; filter:hue-rotate(180deg) saturate(1.5) brightness(1.25); }
 .boost-button:disabled img { opacity:.5; }
 .result-card { display:grid; grid-template-columns:52px minmax(0,1fr) auto; align-items:center; gap:14px; min-height:76px; padding:12px 16px; border:1px solid var(--acrho-border); border-radius:12px; background:#fff; }
 
@@ -201,7 +201,10 @@
 
 
 
-.runner-profile-heading { display:flex; align-items:center; gap:20px; min-width:0; }
+.runner-profile-heading { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:20px; min-width:0; }
+.runner-season-boosts { display:flex; align-items:center; gap:6px; color:#fff; font-variant-numeric:tabular-nums; }
+.runner-profile-banner:is([data-banner-color='yellow'], [data-banner-color='orange'], [data-banner-color='sky'],
+                          [data-banner-color='gold'], [data-banner-color='silver']) .runner-season-boosts { color:#172d31; }
 .runner-profile-info { min-width:0; overflow-wrap:anywhere; }
 .runner-profile-avatar { align-self:center; width:80px; height:80px; border-radius:50%; font-size:24px; }
 @media(max-width:550px) { .runner-profile-heading { gap:12px; }.runner-profile-avatar { width:56px; height:56px; font-size:18px; } }

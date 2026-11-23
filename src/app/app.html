@@ -170,10 +170,17 @@
           <button class="back-link" type="button" (click)="closeRunner()"><mat-icon>arrow_back</mat-icon> {{ "Retour aux coureurs" | t }}</button>
           <div class="page-heading">
             <div class="runner-profile-heading runner-profile-banner" [attr.data-banner-color]="runner.bannerColor || 'blue'"><div class="runner-avatar runner-profile-avatar">@if (runner.pictureUrl && !failedRunnerPictures.has(runner.pictureUrl)) { <img [src]="runner.pictureUrl" alt="" referrerpolicy="no-referrer" (error)="failedRunnerPictures.add(runner.pictureUrl)"> } @else { {{runner.firstName?.[0]}}{{runner.lastName?.[0]}} }</div><div class="runner-profile-info"><h1>{{runner.firstName}} {{runner.lastName}}</h1><div class="runner-meta-row"><div><p>{{(runner.club | clubName) || ("Indépendant" | t)}}</p>@if (runner.category) { <p>{{categoryLabel(runner.category)}} ({{runner.categoryYear}})</p> }
-                @if (runnerYear && !runnerDetailError) {
-                  <p>{{ 'Boosts reçus' | t }} · {{ runnerYear }} · {{ runnerDetailLoading ? '…' : (runnerSeasonBoosts | number:'1.0-0':i18n.locale()) }}</p>
-                }
-              </div><button mat-icon-button class="favorite-toggle" [class.is-favorite]="isFavorite(runner.id)" type="button" [disabled]="favoritesLoading || !!favoritesError || savingFavorites.has(runner.id)" [attr.aria-pressed]="isFavorite(runner.id)" [attr.aria-label]="isFavorite(runner.id) ? (&quot;Retirer des favoris&quot; | t) : (&quot;Ajouter aux favoris&quot; | t)" [title]="isFavorite(runner.id) ? (&quot;Retirer des favoris&quot; | t) : (&quot;Ajouter aux favoris&quot; | t)" (click)="toggleFavorite(runner)"><mat-icon>{{isFavorite(runner.id) ? 'favorite' : 'favorite_border'}}</mat-icon></button></div></div></div>
+              </div><button mat-icon-button class="favorite-toggle" [class.is-favorite]="isFavorite(runner.id)" type="button" [disabled]="favoritesLoading || !!favoritesError || savingFavorites.has(runner.id)" [attr.aria-pressed]="isFavorite(runner.id)" [attr.aria-label]="isFavorite(runner.id) ? (&quot;Retirer des favoris&quot; | t) : (&quot;Ajouter aux favoris&quot; | t)" [title]="isFavorite(runner.id) ? (&quot;Retirer des favoris&quot; | t) : (&quot;Ajouter aux favoris&quot; | t)" (click)="toggleFavorite(runner)"><mat-icon>{{isFavorite(runner.id) ? 'favorite' : 'favorite_border'}}</mat-icon></button></div></div>
+              @if (runnerYear && !runnerDetailError) {
+                @let boostTotal = runnerDetailLoading ? '…' : (runnerSeasonBoosts | number:'1.0-0':i18n.locale());
+                <div class="runner-season-boosts" role="group"
+                     [attr.aria-label]="('Boosts reçus' | t) + ' · ' + runnerYear"
+                     [title]="('Boosts reçus' | t) + ' · ' + runnerYear">
+                  <img src="assets/boost-sent.png" alt="" width="26" height="26">
+                  <strong>{{ boostTotal }}</strong>
+                </div>
+              }
+            </div>
           </div>
 
           @if (favoritesError) { <div class="error-banner" role="alert">{{favoritesError | t}}<button mat-button type="button" (click)="loadFavorites()">{{ "Réessayer" | t }}</button></div> }
