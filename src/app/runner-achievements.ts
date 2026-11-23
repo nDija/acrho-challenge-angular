@@ -42,15 +42,15 @@ export class RunnerAchievements {
   readonly nextBadges = computed(() => {
     const state = this.state();
     const firstByGroup = new Map<string, RunnerAchievement>();
-    const finalPlacements: RunnerAchievement[] = [];
+    const individualBadges: RunnerAchievement[] = [];
     if (state.status === 'ready') {
       for (const item of state.items) {
         if (item.unlocked) continue;
-        if (item.group === 'SEASON') finalPlacements.push(item);
+        if (item.group === 'SEASON' || item.group === 'CLUB') individualBadges.push(item);
         else if (!firstByGroup.has(item.group)) firstByGroup.set(item.group, item);
       }
     }
-    return [...firstByGroup.values(), ...finalPlacements];
+    return [...firstByGroup.values(), ...individualBadges];
   });
 
   readonly activeBadge = signal<string | null>(null);
