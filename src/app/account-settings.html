@@ -7,6 +7,13 @@
       <p><strong>{{account.linkedRunner ? account.linkedRunner.firstName + ' ' + account.linkedRunner.lastName : ("Coureur lié au compte" | t)}}</strong>@if (account.linkedRunner?.club | clubName; as club) { · {{club}} }</p>
       <div class="account-actions">@if (account.linkedRunner; as runner) { <button mat-stroked-button class="account-runner-results" type="button" (click)="account.openRunner(runner)">{{ "Voir mes résultats" | t }}</button> }<button mat-icon-button class="delete-account-button" type="button" [title]="&quot;Retirer la liaison&quot; | t" [attr.aria-label]="&quot;Retirer la liaison avec le coureur&quot; | t" [disabled]="account.runnerLinkSaving || account.deletingAccount" (click)="account.saveRunnerLink()"><mat-icon>delete</mat-icon></button></div>
       <p>{{ "Tu peux aussi cliquer sur ton avatar pour accéder à ta fiche coureur." | t }}</p>
+      <label class="picture-toggle">
+        <input #picture type="checkbox" name="show-picture" [checked]="user.showPicture !== false"
+               [disabled]="account.pictureVisibilitySaving || account.runnerLinkSaving || account.deletingAccount"
+               (change)="account.changePictureVisibility(picture.checked)">
+        <span>{{ "Afficher ma photo de profil dans les résultats et classements publics" | t }}</span>
+      </label>
+      @if (account.pictureVisibilityError) { <div class="error-banner" role="alert">{{ account.pictureVisibilityError | t }}</div> }
     } @else { <p>{{ "Choisis ta fiche coureur pour la lier à ton compte." | t }}</p> }
     @if (!user.runnerId) {
     <form (ngSubmit)="account.loadAccountRunners()">

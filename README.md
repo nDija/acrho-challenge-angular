@@ -10,7 +10,12 @@ Interface web Angular autonome pour consulter les saisons ACRHO, leur calendrier
 
 Le serveur de développement redirige `/api` vers `http://192.168.0.100:8080` via `proxy.conf.json`. Pour utiliser une API locale, modifier cette cible en `http://localhost:8080`.
 
-## Publication sur GitHub Pages
+## Publication sur GitHub Pages (obsolète)
+
+> **Obsolète.** Depuis la suppression de la configuration CORS de l'API, ce front ne peut plus fonctionner sur
+> GitHub Pages (autre origine que l'API, cookie de session et jeton XSRF inutilisables). Le front est désormais servi
+> par Caddy, avec l'API, sur `https://acrho-challenge.ddns.net` (voir `Caddyfile.new`). Cette section n'est gardée
+> que pour mémoire ; `deploy:pages` peut être retiré de `package.json`.
 
 Le dépôt `nDija/acrho-challenge-angular` publie le frontend à l'adresse
 <https://ndija.github.io/acrho-challenge-angular/>. La commande `ng deploy` construit l'application puis pousse
@@ -69,8 +74,10 @@ qu'ils restent sous les seuils d'erreur.
 
 GitHub Pages héberge uniquement les fichiers statiques : il ne relaie pas les requêtes `/api` vers Spring.
 La configuration locale utilise des chemins `/api/...` et le proxy défini dans `proxy.conf.json`. La configuration
-`production` remplace l'URL de base par `https://acrho-challenge.ddns.net`. L'API doit autoriser l'origine
-`https://ndija.github.io` dans sa configuration CORS.
+`production` remplace l'URL de base par `https://acrho-challenge.ddns.net`. Depuis la mise en place de Caddy (même origine pour le front et l'API), il n'y a plus de CORS : l'ancienne
+autorisation de l'origine
+`https://ndija.github.io` a été supprimée côté API. Caddy ajoute aussi les en-têtes de sécurité (HSTS,
+`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`).
 
 ## Angular Material
 
@@ -84,6 +91,7 @@ Angular Material et Angular CDK sont installés. Le thème Material `azure-blue`
 - `GET /api/v1/routes/{id}/results`
 - `GET /api/v1/categories`
 - `GET /api/v1/runners?q=...`
+- `PUT /api/v1/me/picture-visibility` (connecté) : afficher ou cacher sa photo de profil publique, avec le jeton XSRF
 
 Les résultats dépendent des courses publiées par l'API.
 

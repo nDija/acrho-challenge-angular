@@ -16,7 +16,7 @@ export interface RacePhoto {
 }
 export interface RaceDetail extends Race { organizer?: string; routes: RouteInfo[]; practicalInfo?: RacePracticalInfo | null; }
 export interface Runner { id: number; firstName: string; lastName: string; gender?: string; club?: string; category?: string | null; categoryYear?: number | null; pictureUrl?: string | null; bannerColor?: string; }
-export interface Me { id: number; email: string; displayName?: string; role: 'USER' | 'ADMIN'; pictureUrl?: string | null; createdAt?: string | null; runnerId?: number | null; }
+export interface Me { showPicture?: boolean; id: number; email: string; displayName?: string; role: 'USER' | 'ADMIN'; pictureUrl?: string | null; createdAt?: string | null; runnerId?: number | null; }
 export type RaceStatus = 'PLANNED' | 'RESULTS_RECEIVED' | 'PUBLISHED' | 'CANCELLED';
 
 export interface AdminRace {
@@ -166,6 +166,7 @@ export class AcrhoApi {
   addFavorite(id: number) { return this.http.put<void>(this.apiUrl(`/api/v1/me/favorites/${id}`), null); }
   removeFavorite(id: number) { return this.http.delete<void>(this.apiUrl(`/api/v1/me/favorites/${id}`)); }
   changeBanner(color: string) { return this.http.put<void>(this.apiUrl('/api/v1/me/runner/banner'), { color }); }
+  changePictureVisibility(visible: boolean) { return this.http.put<void>(this.apiUrl('/api/v1/me/picture-visibility'), { visible }); }
   runnerSuggestions() { return this.http.get<Runner[]>(this.apiUrl('/api/v1/me/runner-suggestions')); }
   linkRunner(runnerId: number) { return this.http.put<void>(this.apiUrl('/api/v1/me/runner'), { runnerId }); }
   unlinkRunner() { return this.http.delete<void>(this.apiUrl('/api/v1/me/runner')); }

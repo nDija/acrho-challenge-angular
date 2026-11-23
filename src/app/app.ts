@@ -91,6 +91,8 @@ export class App implements OnInit {
   ];
   bannerSaving = false;
   bannerError = '';
+  pictureVisibilitySaving = false;
+  pictureVisibilityError = '';
   failedRunnerPictures = new Set<string>();
   linkedRunner?: Runner;
   openingLinkedRunner = false;
@@ -385,6 +387,36 @@ export class App implements OnInit {
         this.bannerSaving = false;
         if (this.me?.id !== userId) return;
         this.bannerError = 'Impossible de changer la couleur de la bannière.';
+        if (error.status === 401) this.fail(error);
+        this.cdr.markForCheck();
+      },
+    });
+  }
+  changePictureVisibility(visible: boolean) {
+    if (!this.me || this.pictureVisibilitySaving || this.runnerLinkSaving || this.deletingAccount) return;
+    const userId = this.me.id;
+    this.pictureVisibilitySaving = true;
+    this.pictureVisibilityError = '';
+    this.api.changePictureVisibility(visible).subscribe({
+      next: () => {
+        this.pictureVisibilitySaving = false;
+        if (this.me?.id !== userId) return;
+        this.me = { ...this.me, showPicture: visible };
+        // Keep the pages already loaded in step with the choice (the next load will confirm it).
+        const runnerId = this.me.runnerId;
+        const pictureUrl = visible ? this.me.pictureUrl ?? null : null;
+        if (runnerId != null) {
+          if (this.linkedRunner?.id === runnerId) this.linkedRunner = { ...this.linkedRunner, pictureUrl };
+          if (this.selectedRunner?.id === runnerId) this.selectedRunner = { ...this.selectedRunner, pictureUrl };
+          this.runners = this.runners.map(runner => runner.id === runnerId ? { ...runner, pictureUrl } : runner);
+          this.favorites = this.favorites.map(runner => runner.id === runnerId ? { ...runner, pictureUrl } : runner);
+        }
+        this.cdr.markForCheck();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.pictureVisibilitySaving = false;
+        if (this.me?.id !== userId) return;
+        this.pictureVisibilityError = 'Impossible de modifier l’affichage de la photo. Réessaie dans un instant.';
         if (error.status === 401) this.fail(error);
         this.cdr.markForCheck();
       },

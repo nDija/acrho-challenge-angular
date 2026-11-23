@@ -1,6 +1,13 @@
 acrho-challenge.ddns.net {
     encode zstd gzip
 
+    header {
+        Strict-Transport-Security "max-age=31536000"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
     # L'API et la connexion Google
     @backend path /api/* /oauth2/* /login/* /logout /actuator/health
     handle @backend {

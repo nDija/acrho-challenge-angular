@@ -372,4 +372,6 @@ export const translations: readonly (readonly [string, string, string, string, s
   ['Page suivante', 'Next page', 'Volgende pagina', 'Nächste Seite', "Página siguiente"], ['Page précédente', 'Previous page', 'Vorige pagina', 'Vorherige Seite', "Página anterior"],
   ['Première page', 'First page', 'Eerste pagina', 'Erste Seite', "Primera página"], ['Dernière page', 'Last page', 'Laatste pagina', 'Letzte Seite', "Última página"],
   ['sur', 'of', 'van', 'von', "de"],
+  ['Afficher ma photo de profil dans les résultats et classements publics', 'Show my profile picture in public results and standings', 'Mijn profielfoto tonen in openbare resultaten en klassementen', 'Mein Profilbild in öffentlichen Ergebnissen und Ranglisten anzeigen', "Mostrar mi foto de perfil en los resultados y clasificaciones públicos"],
+  ['Impossible de modifier l’affichage de la photo. Réessaie dans un instant.', 'Could not change the picture setting. Try again in a moment.', 'De foto-instelling kon niet worden gewijzigd. Probeer het zo meteen opnieuw.', 'Die Foto-Einstellung konnte nicht geändert werden. Versuche es gleich noch einmal.', "No se pudo cambiar el ajuste de la foto. Inténtalo de nuevo en un momento."],
 ];

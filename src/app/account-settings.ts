@@ -15,7 +15,8 @@ type AccountSettingsContext = Pick<App,
   | 'runnerLinkLoading'
   | 'loadAccountRunners' | 'accountRunnerQuery' | 'runnerLinkError' | 'runnerLinkMessage'
   | 'suggestedRunners' | 'categoryLabel' | 'changeLanguage' | 'i18n' | 'apiOnline' | 'accountError'
-  | 'confirmAccountDeletion' | 'deleteAccount' | 'login'>;
+  | 'confirmAccountDeletion' | 'deleteAccount' | 'login'
+  | 'changePictureVisibility' | 'pictureVisibilitySaving' | 'pictureVisibilityError'>;
 
 @Component({
   selector: 'app-account-settings',
