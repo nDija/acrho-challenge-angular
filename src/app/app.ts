@@ -1,3 +1,4 @@
+import { KoFiButton } from './ko-fi-button';
 import { Administration } from './administration';
 import { Paginator } from './paginator';
 import { RacePhotoCredit } from './race-photo-credit';
@@ -35,7 +36,7 @@ import type { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root', standalone: true,
-  imports: [Administration, Paginator, RacePhotoCredit, RunnerSeason, RunnerSearch, ResultFilters, RaceBoosts, AccountSettings, Regulation, Photos, Sponsors, ProjectCredits, RaceTips, RaceRegistration, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, RunnerAchievements, Standings, TranslatePipe, ClubNamePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [Administration, Paginator, RacePhotoCredit, RunnerSeason, RunnerSearch, ResultFilters, RaceBoosts, AccountSettings, Regulation, Photos, Sponsors, ProjectCredits, KoFiButton, RaceTips, RaceRegistration, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, RunnerAchievements, Standings, TranslatePipe, ClubNamePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './app.html', styleUrl: './app.scss'
 })
 export class App implements OnInit {

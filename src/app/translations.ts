@@ -118,6 +118,7 @@ export const translations: readonly (readonly [string, string, string, string, s
   ['Assistants IA', 'AI assistants', 'AI-assistenten', 'KI-Assistenten', "Asistentes de IA"],
   ['Crédits', 'Credits', 'Credits', 'Danksagung', "Créditos"],
   ['Technologies du projet', 'Project technologies', 'Projecttechnologieën', 'Projekttechnologien', "Tecnologías del proyecto"],
+  ['Tests et développement', 'Testing and development', 'Testen en ontwikkeling', 'Tests und Entwicklung', 'Pruebas y desarrollo'],
   ['Services et crédits', 'Services and credits', 'Diensten en bronvermelding', 'Dienste und Quellen', "Servicios y créditos"],
   ['Application web', 'Web app', 'Webapp', 'Web-App', "Aplicación web"],
   ['Application mobile Android et iOS (projet)', 'Android and iOS app (project)', 'Android- en iOS-app (project)', 'Android- und iOS-App (Projekt)', "Aplicación Android e iOS (proyecto)"],

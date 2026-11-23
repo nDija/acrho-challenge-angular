@@ -52,7 +52,9 @@
     </header>
     <section class="content">
       @if (activeView === 'calendar' && !selectedRace) {
-        <div class="page-heading"><div><div class="eyebrow">{{ "VOTRE CALENDRIER DE RUNNING" | t }}</div><h1>{{ "La saison," | t }} <em>{{ "en mouvement." | t }}</em></h1><p>{{ "Retrouvez les courses et résultats du challenge ACRHO." | t }}</p></div>
+        <div class="page-heading"><div><div class="eyebrow">{{ "VOTRE CALENDRIER DE RUNNING" | t }}</div><h1>{{ "La saison," | t }} <em>{{ "en mouvement." | t }}</em></h1><p>{{ "Retrouvez les courses et résultats du challenge ACRHO." | t }}</p>
+          <app-ko-fi-button />
+        </div>
           <label class="season-select calendar-season">
             <span>{{ "Saison" | t }}</span>
             <select [ngModel]="selectedYear" (ngModelChange)="selectedYear = $event; loadRaces()">

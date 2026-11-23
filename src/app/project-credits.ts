@@ -1,12 +1,14 @@
+import { KoFiButton } from './ko-fi-button';
 import { Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from './translate.pipe';
 
 @Component({
   selector: 'app-project-credits',
-  imports: [MatIconModule, TranslatePipe],
+  imports: [MatIconModule, TranslatePipe, KoFiButton],
   template: `
     <h1>{{ 'Crédits' | t }}</h1>
+    <app-ko-fi-button />
 
     <section aria-labelledby="project-technologies">
       <h2 id="project-technologies">{{ 'Technologies du projet' | t }}</h2>
@@ -18,8 +20,10 @@ import { TranslatePipe } from './translate.pipe';
             <ul class="technology-tools">
               @for (tool of stack.tools; track tool.name) {
                 <li>
-                  <img [src]="'assets/technologies/' + tool.logo" alt="" width="24" height="24" loading="lazy">
-                  <span translate="no">{{ tool.name }}</span>
+                  <a [href]="tool.url">
+                    <img [src]="'assets/technologies/' + tool.logo" alt="" width="24" height="24" loading="lazy">
+                    <span translate="no">{{ tool.name }}</span>
+                  </a>
                 </li>
               }
             </ul>
@@ -84,13 +88,16 @@ import { TranslatePipe } from './translate.pipe';
       padding-top: .65rem;
       border-top: 1px solid var(--acrho-border);
     }
-    .technology-tools li {
+    .technology-tools a {
       display: inline-flex;
       align-items: center;
       gap: .25rem;
       color: var(--acrho-muted);
       font-size: .8rem;
     }
+    .technology-tools a { text-decoration: underline; text-underline-offset: .15em; }
+    .technology-tools a:hover { color: var(--acrho-accent-dark); }
+    .technology-tools a:focus-visible { outline: 2px solid var(--acrho-accent-dark); outline-offset: 2px; }
     .technology-tools img { flex: none; object-fit: contain; }
     .credit-list a {
       grid-template-columns: auto minmax(0, 1fr) auto;
@@ -118,50 +125,66 @@ export class ProjectCredits {
       name: 'Application web',
       icon: 'web',
       tools: [
-        { name: 'Angular', logo: 'angular.svg' },
-        { name: 'Angular Material', logo: 'angularmaterial.svg' },
-        { name: 'TypeScript', logo: 'typescript.svg' },
-        { name: 'RxJS', logo: 'rxjs.svg' },
-        { name: 'Chart.js', logo: 'chartjs.svg' },
+        { name: 'Angular', logo: 'angular.svg', url: 'https://angular.dev/' },
+        { name: 'Node.js', logo: 'nodedotjs.svg', url: 'https://nodejs.org/' },
+        { name: 'Angular Material', logo: 'angularmaterial.svg', url: 'https://material.angular.dev/' },
+        { name: 'TypeScript', logo: 'typescript.svg', url: 'https://www.typescriptlang.org/' },
+        { name: 'RxJS', logo: 'rxjs.svg', url: 'https://rxjs.dev/' },
+        { name: 'Chart.js', logo: 'chartjs.svg', url: 'https://www.chartjs.org/' },
       ],
     },
     {
       name: 'Application mobile Android et iOS (projet)',
       icon: 'smartphone',
       tools: [
-        { name: 'Kotlin Multiplatform', logo: 'kotlin-multiplatform.svg' },
-        { name: 'Compose Multiplatform', logo: 'compose-multiplatform.svg' },
-        { name: 'Ktor', logo: 'ktor.svg' },
+        { name: 'Kotlin Multiplatform', logo: 'kotlin-multiplatform.svg', url: 'https://kotlinlang.org/multiplatform/' },
+        { name: 'Compose Multiplatform', logo: 'compose-multiplatform.svg', url: 'https://www.jetbrains.com/lp/compose-multiplatform/' },
+        { name: 'Ktor', logo: 'ktor.svg', url: 'https://ktor.io/' },
       ],
     },
     {
       name: 'API commune',
       icon: 'dns',
       tools: [
-        { name: 'Java', logo: 'java.svg' },
-        { name: 'Spring Boot', logo: 'springboot.svg' },
-        { name: 'PostgreSQL', logo: 'postgresql.svg' },
-        { name: 'Flyway', logo: 'flyway.svg' },
+        { name: 'Java', logo: 'java.svg', url: 'https://www.java.com/' },
+        { name: 'Gradle', logo: 'gradle.svg', url: 'https://gradle.org/' },
+        { name: 'Spring Boot', logo: 'springboot.svg', url: 'https://spring.io/projects/spring-boot' },
+        { name: 'PostgreSQL', logo: 'postgresql.svg', url: 'https://www.postgresql.org/' },
+        { name: 'Flyway', logo: 'flyway.svg', url: 'https://www.red-gate.com/products/flyway/' },
       ],
     },
     {
       name: 'Hébergement et déploiement',
       icon: 'dns',
       tools: [
-        { name: 'GitHub', logo: 'github.svg' },
-        { name: 'Docker', logo: 'docker.svg' },
-        { name: 'Raspberry Pi', logo: 'raspberrypi.svg' },
-        { name: 'Linux', logo: 'linux.svg' },
+        { name: 'GitHub', logo: 'github.svg', url: 'https://github.com/' },
+        { name: 'Docker', logo: 'docker.svg', url: 'https://www.docker.com/' },
+        { name: 'Caddy', logo: 'caddy.svg', url: 'https://caddyserver.com/' },
+        { name: 'Google', logo: 'google.svg', url: 'https://www.google.com/' },
+        { name: 'Raspberry Pi', logo: 'raspberrypi.svg', url: 'https://www.raspberrypi.com/' },
+        { name: 'Linux', logo: 'linux.svg', url: 'https://www.kernel.org/' },
+        { name: 'Windows', logo: 'windows.svg', url: 'https://www.microsoft.com/windows/' },
+      ],
+    },
+    {
+      name: 'Tests et développement',
+      icon: 'build',
+      tools: [
+        { name: 'JUnit', logo: 'junit5.svg', url: 'https://junit.org/' },
+        { name: 'Gatling', logo: 'gatling.svg', url: 'https://gatling.io/' },
+        { name: 'Postman', logo: 'postman.svg', url: 'https://www.postman.com/' },
+        { name: 'IntelliJ IDEA', logo: 'intellijidea.svg', url: 'https://www.jetbrains.com/idea/' },
+        { name: 'Visual Studio Code', logo: 'visualstudiocode.ico', url: 'https://code.visualstudio.com/' },
       ],
     },
     {
       name: 'Assistants IA',
       icon: 'smart_toy',
       tools: [
-        { name: 'Claude', logo: 'claude.svg' },
-        { name: 'Codex', logo: 'codex.svg' },
-        { name: 'ChatGPT', logo: 'chatgpt.png' },
-        { name: 'Gemini', logo: 'gemini.svg' },
+        { name: 'Claude', logo: 'claude.svg', url: 'https://claude.ai/' },
+        { name: 'Codex', logo: 'codex.svg', url: 'https://openai.com/codex/' },
+        { name: 'ChatGPT', logo: 'chatgpt.png', url: 'https://chatgpt.com/' },
+        { name: 'Gemini', logo: 'gemini.svg', url: 'https://gemini.google.com/' },
       ],
     },
   ];
@@ -190,6 +213,30 @@ export class ProjectCredits {
       url: 'https://pngtree.com/',
       image: 'pngtree.ico',
       description: 'Ressources graphiques.',
+    },
+    {
+      name: 'iLoveIMG',
+      url: 'https://www.iloveimg.com/',
+      image: 'iloveimg.png',
+      description: 'Retouche et optimisation des images.',
+    },
+    {
+      name: 'Canva',
+      url: 'https://www.canva.com/',
+      image: 'canva.png',
+      description: 'Création de visuels.',
+    },
+    {
+      name: 'GIMP',
+      url: 'https://www.gimp.org/',
+      image: 'gimp.png',
+      description: 'Retouche d’images.',
+    },
+    {
+      name: 'Krita',
+      url: 'https://krita.org/',
+      image: 'krita.ico',
+      description: 'Dessin et peinture numériques.',
     },
   ];
 }
