@@ -229,7 +229,24 @@
           <div class="runner-history">
             @for (entry of runnerResults; track entry.routeId) {
               <article class="runner-history-card" [attr.data-banner-color]="runner.bannerColor || 'blue'">
-                <header class="runner-race-banner"><h3>{{entry.raceName}}</h3></header><div class="runner-history-body"><div><p>{{entry.raceDate | date:'dd MMMM yyyy':undefined:i18n.locale()}}@if (entry.city) { · {{entry.city}} }</p><p>{{entry.routeLabel}}@if (entry.distanceM) { · {{entry.distanceM / 1000 | number:'1.0-2':i18n.locale()}} km }</p></div>
+                <header class="runner-race-banner">
+                  <h3>{{entry.raceName}}</h3>
+                  @if (me?.runnerId && me?.runnerId !== runner.id && entry.boostedByViewer !== undefined &&
+                       (entry.boostedByViewer || entry.result.status === 'FINISHED' || entry.result.status === 'DNF')) {
+                    @let key = runner.id + ':' + entry.raceId;
+                    @let action = (entry.boostedByViewer ? 'Retirer le Boost' : 'Envoyer un Boost') | t;
+                    <button mat-icon-button type="button" class="boost-button"
+                            [disabled]="pendingRunnerBoosts.has(key)" [attr.aria-pressed]="entry.boostedByViewer"
+                            [attr.aria-label]="action + ' · ' + entry.raceName" [title]="action"
+                            (click)="toggleRunnerBoost(entry, runner.id)">
+                      <img [src]="entry.boostedByViewer ? 'assets/boost-sent.png' : 'assets/boost-send.png'" alt="" width="26" height="26">
+                    </button>
+                  }
+                </header>
+                @if (failedRunnerBoosts.has(runner.id + ':' + entry.raceId)) {
+                  <div class="error-banner" role="alert">{{ 'Impossible de mettre à jour les Boosts.' | t }}</div>
+                }
+                <div class="runner-history-body"><div><p>{{entry.raceDate | date:'dd MMMM yyyy':undefined:i18n.locale()}}@if (entry.city) { · {{entry.city}} }</p><p>{{entry.routeLabel}}@if (entry.distanceM) { · {{entry.distanceM / 1000 | number:'1.0-2':i18n.locale()}} km }</p></div>
                 <dl><div><dt>{{ "Classement" | t }}</dt><dd>{{entry.result.overallRank ?? '—'}}</dd></div><div><dt>{{ "Catégorie" | t }}</dt><dd>{{categoryLabel(entry.result.category)}}</dd></div><div><dt>{{ "Place catégorie" | t }}</dt><dd>{{entry.result.categoryRank ?? '—'}}</dd></div><div><dt>{{ "Points" | t }}</dt><dd>{{entry.result.points ?? '—'}}</dd></div><div><dt>{{ "Temps" | t }}</dt><dd>{{displayTime(entry.result.time)}}</dd></div><div><dt>{{ "Allure (min/km)" | t }}</dt><dd>{{pacePerKm(entry.result, entry.distanceM) || '—'}}</dd></div><div><dt>{{ "Dossard" | t }}</dt><dd>{{entry.result.bibNumber ?? '—'}}</dd></div><div><dt>{{ "Statut" | t }}</dt><dd>{{(entry.result.status || '—') | t}}</dd></div> @if ($index === 0 || runnerResults[$index - 1].raceId !== entry.raceId) { <div><dt>{{ "Boosts reçus" | t }}</dt><dd>{{entry.boostsReceived ?? 0}}</dd></div> }</dl></div>
               </article>
             }

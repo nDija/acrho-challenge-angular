@@ -114,6 +114,8 @@ export class App implements OnInit {
 
   runnerSeasons: number[] = [];
   runnerResults: RunnerResult[] = [];
+  readonly pendingRunnerBoosts = new Set<string>();
+  readonly failedRunnerBoosts = new Set<string>();
   runnerDetailLoading = false;
   runnerDetailError = '';
   private runnerDetailRequestId = 0;
@@ -422,6 +424,36 @@ export class App implements OnInit {
       },
     });
   }
+  toggleRunnerBoost(entry: RunnerResult, runnerId: number) {
+    const senderId = this.me?.runnerId;
+    const raceId = entry.raceId;
+    const key = runnerId + ':' + raceId;
+    const sent = entry.boostedByViewer;
+    if (senderId == null || senderId === runnerId || sent === undefined || this.pendingRunnerBoosts.has(key)) return;
+    const requestId = this.runnerDetailRequestId;
+    this.pendingRunnerBoosts.add(key);
+    this.failedRunnerBoosts.delete(key);
+    this.api.toggleRaceBoost(raceId, runnerId, !sent).subscribe({
+      next: state => {
+        this.pendingRunnerBoosts.delete(key);
+        if (this.runnerDetailRequestId === requestId && this.me?.runnerId === senderId) {
+          const boostsReceived = state.participants.find(participant => participant.runnerId === runnerId)?.received ?? 0;
+          const boostedByViewer = state.sentTo.includes(runnerId);
+          this.runnerResults = this.runnerResults.map(result => result.raceId === raceId
+            ? { ...result, boostsReceived, boostedByViewer }
+            : result);
+        }
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.pendingRunnerBoosts.delete(key);
+        if (this.runnerDetailRequestId === requestId && this.me?.runnerId === senderId) {
+          this.failedRunnerBoosts.add(key);
+        }
+        this.cdr.markForCheck();
+      },
+    });
+  }
   get runnerSeasonBoosts() {
     const receivedByRace = new Map<number, number>();
     for (const entry of this.runnerResults) {
@@ -463,6 +495,7 @@ export class App implements OnInit {
     const requestId = ++this.runnerDetailRequestId;
     this.runnerDetailLoading = true;
     this.runnerDetailError = '';
+    this.failedRunnerBoosts.clear();
     this.runnerResults = [];
     forkJoin({
       runner: this.api.runner(this.selectedRunner.id),
