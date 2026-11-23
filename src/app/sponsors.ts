@@ -101,9 +101,9 @@ export class Sponsors {
       description: "Jardinerie – animalerie – décoration",
     },
     {
-      name: "Fabrice Hennecard",
+      name: "Fabrice Hannecard",
       image: "fabrice-hennecard.gif",
-      url: "http://www.fabrice-hannecard.be/Accueil.htm",
+      url: "https://www.facebook.com/p/Fabrice-Hannecard-100046919846508/",
       description: "Arboriste grimpeur",
     },
     {
