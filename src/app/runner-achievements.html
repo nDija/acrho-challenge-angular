@@ -1,6 +1,6 @@
 @if (latestResult(); as latest) {
-  <section class="race-recap" aria-labelledby="race-recap-title">
-    <h2 id="race-recap-title">{{ 'Depuis ta dernière course' | t }}</h2>
+  <details class="race-recap">
+    <summary class="achievements-summary">{{ 'Depuis ta dernière course' | t }}</summary>
     <p class="race-recap-name"><strong>{{ latest.raceName }}</strong> · {{ latest.raceDate | date:'dd MMMM yyyy':undefined:i18n.locale() }}</p>
     <dl>
       <div>
@@ -30,7 +30,7 @@
         }
       </ul>
     }
-  </section>
+  </details>
 }
 
 <details class="achievements" #accordion (toggle)="onAccordionToggle(accordion.open)">
