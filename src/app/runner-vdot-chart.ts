@@ -175,6 +175,9 @@ export class RunnerVdotChart {
     const weatherByRace = this.weatherByRace();
     const firstDay = this.points()[0]?.x;
     const lastDay = this.points().at(-1)?.x;
+    const state = this.state();
+    const firstCalendarRace = state.status === 'ready' ? state.data.firstCalendarRaceDate : null;
+    const calendarStart = firstCalendarRace ? Date.parse(firstCalendarRace) / day - 1 : undefined;
     const sameDay = firstDay != null && firstDay === lastDay;
     return {
       locale,
@@ -183,8 +186,11 @@ export class RunnerVdotChart {
       scales: {
         x: {
           type: 'linear',
-          suggestedMin: sameDay ? firstDay - 1 : firstDay,
-          suggestedMax: sameDay ? firstDay + 1 : lastDay,
+          min: calendarStart,
+          suggestedMin: calendarStart === undefined ? (sameDay ? firstDay - 1 : firstDay) : undefined,
+          suggestedMax: calendarStart === undefined
+            ? (sameDay ? firstDay + 1 : lastDay)
+            : Math.max(calendarStart + 1, lastDay ?? calendarStart),
           ...scaleColors,
           ticks: { color: text, precision: 0, maxTicksLimit: 7, callback: value => tickDate.format(Number(value) * day) },
         },

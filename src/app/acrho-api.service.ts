@@ -61,6 +61,7 @@ export interface VdotPerformance {
 }
 
 export interface RunnerVdot {
+  firstCalendarRaceDate?: string | null;
   runnerId: number;
   seasonId: number;
   statistics: {
