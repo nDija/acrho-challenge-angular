@@ -60,6 +60,9 @@ export class RunnerAchievements {
     return state.status === 'ready' ? state.items.filter(item => item.unlocked) : [];
   });
   readonly nextBadges = computed(() => {
+    const currentYear = new Date().getFullYear();
+    if ((this.year() ?? currentYear) < currentYear) return [];
+
     const state = this.state();
     const firstByGroup = new Map<string, RunnerAchievement>();
     const individualBadges: RunnerAchievement[] = [];
