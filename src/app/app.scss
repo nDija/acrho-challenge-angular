@@ -89,9 +89,11 @@
 }
 
 .result-cards { display:flex; flex-direction:column; gap:9px; }
-.result-boost-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:6px; align-items:center; }
-.result-boost-row .result-card { min-width:0; }
-.result-boost { display:flex; align-items:center; gap:4px; color:var(--acrho-heading); }
+.result-card-shell { display:grid; grid-template-columns:minmax(0,1fr) 5.25rem; gap:6px; align-items:center; border:1px solid var(--acrho-border); border-radius:12px; background:#fff; }
+.result-card-shell .result-card { min-width:0; border:0; background:transparent; }
+.result-boost { display:grid; grid-template-columns:2.5rem minmax(0,1fr); align-items:center; gap:4px; padding-inline-end:8px; color:var(--acrho-heading); }
+.result-boost .boost-button { grid-column:1; display:grid; place-items:center; width:2.5rem; height:2.5rem; padding:0; }
+.boost-count { grid-column:2; grid-row:1; text-align:center; font-variant-numeric:tabular-nums; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .boost-button img { width:26px; height:26px; border-radius:5px; vertical-align:middle; filter:hue-rotate(180deg) saturate(1.5) brightness(1.25); }
 .boost-button:disabled img { opacity:.5; }
 .result-card { display:grid; grid-template-columns:52px minmax(0,1fr) auto; align-items:center; gap:14px; min-height:76px; padding:12px 16px; border:1px solid var(--acrho-border); border-radius:12px; background:#fff; }
@@ -190,7 +192,7 @@
 .runner-history-card dd { margin:6px 0 0; color:var(--acrho-heading); font-size:14px; font-weight:700; }
 
 .result-card-link { width:100%; text-align:left; font:inherit; color:inherit; cursor:pointer; }
-.result-card-link:hover { border-color:var(--acrho-accent); }
+.result-card-shell:has(.result-card-link:hover) { border-color:var(--acrho-accent); }
 .result-card-link:focus-visible { outline:2px solid var(--acrho-accent); outline-offset:3px; }
 
 .profile-button { padding:0; border:0; font:inherit; cursor:pointer; }

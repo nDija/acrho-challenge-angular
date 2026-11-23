@@ -134,10 +134,10 @@
               @for (result of results; track result.runner.id) {
                 @let count = boosts.receivedBy(result.runner.id);
                 @let sent = boosts.hasBoosted(result.runner.id);
-                <div class="result-boost-row">
+                <article class="result-card-shell">
                   <button class="result-card result-card-link" type="button" (click)="openRunnerFromResult(result)" [attr.aria-label]="(&quot;Voir les résultats de &quot; | t) + result.runner.firstName + ' ' + result.runner.lastName"><div class="result-rank">{{result.overallRank ?? '—'}}</div><div class="result-person"><app-ranked-runner-avatar [runner]="result.runner" [rank]="result.overallRank" [failedPictures]="failedRunnerPictures" /><div class="result-person-copy"><strong>{{result.runner.firstName}} {{result.runner.lastName}}</strong><span>{{(result.runner.club | clubName) || ("Indépendant" | t)}}</span></div></div><div class="result-details"><span class="category-pill">{{categoryLabel(result.category)}}</span><span class="result-time-wrap"><small class="result-points">{{result.points != null ? (result.points + ' pts') : '— pts'}}</small><b class="result-time">{{displayTime(result.time)}}</b>@if (pacePerKm(result); as pace) { <small class="result-pace">{{pace}}</small> }</span></div></button>
-                  @if (count !== undefined || sent) {
-                    <div class="result-boost">
+                  <div class="result-boost">
+                    @if (count !== undefined || sent) {
                       @if (result.runner.id !== me?.runnerId) {
                         @let action = (sent ? 'Retirer le Boost' : 'Envoyer un Boost') | t;
                         <button mat-icon-button type="button" class="boost-button" [disabled]="!boosts.canToggle(result.runner.id)"
@@ -148,11 +148,11 @@
                         </button>
                       }
                       @if (count !== undefined) {
-                        <span [attr.aria-label]="('Boosts reçus' | t) + ' · ' + count" [title]="'Boosts reçus' | t">{{ count }}</span>
+                        <span class="boost-count" [attr.aria-label]="('Boosts reçus' | t) + ' · ' + count" [title]="('Boosts reçus' | t) + ' · ' + count">{{ count }}</span>
                       }
-                    </div>
-                  }
-                </div>
+                    }
+                  </div>
+                </article>
               }
             </div>
             @defer (on immediate) { <app-paginator [length]="resultTotal" [pageSize]="resultSize" [pageIndex]="resultPage" [pageSizeOptions]="[20,50,100]" (page)="onResultsPage($event)" /> }
