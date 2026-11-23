@@ -1,4 +1,4 @@
-.achievements {
+.achievements, .race-recap {
   margin-block: 24px;
   padding: 20px;
   border: 1px solid var(--acrho-border);
@@ -7,6 +7,14 @@
   color: var(--acrho-heading);
 }
 
+.race-recap h2 { font-size: 1.25rem; margin: 0; }
+.race-recap-name { margin: 8px 0; }
+.race-recap dl { display: flex; flex-wrap: wrap; gap: 10px 24px; margin: 12px 0 0; }
+.race-recap dt { color: var(--acrho-muted); font-size: .85rem; }
+.race-recap dd { margin: 2px 0 0; font-weight: 700; }
+.race-recap h3 { margin: 16px 0 0; font-size: 1rem; }
+.recap-badges { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 8px 0 0; padding: 0; list-style: none; }
+.recap-badges li { display: flex; align-items: center; gap: 6px; }
 .earned-count { margin-inline-start: .5rem; font-size: .875rem; }
 .earned-count, p, small { color: var(--acrho-muted); }
 .badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }

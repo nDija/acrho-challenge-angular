@@ -67,6 +67,7 @@ export interface RunnerAchievement {
   condition: string;
   image: string;
   unlocked: boolean;
+  unlockedAt?: string | null;
   progress: number;
   target: number;
 }
@@ -198,6 +199,11 @@ export class AcrhoApi {
     return this.http.get<RunnerStanding>(this.apiUrl(`/api/v1/runners/${id}/standing`));
   }
   runnerSeasons(id: number) { return this.http.get<number[]>(this.apiUrl(`/api/v1/runners/${id}/seasons`)); }
+  runnerRaceRankChange(id: number, raceId: number, year: number) {
+    return this.http.get<{ before: number | null; after: number | null }>(
+      this.apiUrl(`/api/v1/runners/${id}/races/${raceId}/rank-change`), { params: { year } });
+  }
+
   runnerAchievements(id: number, seasonId: number) {
     return this.http.get<RunnerAchievement[]>(this.apiUrl(`/api/v1/runners/${id}/seasons/${seasonId}/achievements`), { observe: 'response' });
   }

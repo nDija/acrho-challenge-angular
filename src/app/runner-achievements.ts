@@ -1,10 +1,10 @@
 import { OverlayModule } from '@angular/cdk/overlay';
-import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
+import { DatePipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, DestroyRef, inject, input, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { catchError, map, of, startWith, switchMap } from 'rxjs';
-import { AcrhoApi, type RunnerAchievement } from './acrho-api.service';
+import { AcrhoApi, type RunnerAchievement, type RunnerResult } from './acrho-api.service';
 import { LanguageService } from './language.service';
 import { TranslatePipe } from './translate.pipe';
 
@@ -13,7 +13,7 @@ const ACHIEVEMENT_CATALOG_SIZE = 37;
 
 @Component({
   selector: 'app-runner-achievements',
-  imports: [DecimalPipe, NgTemplateOutlet, MatButtonModule, OverlayModule, TranslatePipe],
+  imports: [DatePipe, DecimalPipe, NgTemplateOutlet, MatButtonModule, OverlayModule, TranslatePipe],
   templateUrl: './runner-achievements.html',
   styleUrl: './runner-achievements.scss',
 })
@@ -23,6 +23,30 @@ export class RunnerAchievements {
   readonly runnerId = input.required<number>();
   readonly seasonId = input.required<number>();
   readonly year = input<number>();
+  readonly results = input<RunnerResult[]>([]);
+  readonly latestResult = computed(() => {
+    const results = this.results();
+    const latest = results.find(entry => ['FINISHED', 'DNF', 'DSQ'].includes(entry.result.status ?? ''));
+    return latest ? results.find(entry => entry.raceId === latest.raceId && entry.result.status === 'FINISHED') ?? latest
+      : undefined;
+  });
+  private readonly rankingRequest = computed(() => {
+    const raceId = this.latestResult()?.raceId;
+    const year = this.year();
+    return raceId == null || year == null ? null : { runnerId: this.runnerId(), raceId, year };
+  });
+  private readonly rankingResponse = toSignal(toObservable(this.rankingRequest).pipe(
+    switchMap(request => request === null ? of(null) : this.api.runnerRaceRankChange(
+      request.runnerId, request.raceId, request.year,
+    ).pipe(
+      map(ranking => ({ request, ranking })),
+      catchError(() => of({ request, ranking: null })),
+    )),
+  ));
+  readonly rankChange = computed(() => {
+    const response = this.rankingResponse();
+    return response?.request === this.rankingRequest() ? response?.ranking : null;
+  });
   private readonly refresh = signal(0);
   private readonly request = computed(() => ({
     runnerId: this.runnerId(), seasonId: this.seasonId(), refresh: this.refresh(),
@@ -59,6 +83,15 @@ export class RunnerAchievements {
     const state = this.state();
     return state.status === 'ready' ? state.items.filter(item => item.unlocked) : [];
   });
+  readonly recentBadges = computed(() => {
+    const latest = this.latestResult();
+    if (!latest) return [];
+    const dateFormat = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Brussels' });
+    return this.unlocked().filter(badge =>
+      badge.unlockedAt && dateFormat.format(new Date(badge.unlockedAt)) >= latest.raceDate
+    );
+  });
+
   readonly nextBadges = computed(() => {
     const currentYear = new Date().getFullYear();
     if ((this.year() ?? currentYear) < currentYear) return [];

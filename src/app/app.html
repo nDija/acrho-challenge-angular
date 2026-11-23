@@ -212,7 +212,8 @@
             }
           </div>
           @if (vdotSeasonId != null) {
-            <app-runner-achievements [runnerId]="runner.id" [seasonId]="vdotSeasonId" [year]="runnerYear" />
+            <app-runner-achievements [runnerId]="runner.id" [seasonId]="vdotSeasonId" [year]="runnerYear"
+              [results]="runnerResults" />
           }
           <div class="section-head"><h2>{{ "Résultats" | t }} {{runnerYear}} @if (!runnerDetailLoading && !runnerDetailError) { <span>({{runnerResults.length}})</span> }</h2></div>
           @if (runnerDetailLoading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> }

@@ -1,3 +1,38 @@
+@if (latestResult(); as latest) {
+  <section class="race-recap" aria-labelledby="race-recap-title">
+    <h2 id="race-recap-title">{{ 'Depuis ta dernière course' | t }}</h2>
+    <p class="race-recap-name"><strong>{{ latest.raceName }}</strong> · {{ latest.raceDate | date:'dd MMMM yyyy':undefined:i18n.locale() }}</p>
+    <dl>
+      <div>
+        <dt>{{ 'Résultat' | t }}</dt>
+        <dd>
+          @if (latest.result.overallRank != null) { #{{ latest.result.overallRank }} }
+          @if (latest.result.overallRank != null && latest.result.time) { · }
+          @if (latest.result.time) { {{ latest.result.time }} }
+          @else if (latest.result.overallRank == null) { {{ (latest.result.status || '—') | t }} }
+        </dd>
+      </div>
+      @if (rankChange(); as ranks) {
+        @if (ranks.before != null || ranks.after != null) {
+          <div>
+            <dt>{{ 'Classement général avant et après la journée' | t }}</dt>
+            <dd>{{ ranks.before == null ? '—' : '#' + ranks.before }} → {{ ranks.after == null ? '—' : '#' + ranks.after }}</dd>
+          </div>
+        }
+      }
+      <div><dt>{{ 'Boosts reçus' | t }}</dt><dd>{{ (latest.boostsReceived ?? 0) | number:'1.0-0':i18n.locale() }}</dd></div>
+    </dl>
+    @if (recentBadges().length) {
+      <h3>{{ 'Succès enregistrés depuis la course' | t }}</h3>
+      <ul class="recap-badges">
+        @for (badge of recentBadges(); track badge.code) {
+          <li><img [src]="'assets/achievements/thumbnails/' + badge.image" alt="" width="32" height="32" loading="lazy">{{ badge.title }}</li>
+        }
+      </ul>
+    }
+  </section>
+}
+
 <details class="achievements" #accordion (toggle)="onAccordionToggle(accordion.open)">
   <summary class="achievements-summary">
     {{ 'Succès' | t }} {{ year() }}
