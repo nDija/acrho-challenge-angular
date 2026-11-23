@@ -1,0 +1,38 @@
+.achievements {
+  margin-block: 24px;
+  padding: 20px;
+  border: 1px solid var(--acrho-border);
+  border-radius: 14px;
+  background: var(--acrho-surface, #fff);
+  color: var(--acrho-heading);
+}
+
+header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+h2 { margin: 0; font-size: 1.25rem; }
+.earned-count, p, small { color: var(--acrho-muted); }
+.badges {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  margin: 12px 0 0;
+  padding: 0;
+  gap: 10px;
+  list-style: none;
+}
+li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid var(--acrho-border);
+  border-radius: 10px;
+}
+li > div { min-width: 0; overflow-wrap: anywhere; }
+img { flex: none; object-fit: contain; }
+li p { margin: 4px 0 0; font-size: .875rem; }
+details { margin-top: 16px; }
+summary { cursor: pointer; width: fit-content; font-weight: 600; }
+progress { display: block; width: 100%; max-width: 11rem; margin-block: 8px 2px; accent-color: var(--acrho-accent); }
+@media (max-width: 480px) {
+  .achievements { padding: 14px; }
+  img { width: 56px; height: 56px; }
+}

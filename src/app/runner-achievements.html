@@ -1,0 +1,66 @@
+<section aria-labelledby="runner-achievements-heading" class="achievements">
+  <header>
+    <h2 id="runner-achievements-heading">{{ 'Succès' | t }} {{ year() }}</h2>
+    @if (state().status === 'ready') {
+      <span class="earned-count">{{ unlocked().length }} · {{ 'Débloqués' | t }}</span>
+    }
+  </header>
+  @switch (state().status) {
+    @case ('loading') {
+      <p role="status">{{ 'Chargement des succès…' | t }}</p>
+    }
+    @case ('error') {
+      <p role="alert">{{ 'Impossible de charger les succès.' | t }}</p>
+      <button mat-stroked-button type="button" (click)="retry()">{{ 'Réessayer' | t }}</button>
+    }
+    @case ('ready') {
+      @if (unlocked().length) {
+        <ul class="badges">
+          @for (badge of unlocked(); track badge.code) {
+            <li>
+              <img [src]="'assets/achievements/' + badge.image" alt="" width="72" height="72" loading="lazy">
+              <div><strong>{{ badge.title }}</strong><p>{{ badge.description }}</p></div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p>{{ 'Aucun succès débloqué pour cette saison.' | t }}</p>
+      }
+      @if (nextBadges().length) {
+        <details>
+          <summary>{{ 'Prochains succès' | t }}</summary>
+          <ul class="badges">
+            @for (badge of nextBadges(); track badge.code) {
+              <li>
+                <img [src]="'assets/achievements/' + badge.image" alt="" width="72" height="72" loading="lazy">
+                <div>
+                  <strong>{{ badge.title }}</strong>
+                  <p>{{ badge.condition }}</p>
+                  @switch (badge.group) {
+                    @case ('DISTANCE') {
+                      <progress [max]="badge.target" [value]="badge.progress" [attr.aria-label]="badge.title"></progress>
+                      <small>{{ badge.progress / 1000 | number:'1.0-3':i18n.locale() }} /
+                        {{ badge.target / 1000 | number:'1.0-3':i18n.locale() }} km</small>
+                    }
+                    @case ('PARTICIPATION') {
+                      <progress [max]="badge.target" [value]="badge.progress" [attr.aria-label]="badge.title"></progress>
+                      <small>{{ badge.progress }} / {{ badge.target }}</small>
+                    }
+                    @case ('CLUB') {
+                      <progress [max]="badge.target" [value]="badge.progress" [attr.aria-label]="badge.title"></progress>
+                      <small>{{ badge.progress }} / {{ badge.target }}</small>
+                    }
+                    @case ('BOOST') {
+                      <progress [max]="badge.target" [value]="badge.progress" [attr.aria-label]="badge.title"></progress>
+                      <small>{{ badge.progress }} / {{ badge.target }}</small>
+                    }
+                  }
+                </div>
+              </li>
+            }
+          </ul>
+        </details>
+      }
+    }
+  }
+</section>

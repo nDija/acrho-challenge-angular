@@ -60,6 +60,18 @@ export interface VdotPerformance {
   warnings: string[];
 }
 
+export interface RunnerAchievement {
+  code: string;
+  group: 'PARTICIPATION' | 'SPEED' | 'CATEGORY' | 'RACE' | 'SEASON' | 'DISTANCE' | 'CLUB' | 'BOOST';
+  title: string;
+  description: string;
+  condition: string;
+  image: string;
+  unlocked: boolean;
+  progress: number;
+  target: number;
+}
+
 export interface RunnerVdot {
   firstCalendarRaceDate?: string | null;
   runnerId: number;
@@ -186,6 +198,9 @@ export class AcrhoApi {
     return this.http.get<RunnerStanding>(this.apiUrl(`/api/v1/runners/${id}/standing`));
   }
   runnerSeasons(id: number) { return this.http.get<number[]>(this.apiUrl(`/api/v1/runners/${id}/seasons`)); }
+  runnerAchievements(id: number, seasonId: number) {
+    return this.http.get<RunnerAchievement[]>(this.apiUrl(`/api/v1/runners/${id}/seasons/${seasonId}/achievements`));
+  }
   runnerVdot(id: number, seasonId: number) {
     return this.http.get<RunnerVdot>(this.apiUrl(`/api/v1/runners/${id}/seasons/${seasonId}/vdot`));
   }

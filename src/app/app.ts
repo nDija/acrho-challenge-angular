@@ -17,6 +17,7 @@ import { LanguageService } from './language.service';
 import { RunnerStandingCard } from './runner-standing-card';
 import { RankedRunnerAvatar } from './ranked-runner-avatar';
 import { RunnerVdotChart } from './runner-vdot-chart';
+import { RunnerAchievements } from './runner-achievements';
 import { Standings } from './standings';
 import { TranslatePipe } from './translate.pipe';
 import { ClubNamePipe } from './club-name.pipe';
@@ -34,7 +35,7 @@ import type { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root', standalone: true,
-  imports: [Administration, Paginator, RacePhotoCredit, RunnerSeason, RunnerSearch, ResultFilters, RaceBoosts, AccountSettings, Regulation, Photos, Sponsors, ProjectCredits, RaceTips, RaceRegistration, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, Standings, TranslatePipe, ClubNamePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [Administration, Paginator, RacePhotoCredit, RunnerSeason, RunnerSearch, ResultFilters, RaceBoosts, AccountSettings, Regulation, Photos, Sponsors, ProjectCredits, RaceTips, RaceRegistration, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, RunnerAchievements, Standings, TranslatePipe, ClubNamePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './app.html', styleUrl: './app.scss'
 })
 export class App implements OnInit {
