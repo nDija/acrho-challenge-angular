@@ -422,6 +422,13 @@ export class App implements OnInit {
       },
     });
   }
+  get runnerSeasonBoosts() {
+    const receivedByRace = new Map<number, number>();
+    for (const entry of this.runnerResults) {
+      if (entry.boostsReceived != null) receivedByRace.set(entry.raceId, entry.boostsReceived);
+    }
+    return [...receivedByRace.values()].reduce((total, count) => total + count, 0);
+  }
   get runnerDistanceKm() {
     return this.runnerResults
       .filter(entry => entry.result.status === 'FINISHED')

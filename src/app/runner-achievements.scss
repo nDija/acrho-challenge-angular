@@ -7,8 +7,7 @@
   color: var(--acrho-heading);
 }
 
-header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-h2 { margin: 0; font-size: 1.25rem; }
+.earned-count { margin-inline-start: .5rem; font-size: .875rem; }
 .earned-count, p, small { color: var(--acrho-muted); }
 .badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
 .badge-trigger {
@@ -22,8 +21,9 @@ h2 { margin: 0; font-size: 1.25rem; }
 }
 .badge-trigger:focus-visible { outline: 2px solid var(--acrho-accent); outline-offset: 2px; }
 img { display: block; object-fit: contain; }
-details { margin-top: 16px; }
+.achievements details { margin-top: 16px; }
 summary { cursor: pointer; width: fit-content; font-weight: 600; }
+.achievements-summary { width: auto; font-size: 1.25rem; }
 
 .badge-preview {
   box-sizing: border-box;

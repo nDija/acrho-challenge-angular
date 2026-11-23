@@ -41,7 +41,6 @@ export interface ImportReport {
 }
 
 export interface RaceBoostState {
-  limit: number;
   sentTo: number[];
   participants: { runnerId: number; received: number }[];
 }
@@ -62,7 +61,7 @@ export interface VdotPerformance {
 
 export interface RunnerAchievement {
   code: string;
-  group: 'PARTICIPATION' | 'SPEED' | 'CATEGORY' | 'RACE' | 'SEASON' | 'DISTANCE' | 'CLUB' | 'BOOST';
+  group: 'PARTICIPATION' | 'SPEED' | 'CATEGORY' | 'RACE' | 'SEASON' | 'DISTANCE' | 'CLUB' | 'BOOST' | 'HIDDEN';
   title: string;
   description: string;
   condition: string;
@@ -200,7 +199,7 @@ export class AcrhoApi {
   }
   runnerSeasons(id: number) { return this.http.get<number[]>(this.apiUrl(`/api/v1/runners/${id}/seasons`)); }
   runnerAchievements(id: number, seasonId: number) {
-    return this.http.get<RunnerAchievement[]>(this.apiUrl(`/api/v1/runners/${id}/seasons/${seasonId}/achievements`));
+    return this.http.get<RunnerAchievement[]>(this.apiUrl(`/api/v1/runners/${id}/seasons/${seasonId}/achievements`), { observe: 'response' });
   }
   runnerVdot(id: number, seasonId: number) {
     return this.http.get<RunnerVdot>(this.apiUrl(`/api/v1/runners/${id}/seasons/${seasonId}/vdot`));

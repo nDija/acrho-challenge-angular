@@ -12,9 +12,8 @@ type BoostTarget = { raceId: number; senderId: number };
   imports: [TranslatePipe],
   template: `
     @if (state(); as boosts) {
-      <p class="quota" role="status">
-        {{ 'Boosts envoyés' | t }} {{ boosts.sentTo.length }} / {{ boosts.limit }}
-        · {{ 'Places restantes' | t }} {{ boosts.limit - boosts.sentTo.length }}
+      <p class="sent-count" role="status">
+        {{ 'Boosts envoyés' | t }} {{ boosts.sentTo.length }}
       </p>
     }
     @if (loadFailed() || saveFailed()) {
@@ -22,7 +21,7 @@ type BoostTarget = { raceId: number; senderId: number };
     }
     <ng-content></ng-content>
   `,
-  styles: ['.quota { color: var(--acrho-heading); font-weight: 600; }'],
+  styles: ['.sent-count { color: var(--acrho-heading); font-weight: 600; }'],
 })
 export class RaceBoosts {
   private readonly api = inject(AcrhoApi);
@@ -69,7 +68,7 @@ export class RaceBoosts {
   canToggle(runnerId: number) {
     const state = this.state();
     return !!state && !this.saving() && runnerId !== this.senderId() &&
-      (state.sentTo.includes(runnerId) || (this.received().has(runnerId) && state.sentTo.length < state.limit));
+      (state.sentTo.includes(runnerId) || this.received().has(runnerId));
   }
 
   toggle(runnerId: number) {

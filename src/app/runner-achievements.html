@@ -1,33 +1,37 @@
-<section aria-labelledby="runner-achievements-heading" class="achievements">
-  <header>
-    <h2 id="runner-achievements-heading">{{ 'Succès' | t }} {{ year() }}</h2>
-    @if (state().status === 'ready') {
-      <span class="earned-count">{{ unlocked().length }} · {{ 'Débloqués' | t }}</span>
+<details class="achievements" #accordion (toggle)="onAccordionToggle(accordion.open)">
+  <summary class="achievements-summary">
+    {{ 'Succès' | t }} {{ year() }}
+    @if (total(); as badgeTotal) {
+      <span class="earned-count" [attr.aria-label]="('Débloqués' | t) + ' ' + unlocked().length + ' / ' + badgeTotal">
+        {{ unlocked().length }} / {{ badgeTotal }}
+      </span>
     }
-  </header>
-  @switch (state().status) {
-    @case ('loading') {
-      <p role="status">{{ 'Chargement des succès…' | t }}</p>
-    }
-    @case ('error') {
-      <p role="alert">{{ 'Impossible de charger les succès.' | t }}</p>
-      <button mat-stroked-button type="button" (click)="retry()">{{ 'Réessayer' | t }}</button>
-    }
-    @case ('ready') {
-      @if (unlocked().length) {
-        <ng-container *ngTemplateOutlet="badgeList; context: { $implicit: unlocked() }" />
-      } @else {
-        <p>{{ 'Aucun succès débloqué pour cette saison.' | t }}</p>
+  </summary>
+  @if (expanded()) {
+    @switch (state().status) {
+      @case ('loading') {
+        <p role="status">{{ 'Chargement des succès…' | t }}</p>
       }
-      @if (nextBadges().length) {
-        <details>
-          <summary>{{ 'Prochains succès' | t }}</summary>
-          <ng-container *ngTemplateOutlet="badgeList; context: { $implicit: nextBadges() }" />
-        </details>
+      @case ('error') {
+        <p role="alert">{{ 'Impossible de charger les succès.' | t }}</p>
+        <button mat-stroked-button type="button" (click)="retry()">{{ 'Réessayer' | t }}</button>
+      }
+      @case ('ready') {
+        @if (unlocked().length) {
+          <ng-container *ngTemplateOutlet="badgeList; context: { $implicit: unlocked() }" />
+        } @else {
+          <p>{{ 'Aucun succès débloqué pour cette saison.' | t }}</p>
+        }
+        @if (nextBadges().length) {
+          <details>
+            <summary>{{ 'Prochains succès' | t }}</summary>
+            <ng-container *ngTemplateOutlet="badgeList; context: { $implicit: nextBadges() }" />
+          </details>
+        }
       }
     }
   }
-</section>
+</details>
 
 <ng-template #badgeList let-badges>
   <ul class="badges">
@@ -40,7 +44,7 @@
                 (pointerenter)="previewBadge($event, badge.code)" (pointerleave)="leaveBadge($event, badge.code)"
                 (focus)="showBadge(badge.code)" (blur)="scheduleClose(badge.code)"
                 (click)="showBadge(badge.code)" (keydown.escape)="closeBadge()">
-          <img [src]="'assets/achievements/' + badge.image" alt="" width="64" height="64" loading="lazy">
+          <img [src]="'assets/achievements/thumbnails/' + badge.image" alt="" width="64" height="64" loading="lazy">
         </button>
 
         <ng-template cdkConnectedOverlay

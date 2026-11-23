@@ -8,6 +8,9 @@ import { AcrhoApi, type RunnerAchievement } from './acrho-api.service';
 import { LanguageService } from './language.service';
 import { TranslatePipe } from './translate.pipe';
 
+// Includes hidden badges when an older API response omits the catalogue size.
+const ACHIEVEMENT_CATALOG_SIZE = 37;
+
 @Component({
   selector: 'app-runner-achievements',
   imports: [DecimalPipe, NgTemplateOutlet, MatButtonModule, OverlayModule, TranslatePipe],
@@ -26,7 +29,13 @@ export class RunnerAchievements {
   }));
   private readonly response = toSignal(toObservable(this.request).pipe(
     switchMap(request => this.api.runnerAchievements(request.runnerId, request.seasonId).pipe(
-      map(items => ({ request, status: 'ready' as const, items })),
+      map(response => {
+        const items = response.body ?? [];
+        return {
+          request, status: 'ready' as const, items,
+          total: Number(response.headers.get('X-Total-Count') ?? ACHIEVEMENT_CATALOG_SIZE),
+        };
+      }),
       catchError(() => of({ request, status: 'error' as const })),
       startWith({ request, status: 'loading' as const }),
     )),
@@ -35,6 +44,17 @@ export class RunnerAchievements {
     const response = this.response();
     return response?.request === this.request() ? response : { status: 'loading' as const };
   });
+  readonly expanded = signal(false);
+  readonly total = computed(() => {
+    const state = this.state();
+    return state.status === 'ready' ? state.total : null;
+  });
+
+  onAccordionToggle(open: boolean) {
+    this.expanded.set(open);
+    if (!open) this.closeBadge();
+  }
+
   readonly unlocked = computed(() => {
     const state = this.state();
     return state.status === 'ready' ? state.items.filter(item => item.unlocked) : [];
