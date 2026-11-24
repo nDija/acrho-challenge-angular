@@ -50,7 +50,7 @@ export class AdminRaceMail {
     )),
   ));
   private readonly racePhoto = toSignal(toObservable(this.race).pipe(
-    switchMap(race => race ? this.api.racePhoto(race.id).pipe(
+    switchMap(race => race ? this.api.findOrDiscoverAdminRacePhoto(race.id).pipe(
       map(photo => ({ raceId: race.id, photo, failed: false })),
       catchError(() => of({ raceId: race.id, photo: null, failed: true })),
     ) : of(null)),

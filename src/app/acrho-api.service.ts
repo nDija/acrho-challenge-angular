@@ -128,6 +128,10 @@ export class AcrhoApi {
     return this.http.get<AdminRace[]>(this.apiUrl('/api/v1/admin/races'), { params: { year } });
   }
 
+  findOrDiscoverAdminRacePhoto(id: number) {
+    return this.http.post<RacePhoto | null>(this.apiUrl(`/api/v1/admin/races/${id}/photo`), null);
+  }
+
   sendRaceResultsTest(subject: string, html: string) {
     return this.http.post<void>(this.apiUrl('/api/v1/mail/race-results/test'), { subject, html });
   }
