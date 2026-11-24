@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 
 export interface Season { id: number; year: number; }
@@ -14,6 +14,7 @@ export interface RacePhoto {
   license: string;
   licenseUrl: string | null;
   authorUrl?: string | null;
+  uploaded?: boolean;
 }
 export interface RacePhotoCandidate {
   filename: string;
@@ -22,6 +23,11 @@ export interface RacePhotoCandidate {
 export interface UnsplashPhotoCandidate {
   id: string;
   photo: RacePhoto;
+}
+export interface GooglePlacesPhotoPreview {
+  url: string;
+  sourceUrl: string | null;
+  authors: { name: string; url: string | null }[];
 }
 export interface RaceDetail extends Race { organizer?: string; routes: RouteInfo[]; practicalInfo?: RacePracticalInfo | null; }
 export interface Runner { id: number; firstName: string; lastName: string; gender?: string; club?: string; category?: string | null; categoryYear?: number | null; pictureUrl?: string | null; bannerColor?: string; }
@@ -141,8 +147,31 @@ export class AcrhoApi {
     return this.http.get<AdminRace[]>(this.apiUrl('/api/v1/admin/races'), { params: { year } });
   }
 
+  private resolvePhotoUrl(photo: RacePhoto | null): RacePhoto | null {
+    return photo?.uploaded ? this.resolveUploadedPhotoUrl(photo) : photo;
+  }
+
+  enableRacePhotoMailAccess(id: number, version: string) {
+    return this.http.post<void>(this.apiUrl(`/api/v1/admin/races/${id}/photo/upload/mail-access`), null, {
+      params: { v: version },
+    });
+  }
+
+  uploadAdminRacePhoto(id: number, file: File, author: string) {
+    const body = new FormData();
+    body.set('file', file);
+    body.set('author', author);
+    return this.http.post<RacePhoto>(this.apiUrl(`/api/v1/admin/races/${id}/photo/upload`), body)
+      .pipe(map(photo => this.resolveUploadedPhotoUrl(photo)));
+  }
+
+  private resolveUploadedPhotoUrl(photo: RacePhoto): RacePhoto {
+    return { ...photo, url: this.apiUrl(photo.url), sourceUrl: this.apiUrl(photo.sourceUrl) };
+  }
+
   findOrDiscoverAdminRacePhoto(id: number) {
-    return this.http.post<RacePhoto | null>(this.apiUrl(`/api/v1/admin/races/${id}/photo`), null);
+    return this.http.post<RacePhoto | null>(this.apiUrl(`/api/v1/admin/races/${id}/photo`), null)
+      .pipe(map(photo => this.resolvePhotoUrl(photo)));
   }
 
   adminRacePhotoCandidates(id: number) {
@@ -161,6 +190,10 @@ export class AcrhoApi {
 
   selectAdminUnsplashPhoto(id: number, photoId: string) {
     return this.http.put<RacePhoto>(this.apiUrl(`/api/v1/admin/races/${id}/photo/unsplash`), { id: photoId });
+  }
+
+  adminGooglePlacesPhotoPreviews(id: number) {
+    return this.http.get<GooglePlacesPhotoPreview[]>(this.apiUrl(`/api/v1/admin/races/${id}/photo/google-places/previews`));
   }
 
   sendRaceResultsTest(subject: string, html: string) {
@@ -216,7 +249,10 @@ export class AcrhoApi {
   participantCount(year: number) {
     return this.http.get<number>(this.apiUrl(`/api/v1/seasons/year/${year}/participants/count`));
   }
-  racePhoto(id: number) { return this.http.get<RacePhoto | null>(this.apiUrl(`/api/v1/races/${id}/photo`)); }
+  racePhoto(id: number) {
+    return this.http.get<RacePhoto | null>(this.apiUrl(`/api/v1/races/${id}/photo`))
+      .pipe(map(photo => this.resolvePhotoUrl(photo)));
+  }
   race(id: number) { return this.http.get<RaceDetail>(this.apiUrl(`/api/v1/races/${id}`)); }
   raceBoosts(raceId: number) {
     return this.http.get<RaceBoostState>(this.apiUrl(`/api/v1/me/race-boosts/${raceId}`));

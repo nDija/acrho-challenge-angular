@@ -1,15 +1,15 @@
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { DomSanitizer } from '@angular/platform-browser';
-import { catchError, finalize, map, of, startWith, switchMap } from 'rxjs';
-import { AcrhoApi, AdminRace, RacePhoto, RacePhotoCandidate, UnsplashPhotoCandidate } from './acrho-api.service';
+import { catchError, finalize, map, of, startWith, switchMap, throwError } from 'rxjs';
+import { AcrhoApi, AdminRace, GooglePlacesPhotoPreview, RacePhoto, RacePhotoCandidate, UnsplashPhotoCandidate } from './acrho-api.service';
 
 @Component({
   selector: 'app-admin-race-mail',
-  imports: [MatButtonModule],
+  imports: [MatButtonModule, NgTemplateOutlet],
   templateUrl: './admin-race-mail.html',
   styles: [`
     :host { display: block; padding-top: 20px; }
@@ -21,8 +21,29 @@ import { AcrhoApi, AdminRace, RacePhoto, RacePhotoCandidate, UnsplashPhotoCandid
     .photo-source h3 { margin-top: 0; }
     .photo-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; padding: 0; list-style: none; }
     .photo-options li { padding: 8px; border: 1px solid var(--acrho-border); border-radius: 8px; background: var(--acrho-surface, #fff); }
-    .photo-options img { display: block; width: 100%; aspect-ratio: 2 / 1; object-fit: cover; }
+    .photo-thumbnail { display: block; cursor: zoom-in; }
+    .photo-thumbnail:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+    .photo-options .photo-thumbnail-image { display: block; width: 100%; aspect-ratio: 2 / 1; object-fit: cover; }
+    .photo-enlargement {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      inset: 50% auto auto 50%;
+      transform: translate(-50%, -50%);
+      max-width: min(760px, calc(100vw - 32px));
+      max-height: 72vh;
+      border: 2px solid var(--acrho-border);
+      border-radius: 8px;
+      background: var(--acrho-surface, #fff);
+      box-shadow: 0 8px 28px rgb(0 0 0 / 35%);
+      pointer-events: none;
+    }
+    .photo-thumbnail:focus-visible .photo-enlargement { display: block; }
+    @media (hover: hover) {
+      .photo-thumbnail:hover .photo-enlargement { display: block; }
+    }
     .photo-options p { margin: 6px 0; font-size: .85rem; }
+    .uploaded-photo-preview { display: block; max-width: min(100%, 420px); max-height: 280px; margin-bottom: 14px; }
     iframe { display: block; width: 100%; height: 680px; margin-top: 16px; border: 1px solid var(--acrho-border); }
   `],
 })
@@ -31,7 +52,8 @@ export class AdminRaceMail {
   private readonly api = inject(AcrhoApi);
   private readonly document = inject(DOCUMENT);
   private readonly sanitizer = inject(DomSanitizer);
-  private readonly template = toSignal(inject(HttpClient).get('assets/race-results-mail.html', { responseType: 'text' }).pipe(
+  private readonly http = inject(HttpClient);
+  private readonly template = toSignal(this.http.get('assets/race-results-mail.html', { responseType: 'text' }).pipe(
     catchError(() => of(null)),
   ));
 
@@ -66,7 +88,14 @@ export class AdminRaceMail {
     ) : of(null)),
   ));
   private readonly savedPhoto = signal<{ raceId: number; photo: RacePhoto; failed: false } | null>(null);
+  readonly upload = signal<{ file: File; preview: string } | null>(null);
+  readonly uploadAuthor = signal('');
+  readonly uploadError = signal<string | null>(null);
+  readonly photoPickerOpen = signal(false);
   readonly photoCandidates = signal<RacePhotoCandidate[] | null>(null);
+  readonly googlePlacesPreviews = signal<GooglePlacesPhotoPreview[] | null>(null);
+  readonly googlePlacesLoading = signal(false);
+  readonly googlePlacesError = signal(false);
   readonly unsplashCandidates = signal<UnsplashPhotoCandidate[] | null>(null);
   readonly unsplashLoading = signal(false);
   readonly unsplashError = signal<string | null>(null);
@@ -80,26 +109,46 @@ export class AdminRaceMail {
     const result = this.racePhoto();
     return result?.raceId === this.race()?.id ? result : null;
   });
+  private readonly uploadedPhotoUrl = computed(() => {
+    const photo = this.photoResult()?.photo;
+    return photo?.uploaded ? photo.url : null;
+  });
+  readonly uploadedPreview = toSignal(toObservable(this.uploadedPhotoUrl).pipe(
+    switchMap(url => url ? this.http.get(url, { responseType: 'blob' }).pipe(
+      switchMap(image => readPreviewImage(image)),
+      map(dataUrl => ({ url, dataUrl, failed: false })),
+      catchError(() => of({ url, dataUrl: null, failed: true })),
+      startWith(null),
+    ) : of(null)),
+  ));
+
   readonly sending = signal(false);
   readonly sendNotice = signal<{ success: boolean; text: string } | null>(null);
   readonly canSend = computed(() => !!this.html() && !!this.photoResult() && !this.photoSaving() && !this.sending());
   readonly templateFailed = computed(() => this.template() === null);
   readonly canExport = computed(() => !!this.html() && !!httpsUrl(this.resultsUrl()) && !!httpsUrl(this.unsubscribeUrl()));
 
-  private renderHtml(logoUrl: string) {
+  constructor() {
+    this.destroyRef.onDestroy(() => this.clearUpload());
+  }
+
+  private renderHtml(logoUrl: string, previewImage?: string | null) {
     const template = this.template();
     const race = this.race();
     if (!template || !race) return '';
     const photo = this.photoResult()?.photo;
-    const photoUrl = httpsUrl(photo?.url ?? '');
+    const photoUrl = photo?.uploaded
+      ? (previewImage === undefined ? httpsUrl(photo.url + '&mail=1') : previewImage)
+      : httpsUrl(photo?.url ?? '');
     const sourceUrl = httpsUrl(photo?.sourceUrl ?? '');
     const authorUrl = httpsUrl(photo?.authorUrl ?? '');
     const licenseUrl = httpsUrl(photo?.licenseUrl ?? '');
-    const photoHtml = photo && photoUrl && sourceUrl ? `
+    const photoHtml = photo && photoUrl && (sourceUrl || photo.uploaded) ? `
       <tr><td><img src="${escapeHtml(photoUrl)}" alt="Photo d’illustration de ${escapeHtml(race.city || race.name)}" width="600" height="300" style="display:block;width:100%;max-width:600px;height:auto;aspect-ratio:2 / 1;object-fit:cover;object-position:center"></td></tr>
       <tr><td style="padding:8px 20px;text-align:center;font-size:12px;color:#304B68">
-        Photo d’illustration · ${authorUrl ? `<a href="${escapeHtml(authorUrl)}">${escapeHtml(photo.author)}</a>` : escapeHtml(photo.author)} · <a href="${escapeHtml(sourceUrl)}">${authorUrl ? 'Unsplash' : 'Wikimedia Commons'}</a> ·
-        ${licenseUrl ? `<a href="${escapeHtml(licenseUrl)}">${escapeHtml(photo.license)}</a>` : escapeHtml(photo.license)}
+        ${photo.uploaded ? `Photo importée · ${escapeHtml(photo.author)}${sourceUrl ? ` · <a href="${escapeHtml(sourceUrl)}">Source de l’image affichée</a>` : ''}` : `
+        Photo d’illustration · ${authorUrl ? `<a href="${escapeHtml(authorUrl)}">${escapeHtml(photo.author)}</a>` : escapeHtml(photo.author)} · <a href="${escapeHtml(sourceUrl ?? '')}">${authorUrl ? 'Unsplash' : 'Wikimedia Commons'}</a> ·
+        ${licenseUrl ? `<a href="${escapeHtml(licenseUrl)}">${escapeHtml(photo.license)}</a>` : escapeHtml(photo.license)}`}
       </td></tr>` : '';
     const values: Record<string, string> = {
       raceName: escapeHtml(race.name),
@@ -116,7 +165,10 @@ export class AdminRaceMail {
 
   readonly preview = computed(() => {
     const logoUrl = new URL('assets/acrho-logo.png', this.document.baseURI).href;
-    return this.sanitizer.bypassSecurityTrustHtml(this.renderHtml(logoUrl));
+    const uploaded = this.uploadedPreview();
+    const photo = this.uploadedPhotoUrl();
+    const previewImage = photo && uploaded?.url === photo ? uploaded.dataUrl : null;
+    return this.sanitizer.bypassSecurityTrustHtml(this.renderHtml(logoUrl, previewImage));
   });
 
   selectYear(year: string) {
@@ -128,6 +180,13 @@ export class AdminRaceMail {
     const race = this.races()?.find(race => race.id === Number(id)) ?? null;
     this.race.set(race);
     this.savedPhoto.set(null);
+    this.clearUpload();
+    this.uploadAuthor.set('');
+    this.uploadError.set(null);
+    this.photoPickerOpen.set(false);
+    this.googlePlacesPreviews.set(null);
+    this.googlePlacesLoading.set(false);
+    this.googlePlacesError.set(false);
     this.photoCandidates.set(null);
     this.unsplashCandidates.set(null);
     this.unsplashLoading.set(false);
@@ -178,6 +237,68 @@ export class AdminRaceMail {
     });
   }
 
+  loadGooglePlacesPreviews() {
+    const race = this.race();
+    if (!race?.city?.trim() || this.googlePlacesLoading() || this.photoSaving() || this.sending()) return;
+    this.googlePlacesLoading.set(true);
+    this.googlePlacesError.set(false);
+    this.googlePlacesPreviews.set(null);
+    this.api.adminGooglePlacesPhotoPreviews(race.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: previews => {
+        if (this.race() !== race) return;
+        this.googlePlacesPreviews.set(previews);
+        this.googlePlacesLoading.set(false);
+      },
+      error: () => {
+        if (this.race() !== race) return;
+        this.googlePlacesError.set(true);
+        this.googlePlacesLoading.set(false);
+      },
+    });
+  }
+
+  chooseUpload(input: HTMLInputElement) {
+    this.clearUpload();
+    this.uploadError.set(null);
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    if (file.size === 0 || file.size > 8 * 1024 * 1024) {
+      this.uploadError.set('Choisis une photo de 8 Mo maximum.');
+      return;
+    }
+    this.upload.set({ file, preview: URL.createObjectURL(file) });
+  }
+
+  private clearUpload() {
+    const upload = this.upload();
+    if (upload) URL.revokeObjectURL(upload.preview);
+    this.upload.set(null);
+  }
+
+  saveUpload() {
+    const race = this.race();
+    const upload = this.upload();
+    const author = this.uploadAuthor().trim();
+    if (!race || !upload || !author || this.photoSaving() || this.sending()) return;
+
+    this.photoSaving.set(true);
+    this.photoNotice.set(null);
+    this.uploadError.set(null);
+    this.api.uploadAdminRacePhoto(race.id, upload.file, author).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => this.photoSaving.set(false)),
+    ).subscribe({
+      next: photo => {
+        this.savedPhoto.set({ raceId: race.id, photo, failed: false });
+        this.photoNotice.set({ success: true, text: 'Photo enregistrée pour le mail et la fiche de course.' });
+        this.clearUpload();
+        this.uploadAuthor.set('');
+      },
+      error: error => this.uploadError.set(error?.error?.detail || 'Impossible d’importer la photo.'),
+    });
+  }
+
   choosePhoto(candidate: RacePhotoCandidate | UnsplashPhotoCandidate) {
     const race = this.race();
     if (!race || this.photoSaving() || this.sending()) return;
@@ -198,12 +319,24 @@ export class AdminRaceMail {
     });
   }
 
+  private prepareMailPhoto(raceId: number) {
+    const photo = this.photoResult()?.photo;
+    if (!photo?.uploaded) return of(undefined);
+    const url = httpsUrl(photo.url);
+    const version = url ? new URL(url).searchParams.get('v') : null;
+    return version ? this.api.enableRacePhotoMailAccess(raceId, version) : throwError(() => ({
+      error: { detail: 'La photo importée doit être accessible à une adresse HTTPS pour figurer dans le mail.' },
+    }));
+  }
+
   sendTest() {
     const race = this.race();
     if (!race || !this.canSend()) return;
     this.sending.set(true);
     this.sendNotice.set(null);
-    this.api.sendRaceResultsTest(`Résultats · ${race.name}`, this.html()).pipe(
+    const html = this.html();
+    this.prepareMailPhoto(race.id).pipe(
+      switchMap(() => this.api.sendRaceResultsTest(`Résultats · ${race.name}`, html)),
       takeUntilDestroyed(this.destroyRef),
       finalize(() => this.sending.set(false)),
     ).subscribe({
@@ -216,14 +349,44 @@ export class AdminRaceMail {
   }
 
   download() {
-    if (!this.canExport()) return;
-    const url = URL.createObjectURL(new Blob([this.html()], { type: 'text/html;charset=utf-8' }));
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `resultats-course-${this.race()?.id}.html`;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    const race = this.race();
+    if (!race || !this.canExport() || !this.photoResult() || this.photoSaving() || this.sending()) return;
+    this.sending.set(true);
+    this.sendNotice.set(null);
+    const html = this.html();
+    this.prepareMailPhoto(race.id).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => this.sending.set(false)),
+    ).subscribe({
+      next: () => {
+        const url = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
+        const link = this.document.createElement('a');
+        link.href = url;
+        link.download = `resultats-course-${race.id}.html`;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      },
+      error: error => this.sendNotice.set({
+        success: false,
+        text: error?.error?.detail || 'Impossible de préparer la photo pour le téléchargement du mail.',
+      }),
+    });
   }
+}
+
+function readPreviewImage(image: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string' && /^data:image\/(?:jpeg|png);base64,/.test(reader.result)) {
+        resolve(reader.result);
+      } else {
+        reject(new Error('Unexpected photo format'));
+      }
+    };
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(image);
+  });
 }
 
 function httpsUrl(value: string): string | null {

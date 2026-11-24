@@ -9,10 +9,10 @@
   } @else if (credit.author) {
     <div class="race-hero-credit-text">{{ credit.author }}</div>
   }
-  <a mat-menu-item [href]="credit.sourceUrl" target="_blank" rel="noopener noreferrer" translate="no">{{ credit.authorUrl ? 'Unsplash' : 'Wikimedia Commons' }}</a>
+  <a mat-menu-item [href]="credit.sourceUrl" target="_blank" rel="noopener noreferrer">{{ credit.uploaded ? 'Photo de la course' : credit.authorUrl ? 'Unsplash' : 'Wikimedia Commons' }}</a>
   @if (credit.licenseUrl) {
     <a mat-menu-item [href]="credit.licenseUrl" target="_blank" rel="noopener noreferrer">{{ credit.license }}</a>
-  } @else {
+  } @else if (credit.license) {
     <div class="race-hero-credit-text">{{ credit.license }}</div>
   }
 </mat-menu>
