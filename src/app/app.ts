@@ -131,8 +131,10 @@ export class App implements OnInit {
   participantCount?: number;
   distanceLoading = false;
   ngOnInit() {
+    const course = new URLSearchParams(window.location.search).get('course');
+    const raceId = Number(course);
     this.loadMe();
-    this.api.seasons().subscribe({ next: xs => { this.seasons = xs; if (xs.length && !xs.some(s => s.year === this.selectedYear)) this.selectedYear = xs[0].year; this.loadRaces(); this.cdr.markForCheck(); }, error: e => this.fail(e) });
+    this.api.seasons().subscribe({ next: xs => { this.seasons = xs; if (xs.length && !xs.some(s => s.year === this.selectedYear)) this.selectedYear = xs[0].year; this.loadRaces(); if (Number.isSafeInteger(raceId) && raceId > 0) this.openRaceById(raceId); this.cdr.markForCheck(); }, error: e => this.fail(e) });
     this.api.categories().subscribe({ next: xs => { this.categories = xs; this.cdr.markForCheck(); }, error: () => {} });
   }
   closeMobileMenu(): void {
@@ -196,7 +198,11 @@ export class App implements OnInit {
       this.distanceLoading = false;
       this.cdr.markForCheck();
     });
-  }  openRace(r: Race) { this.loading = true; this.error = ''; this.api.race(r.id).subscribe({ next: x => { this.selectedRace = x; this.viewport.scrollToPosition([0, 0]); this.racePhotoLoaded = undefined; this.racePhoto = this.api.racePhoto(x.id).pipe(catchError(() => of(null))); this.loading = false; this.results = []; this.resultPage = 0; this.selectedRouteId = undefined; if (x.routes?.length) this.loadResults(x.routes[0].id); this.cdr.markForCheck(); }, error: e => { this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
+  }
+
+  openRace(r: Race) { this.openRaceById(r.id); }
+
+  private openRaceById(id: number) { this.loading = true; this.error = ''; this.api.race(id).subscribe({ next: x => { this.selectedRace = x; this.viewport.scrollToPosition([0, 0]); this.racePhotoLoaded = undefined; this.racePhoto = this.api.racePhoto(x.id).pipe(catchError(() => of(null))); this.loading = false; this.results = []; this.resultPage = 0; this.selectedRouteId = undefined; if (x.routes?.length) this.loadResults(x.routes[0].id); this.cdr.markForCheck(); }, error: e => { this.loading = false; this.fail(e); this.cdr.markForCheck(); } }); }
   loadResults(routeId: number, page = 0) { this.selectedRouteId = routeId; this.loading = true; this.api.results(routeId, page, this.resultSize, this.resultQuery, this.category, this.gender).subscribe({ next: x => { this.results = x.content; this.resultTotal = x.total; this.resultPage = x.page; this.loading = false; this.cdr.markForCheck(); }, error: e => { this.loading = false; this.results = []; this.resultTotal = 0; if (e.status === 404) this.error = 'Les résultats ne sont pas publiés pour cette course.'; else this.fail(e); this.cdr.markForCheck(); } }); }
   setRunnerSearchMode(mode: 'name' | 'club') {
     if (this.runnerSearchMode === mode) return;

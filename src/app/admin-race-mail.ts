@@ -154,7 +154,7 @@ export class AdminRaceMail {
       raceName: escapeHtml(race.name),
       message: formatAnnouncement(this.message(), race.name, formatRaceDate(race.raceDate)),
       logoUrl: escapeHtml(logoUrl),
-      resultsUrl: escapeHtml(httpsUrl(this.resultsUrl()) ?? 'https://acrho.run/'),
+      resultsUrl: escapeHtml(httpsUrl(this.resultsUrl()) ?? raceResultsUrl(race.id)),
       unsubscribeUrl: escapeHtml(httpsUrl(this.unsubscribeUrl()) ?? '#'),
       photo: photoHtml,
     };
@@ -194,7 +194,7 @@ export class AdminRaceMail {
     this.photoLoading.set(false);
     this.photoNotice.set(null);
     this.sendNotice.set(null);
-    this.resultsUrl.set('');
+    this.resultsUrl.set(race ? raceResultsUrl(race.id) : '');
     this.message.set(race ? `Les résultats de la course ${race.name} du ${formatRaceDate(race.raceDate)} sont disponibles sur acrho.run.` : '');
   }
 
@@ -412,4 +412,8 @@ function formatAnnouncement(message: string, raceName: string, raceDate: string)
   return message.split(new RegExp(`(${pattern})`, 'g')).map((part, index) =>
     index % 2 === 1 ? `<strong>${escapeHtml(part)}</strong>` : escapeHtml(part).replace(/\r?\n/g, '<br>'),
   ).join('');
+}
+
+function raceResultsUrl(raceId: number): string {
+  return `https://acrho-challenge.ddns.net/?course=${raceId}`;
 }
