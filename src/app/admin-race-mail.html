@@ -1,0 +1,52 @@
+<label>Saison
+  <select #season [disabled]="sending()" [value]="selectedYear()" (change)="selectYear(season.value)">
+    @for (item of seasons(); track item.id) {
+      <option [value]="item.year" [selected]="item.year === selectedYear()">{{ item.year }}</option>
+    }
+  </select>
+</label>
+<label>Course
+  <select #raceSelect [disabled]="sending()" [value]="race()?.id ?? ''" (change)="selectRace(raceSelect.value)">
+    <option value="">Choisir une course</option>
+    @for (item of races(); track item.id) {
+      <option [value]="item.id">{{ item.name }} · {{ statusLabels[item.status] }}</option>
+    }
+  </select>
+</label>
+@if (seasons() === null || races() === null) {
+  <p role="alert">Impossible de charger les courses ou les saisons.</p>
+} @else if (races() === undefined) {
+  <p role="status">Chargement des courses…</p>
+} @else if (races()?.length === 0) {
+  <p>Aucune course disponible pour cette saison.</p>
+}
+@if (race()) {
+  <label>Texte d’annonce
+    <textarea #body rows="4" [value]="message()" (input)="message.set(body.value)"></textarea>
+  </label>
+  <label>Lien HTTPS vers les résultats
+    <input #results type="url" [value]="resultsUrl()" (input)="resultsUrl.set(results.value)">
+  </label>
+  <label>Lien HTTPS de désabonnement
+    <input #unsubscribe type="url" [value]="unsubscribeUrl()" (input)="unsubscribeUrl.set(unsubscribe.value)">
+  </label>
+  @if (!photoResult()) {
+    <p role="status">Recherche de la photo Wikimedia Commons…</p>
+  } @else if (photoResult()?.failed) {
+    <p role="status">Impossible de récupérer la photo Wikimedia Commons.</p>
+  } @else if (!photoResult()?.photo) {
+    <p>Aucune photo Wikimedia Commons disponible pour cette course.</p>
+  }
+  @if (templateFailed()) {
+    <p role="alert">Impossible de charger le modèle de mail.</p>
+  } @else {
+    <button type="button" [disabled]="!canExport() || !photoResult()" (click)="download()">Télécharger le HTML</button>
+    <button type="button" [disabled]="!canSend()" (click)="sendTest()">
+      {{ sending() ? 'Envoi en cours…' : 'Envoyer un test aux administrateurs' }}
+    </button>
+    @if (sendNotice(); as notice) {
+      <p [attr.role]="notice.success ? 'status' : 'alert'">{{ notice.text }}</p>
+    }
+    <iframe sandbox="" title="Aperçu du mail de résultats" [srcdoc]="preview()"></iframe>
+  }
+}

@@ -128,6 +128,10 @@ export class AcrhoApi {
     return this.http.get<AdminRace[]>(this.apiUrl('/api/v1/admin/races'), { params: { year } });
   }
 
+  sendRaceResultsTest(subject: string, html: string) {
+    return this.http.post<void>(this.apiUrl('/api/v1/mail/race-results/test'), { subject, html });
+  }
+
   updateRaceStatus(id: number, status: RaceStatus | 'AUTOMATIC') {
     const url = this.apiUrl(`/api/v1/admin/races/${id}/status`);
     return status === 'AUTOMATIC' ? this.http.delete<AdminRace>(url) :

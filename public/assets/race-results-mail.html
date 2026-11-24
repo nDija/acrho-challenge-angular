@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Résultats · {{raceName}}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Manrope:wght@800&display=swap');
+  </style>
+</head>
+<body style="margin:0;background:#E8F0FA;color:#193B5B;font-family:'DM Sans',Arial,sans-serif">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#E8F0FA">
+    <tr><td align="center" style="padding:16px 8px">
+      <!--[if mso]><table role="presentation" width="600"><tr><td><![endif]-->
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#F3F7FC" style="max-width:600px;border-collapse:separate;border-radius:16px;overflow:hidden">
+        <tr><td bgcolor="#183B5B" style="padding:16px 24px;border-radius:16px 16px 0 0">
+          <table role="presentation" cellspacing="0" cellpadding="0">
+            <tr>
+              <td style="padding-right:11px">
+                <a href="https://acrho.run/"><img src="{{logoUrl}}" width="38" height="38" alt="ACRHO" style="display:block;background:#FFFFFF;border-radius:8px"></a>
+              </td>
+              <td>
+                <a href="https://acrho.run/" style="font:800 21px Manrope,Arial,sans-serif;letter-spacing:-.8px;color:#FFFFFF;text-decoration:none">acrho<span style="color:#D6E2F0">.run</span></a>
+                <div style="margin-top:2px;font:600 8px 'DM Sans',Arial,sans-serif;letter-spacing:1.7px;color:#D6E2F0">COURIR ENSEMBLE</div>
+              </td>
+            </tr>
+          </table>
+        </td></tr>
+        {{photo}}
+        <tr><td align="center" style="padding:24px">
+          <p style="margin:0 0 20px;font-size:16px;line-height:1.5;color:#304B68">{{message}}</p>
+          <table role="presentation" cellspacing="0" cellpadding="0">
+            <tr><td bgcolor="#183B5B" align="center" style="padding:14px 22px;border-radius:8px">
+              <a href="{{resultsUrl}}" style="display:inline-block;color:#FFFFFF;font-weight:700;text-decoration:none">Voir les résultats<br><strong>{{raceName}}</strong></a>
+            </td></tr>
+          </table>
+        </td></tr>
+        <tr><td bgcolor="#F3F7FC" align="center" style="padding:20px;font-size:13px;border-radius:0 0 16px 16px">
+          <a href="{{unsubscribeUrl}}" style="color:#304B68">Se désabonner des annonces de résultats</a>
+        </td></tr>
+      </table>
+      <!--[if mso]></td></tr></table><![endif]-->
+    </td></tr>
+  </table>
+</body>
+</html>
