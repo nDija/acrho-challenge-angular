@@ -161,10 +161,10 @@ export class AdminRaceMail {
     return template.replace(/\{\{(\w+)\}\}/g, (token, key: string) => values[key] ?? token);
   }
 
-  private readonly html = computed(() => this.renderHtml('https://acrho-challenge.ddns.net/assets/acrho-logo.png'));
+  private readonly html = computed(() => this.renderHtml('https://acrho-challenge.ddns.net/assets/acrho-logo-mail.png'));
 
   readonly preview = computed(() => {
-    const logoUrl = new URL('assets/acrho-logo.png', this.document.baseURI).href;
+    const logoUrl = new URL('assets/acrho-logo-mail.png', this.document.baseURI).href;
     const uploaded = this.uploadedPreview();
     const photo = this.uploadedPhotoUrl();
     const previewImage = photo && uploaded?.url === photo ? uploaded.dataUrl : null;
