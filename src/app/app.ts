@@ -59,6 +59,8 @@ export class App implements OnInit {
   selectedRace?: RaceDetail; categories: Category[] = []; results: Result[] = []; runners: Runner[] = [];
   racePhoto?: Observable<RacePhoto | null>;
   racePhotoLoaded?: string;
+  expandedRacePhoto?: Observable<RacePhoto | null>;
+  expandedRacePhotoLoaded?: string;
   expandedRaceId?: number; expandedRaceDetails?: RaceDetail; practicalInfoLoading = false;
   mobileMenuOpen = false;
   activeView: 'calendar' | 'runners' | 'regulation' | 'settings' | 'favorites' | 'standings' | 'sponsors' | 'photos' | 'tips' | 'registration' | 'credits' | 'administration' = 'calendar'; loading = false; error = '';
@@ -273,6 +275,8 @@ export class App implements OnInit {
       return;
     }
     this.expandedRaceId = race.id;
+    this.expandedRacePhotoLoaded = undefined;
+    this.expandedRacePhoto = this.api.racePhoto(race.id).pipe(catchError(() => of(null)));
     this.expandedRaceDetails = undefined;
     this.practicalInfoLoading = true;
     this.api.race(race.id).subscribe({

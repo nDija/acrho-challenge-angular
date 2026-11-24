@@ -78,6 +78,15 @@
                   </button>
                   @if (expandedRaceId === race.id) {
                     <div class="practical-info-panel">
+                      @if (expandedRacePhoto | async; as photo) {
+                        <figure class="planned-race-photo" [hidden]="expandedRacePhotoLoaded !== photo.url">
+                          <img [src]="photo.url" alt="" referrerpolicy="no-referrer"
+                               (load)="expandedRacePhotoLoaded = photo.url">
+                          @if (expandedRacePhotoLoaded === photo.url) {
+                            @defer (on immediate) { <app-race-photo-credit [photo]="photo" /> }
+                          }
+                        </figure>
+                      }
                       @if (practicalInfoLoading) { <div class="inline-loading"><mat-spinner diameter="28"></mat-spinner><span>{{ "Chargement des détails…" | t }}</span></div> }
                       @if (!practicalInfoLoading && expandedRaceDetails) {
                         @if (expandedRaceDetails.routes?.length) {
