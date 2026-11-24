@@ -11,41 +11,7 @@ import { AcrhoApi, AdminRace, GooglePlacesPhotoPreview, RacePhoto, RacePhotoCand
   selector: 'app-admin-race-mail',
   imports: [MatButtonModule, NgTemplateOutlet],
   templateUrl: './admin-race-mail.html',
-  styles: [`
-    :host { display: block; padding-top: 20px; }
-    label { display: grid; gap: 6px; margin-bottom: 14px; max-width: 600px; }
-    label { color: var(--acrho-heading); font-weight: 600; }
-    textarea { resize: vertical; }
-    .mail-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-    .photo-source { margin-block: 12px; padding: 12px; border: 1px solid var(--acrho-border); border-radius: 8px; }
-    .photo-source h3 { margin-top: 0; }
-    .photo-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; padding: 0; list-style: none; }
-    .photo-options li { padding: 8px; border: 1px solid var(--acrho-border); border-radius: 8px; background: var(--acrho-surface, #fff); }
-    .photo-thumbnail { display: block; cursor: zoom-in; }
-    .photo-thumbnail:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
-    .photo-options .photo-thumbnail-image { display: block; width: 100%; aspect-ratio: 2 / 1; object-fit: cover; }
-    .photo-enlargement {
-      display: none;
-      position: fixed;
-      z-index: 10;
-      inset: 50% auto auto 50%;
-      transform: translate(-50%, -50%);
-      max-width: min(760px, calc(100vw - 32px));
-      max-height: 72vh;
-      border: 2px solid var(--acrho-border);
-      border-radius: 8px;
-      background: var(--acrho-surface, #fff);
-      box-shadow: 0 8px 28px rgb(0 0 0 / 35%);
-      pointer-events: none;
-    }
-    .photo-thumbnail:focus-visible .photo-enlargement { display: block; }
-    @media (hover: hover) {
-      .photo-thumbnail:hover .photo-enlargement { display: block; }
-    }
-    .photo-options p { margin: 6px 0; font-size: .85rem; }
-    .uploaded-photo-preview { display: block; max-width: min(100%, 420px); max-height: 280px; margin-bottom: 14px; }
-    iframe { display: block; width: 100%; height: 680px; margin-top: 16px; border: 1px solid var(--acrho-border); }
-  `],
+  styleUrl: './admin-race-mail.scss',
 })
 export class AdminRaceMail {
   private readonly destroyRef = inject(DestroyRef);

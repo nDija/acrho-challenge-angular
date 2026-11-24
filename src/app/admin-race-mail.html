@@ -5,21 +5,23 @@
     <img class="photo-enlargement" [src]="url" alt="" aria-hidden="true" loading="lazy" referrerpolicy="no-referrer">
   </span>
 </ng-template>
-<label>Saison
-  <select #season [disabled]="sending() || photoSaving()" [value]="selectedYear()" (change)="selectYear(season.value)">
-    @for (item of seasons(); track item.id) {
-      <option [value]="item.year" [selected]="item.year === selectedYear()">{{ item.year }}</option>
-    }
-  </select>
-</label>
-<label>Course
-  <select #raceSelect [disabled]="sending() || photoSaving()" [value]="race()?.id ?? ''" (change)="selectRace(raceSelect.value)">
-    <option value="">Choisir une course</option>
-    @for (item of races(); track item.id) {
-      <option [value]="item.id">{{ item.name }} · {{ statusLabels[item.status] }}</option>
-    }
-  </select>
-</label>
+<div class="mail-filters mail-card">
+  <label>Saison
+    <select #season [disabled]="sending() || photoSaving()" [value]="selectedYear()" (change)="selectYear(season.value)">
+      @for (item of seasons(); track item.id) {
+        <option [value]="item.year" [selected]="item.year === selectedYear()">{{ item.year }}</option>
+      }
+    </select>
+  </label>
+  <label>Course
+    <select #raceSelect [disabled]="sending() || photoSaving()" [value]="race()?.id ?? ''" (change)="selectRace(raceSelect.value)">
+      <option value="">Choisir une course</option>
+      @for (item of races(); track item.id) {
+        <option [value]="item.id">{{ item.name }} · {{ statusLabels[item.status] }}</option>
+      }
+    </select>
+  </label>
+</div>
 @if (seasons() === null || races() === null) {
   <p role="alert">Impossible de charger les courses ou les saisons.</p>
 } @else if (races() === undefined) {
@@ -28,201 +30,209 @@
   <p>Aucune course disponible pour cette saison.</p>
 }
 @if (race()) {
-  <label>Texte d’annonce
-    <textarea #body rows="4" [value]="message()" (input)="message.set(body.value)"></textarea>
-  </label>
-  <label>Lien HTTPS vers les résultats
-    <input #results type="url" [value]="resultsUrl()" (input)="resultsUrl.set(results.value)">
-  </label>
-  <label>Lien HTTPS de désabonnement
-    <input #unsubscribe type="url" [value]="unsubscribeUrl()" (input)="unsubscribeUrl.set(unsubscribe.value)">
-  </label>
-  @if (!photoResult()) {
-    <p role="status">Recherche de la photo de la course…</p>
-  } @else if (photoResult()?.failed) {
-    <p role="status">Impossible de récupérer la photo de la course.</p>
-  } @else if (!photoResult()?.photo) {
-    <p>Aucune photo disponible pour cette course.</p>
-  }
-  @if (photoNotice(); as notice) {
-    <p [attr.role]="notice.success ? 'status' : 'alert'">{{ notice.text }}</p>
-  }
-  <button mat-stroked-button type="button" aria-controls="race-photo-picker"
-          [attr.aria-expanded]="photoPickerOpen()" (click)="photoPickerOpen.set(!photoPickerOpen())">
-    {{ photoPickerOpen() ? 'Fermer le choix de photo' : 'Changer la photo' }}
-  </button>
-  <div id="race-photo-picker" [hidden]="!photoPickerOpen()">
-    <section class="photo-source" aria-labelledby="upload-race-photo">
-      <h3 id="upload-race-photo">Importer une photo</h3>
-      <form (submit)="$event.preventDefault(); saveUpload()">
-        <label>Fichier JPEG ou PNG (8 Mo maximum)
-          <input #uploadInput type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png"
-                 [disabled]="photoSaving() || sending()" (change)="chooseUpload(uploadInput)">
-        </label>
-        @if (upload(); as selected) {
-          <ng-container [ngTemplateOutlet]="photoThumbnail"
-                        [ngTemplateOutletContext]="{ $implicit: selected.preview, description: 'Aperçu de la photo à importer', upload: true }" />
-        }
-        <label>Crédit du photographe
-          <input #uploadCredit type="text" required maxlength="150" [value]="uploadAuthor()"
-                 [disabled]="photoSaving() || sending()" (input)="uploadAuthor.set(uploadCredit.value)">
-        </label>
-        <button mat-stroked-button type="submit" [disabled]="!upload() || !uploadAuthor().trim() || photoSaving() || sending()">
-          {{ photoSaving() ? 'Enregistrement…' : 'Enregistrer la photo' }}
-        </button>
-      </form>
-      @if (uploadError(); as error) {
-        <p role="alert">{{ error }}</p>
+  <div class="mail-workspace">
+    <section class="mail-card mail-editor" aria-labelledby="mail-editor-heading">
+      <h2 id="mail-editor-heading">Contenu du mail</h2>
+      <label>Texte d’annonce
+        <textarea #body rows="4" [value]="message()" (input)="message.set(body.value)"></textarea>
+      </label>
+      <label>Lien HTTPS vers les résultats
+        <input #results type="url" [value]="resultsUrl()" (input)="resultsUrl.set(results.value)">
+      </label>
+      <label>Lien HTTPS de désabonnement
+        <input #unsubscribe type="url" [value]="unsubscribeUrl()" (input)="unsubscribeUrl.set(unsubscribe.value)">
+      </label>
+      @if (!photoResult()) {
+        <p role="status">Recherche de la photo de la course…</p>
+      } @else if (photoResult()?.failed) {
+        <p role="status">Impossible de récupérer la photo de la course.</p>
+      } @else if (!photoResult()?.photo) {
+        <p>Aucune photo disponible pour cette course.</p>
       }
-    </section>
-    <section class="photo-source" aria-labelledby="wikimedia-photos">
-      <h3 id="wikimedia-photos">Wikimedia Commons</h3>
-      <button mat-stroked-button type="button" [disabled]="photoLoading() || photoSaving() || sending()" (click)="loadPhotoCandidates()">
-        {{ photoLoading() ? 'Recherche des photos…' : 'Chercher sur Wikimedia Commons' }}
+      @if (photoNotice(); as notice) {
+        <p [attr.role]="notice.success ? 'status' : 'alert'">{{ notice.text }}</p>
+      }
+      <button mat-stroked-button type="button" aria-controls="race-photo-picker"
+              [attr.aria-expanded]="photoPickerOpen()" (click)="photoPickerOpen.set(!photoPickerOpen())">
+        {{ photoPickerOpen() ? 'Fermer le choix de photo' : 'Changer la photo' }}
       </button>
-      @if (photoCandidates(); as candidates) {
-        @if (candidates.length) {
-          <ul class="photo-options" aria-label="Photos proposées par Wikimedia Commons">
-            @for (candidate of candidates; track candidate.filename) {
-              <li>
-                <ng-container [ngTemplateOutlet]="photoThumbnail"
-                              [ngTemplateOutletContext]="{ $implicit: candidate.photo.url, description: candidate.filename }" />
-                <p><a [href]="candidate.photo.sourceUrl" target="_blank" rel="noopener">{{ candidate.photo.author || 'Wikimedia Commons' }}</a> · {{ candidate.photo.license }}</p>
-                @if (photoResult()?.photo?.sourceUrl === candidate.photo.sourceUrl) {
-                  <p>Photo actuelle</p>
-                } @else {
-                  <button mat-stroked-button type="button" [disabled]="photoSaving() || sending()" (click)="choosePhoto(candidate)">Utiliser cette photo</button>
-                }
-              </li>
+      <div id="race-photo-picker" [hidden]="!photoPickerOpen()">
+        <section class="photo-source" aria-labelledby="upload-race-photo">
+          <h3 id="upload-race-photo">Importer une photo</h3>
+          <form (submit)="$event.preventDefault(); saveUpload()">
+            <label>Fichier JPEG ou PNG (8 Mo maximum)
+              <input #uploadInput type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png"
+                     [disabled]="photoSaving() || sending()" (change)="chooseUpload(uploadInput)">
+            </label>
+            @if (upload(); as selected) {
+              <ng-container [ngTemplateOutlet]="photoThumbnail"
+                            [ngTemplateOutletContext]="{ $implicit: selected.preview, description: 'Aperçu de la photo à importer', upload: true }" />
             }
-          </ul>
-        } @else {
-          <p>Aucune photo proposée par Wikimedia Commons pour cette localité.</p>
-        }
-      }
-    </section>
-    <section class="photo-source" aria-labelledby="unsplash-photos">
-      <h3 id="unsplash-photos">Unsplash</h3>
-      <form (submit)="$event.preventDefault(); loadUnsplashCandidates(unsplashQuery.value)">
-        <label>Suggestions de recherche
-          <select #unsplashSuggestion
-                  (change)="unsplashQuery.value = unsplashSuggestion.value; unsplashSuggestion.selectedIndex = 0">
-            <option value="">Choisir une suggestion</option>
-            <optgroup label="Joggings de village et courses sur route">
-              <option value="countryside road running morning">Route de campagne au lever du soleil</option>
-              <option value="runners rural road sunrise">Coureurs, brume et champs au petit matin</option>
-              <option value="marathon runners group road">Peloton sur une course sur route</option>
-              <option value="jogging autumn park path">Jogging sur une allée de parc en automne</option>
-            </optgroup>
-            <optgroup label="Trails et courses nature">
-              <option value="trail running forest mist">Trail dans un sous-bois brumeux</option>
-              <option value="trail runner mountain ridge">Trail sur une crête</option>
-              <option value="running muddy forest trail">Trail boueux en forêt</option>
-              <option value="runner woods sunlight">Coureur en forêt dans les rayons du soleil</option>
-            </optgroup>
-            <optgroup label="Corridas et courses urbaines ou nocturnes">
-              <option value="night running city lights">Course de nuit sous les lumières de la ville</option>
-              <option value="urban running cobblestone street">Course dans une rue pavée</option>
-              <option value="evening runners city bridge">Coureurs sur un pont en fin de journée</option>
-            </optgroup>
-            <optgroup label="Détails et ambiance">
-              <option value="running shoes asphalt close up">Gros plan sur des chaussures de course</option>
-              <option value="runner tying shoelaces">Coureur qui noue ses lacets</option>
-              <option value="runners finish line celebration">Célébration à la ligne d’arrivée</option>
-            </optgroup>
-          </select>
-        </label>
-        <label>Mots-clés
-          <input #unsplashQuery type="search" maxlength="150" [value]="race()?.city || race()?.name || ''"
-                 placeholder="Ex. trail running, forêt, Belgique">
-        </label>
-        <button mat-stroked-button type="submit" [disabled]="unsplashLoading() || photoSaving() || sending()">
-          {{ unsplashLoading() ? 'Recherche des photos…' : 'Chercher sur Unsplash' }}
-        </button>
-      </form>
-      @if (unsplashError(); as error) {
-        <p role="alert">{{ error }}</p>
-      }
-      @if (unsplashCandidates(); as candidates) {
-        @if (candidates.length) {
-          <ul class="photo-options" aria-label="Photos proposées par Unsplash">
-            @for (candidate of candidates; track candidate.id) {
-              <li>
-                <ng-container [ngTemplateOutlet]="photoThumbnail"
-                              [ngTemplateOutletContext]="{ $implicit: candidate.photo.url, description: 'Photo proposée par ' + candidate.photo.author }" />
-                <p>Photo de <a [href]="candidate.photo.authorUrl" target="_blank" rel="noopener">{{ candidate.photo.author }}</a>
-                  sur <a [href]="candidate.photo.sourceUrl" target="_blank" rel="noopener">Unsplash</a></p>
-                @if (photoResult()?.photo?.sourceUrl === candidate.photo.sourceUrl) {
-                  <p>Photo actuelle</p>
-                } @else {
-                  <button mat-stroked-button type="button" [disabled]="photoSaving() || sending()" (click)="choosePhoto(candidate)">Utiliser cette photo</button>
-                }
-              </li>
-            }
-          </ul>
-        } @else {
-          <p>Aucune photo trouvée. Essaie des mots-clés plus larges, comme « trail running » ou « forêt Belgique ».</p>
-        }
-      }
-    </section>
-    <section class="photo-source" aria-labelledby="google-places-photos">
-      <h3 id="google-places-photos">Google Places · Aperçus</h3>
-      @if (race()?.city?.trim()) {
-        <button mat-stroked-button type="button" [disabled]="googlePlacesLoading() || photoSaving() || sending()"
-                (click)="loadGooglePlacesPreviews()">
-          {{ googlePlacesLoading() ? 'Recherche des photos…' : 'Chercher sur Google Places' }}
-        </button>
-      } @else {
-        <p>Renseigne la ville de la course pour rechercher des photos.</p>
-      }
-      @if (googlePlacesError()) {
-        <p role="alert">Impossible de charger les aperçus Google Places. Vérifie la clé API, les restrictions et le quota.</p>
-      }
-      @if (googlePlacesPreviews(); as previews) {
-        @if (previews.length) {
-          <ul class="photo-options" aria-label="Aperçus Google Places">
-            @for (preview of previews; track $index) {
-              <li>
-                <ng-container [ngTemplateOutlet]="photoThumbnail"
-                              [ngTemplateOutletContext]="{ $implicit: preview.url, description: 'Aperçu de ' + race()?.city }" />
-                <p translate="no">
-                  @if (preview.sourceUrl; as sourceUrl) {
-                    <a [href]="sourceUrl" target="_blank" rel="noopener noreferrer">Google Maps</a>
-                  } @else {
-                    Google Maps
-                  }
-                  @for (author of preview.authors; track $index) {
-                    · @if (author.url; as authorUrl) {
-                      <a [href]="authorUrl" target="_blank" rel="noopener noreferrer">{{ author.name }}</a>
+            <label>Crédit du photographe
+              <input #uploadCredit type="text" required maxlength="150" [value]="uploadAuthor()"
+                     [disabled]="photoSaving() || sending()" (input)="uploadAuthor.set(uploadCredit.value)">
+            </label>
+            <button mat-stroked-button type="submit" [disabled]="!upload() || !uploadAuthor().trim() || photoSaving() || sending()">
+              {{ photoSaving() ? 'Enregistrement…' : 'Enregistrer la photo' }}
+            </button>
+          </form>
+          @if (uploadError(); as error) {
+            <p role="alert">{{ error }}</p>
+          }
+        </section>
+        <section class="photo-source" aria-labelledby="wikimedia-photos">
+          <h3 id="wikimedia-photos">Wikimedia Commons</h3>
+          <button mat-stroked-button type="button" [disabled]="photoLoading() || photoSaving() || sending()" (click)="loadPhotoCandidates()">
+            {{ photoLoading() ? 'Recherche des photos…' : 'Chercher sur Wikimedia Commons' }}
+          </button>
+          @if (photoCandidates(); as candidates) {
+            @if (candidates.length) {
+              <ul class="photo-options" aria-label="Photos proposées par Wikimedia Commons">
+                @for (candidate of candidates; track candidate.filename) {
+                  <li>
+                    <ng-container [ngTemplateOutlet]="photoThumbnail"
+                                  [ngTemplateOutletContext]="{ $implicit: candidate.photo.url, description: candidate.filename }" />
+                    <p><a [href]="candidate.photo.sourceUrl" target="_blank" rel="noopener">{{ candidate.photo.author || 'Wikimedia Commons' }}</a> · {{ candidate.photo.license }}</p>
+                    @if (photoResult()?.photo?.sourceUrl === candidate.photo.sourceUrl) {
+                      <p>Photo actuelle</p>
                     } @else {
-                      {{ author.name }}
+                      <button mat-stroked-button type="button" [disabled]="photoSaving() || sending()" (click)="choosePhoto(candidate)">Utiliser cette photo</button>
                     }
-                  }
-                </p>
-              </li>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p>Aucune photo proposée par Wikimedia Commons pour cette localité.</p>
             }
-          </ul>
-        } @else {
-          <p>Aucun aperçu Google Places disponible pour cette ville.</p>
+          }
+        </section>
+        <section class="photo-source" aria-labelledby="unsplash-photos">
+          <h3 id="unsplash-photos">Unsplash</h3>
+          <form (submit)="$event.preventDefault(); loadUnsplashCandidates(unsplashQuery.value)">
+            <label>Suggestions de recherche
+              <select #unsplashSuggestion
+                      (change)="unsplashQuery.value = unsplashSuggestion.value; unsplashSuggestion.selectedIndex = 0">
+                <option value="">Choisir une suggestion</option>
+                <optgroup label="Joggings de village et courses sur route">
+                  <option value="countryside road running morning">Route de campagne au lever du soleil</option>
+                  <option value="runners rural road sunrise">Coureurs, brume et champs au petit matin</option>
+                  <option value="marathon runners group road">Peloton sur une course sur route</option>
+                  <option value="jogging autumn park path">Jogging sur une allée de parc en automne</option>
+                </optgroup>
+                <optgroup label="Trails et courses nature">
+                  <option value="trail running forest mist">Trail dans un sous-bois brumeux</option>
+                  <option value="trail runner mountain ridge">Trail sur une crête</option>
+                  <option value="running muddy forest trail">Trail boueux en forêt</option>
+                  <option value="runner woods sunlight">Coureur en forêt dans les rayons du soleil</option>
+                </optgroup>
+                <optgroup label="Corridas et courses urbaines ou nocturnes">
+                  <option value="night running city lights">Course de nuit sous les lumières de la ville</option>
+                  <option value="urban running cobblestone street">Course dans une rue pavée</option>
+                  <option value="evening runners city bridge">Coureurs sur un pont en fin de journée</option>
+                </optgroup>
+                <optgroup label="Détails et ambiance">
+                  <option value="running shoes asphalt close up">Gros plan sur des chaussures de course</option>
+                  <option value="runner tying shoelaces">Coureur qui noue ses lacets</option>
+                  <option value="runners finish line celebration">Célébration à la ligne d’arrivée</option>
+                </optgroup>
+              </select>
+            </label>
+            <label>Mots-clés
+              <input #unsplashQuery type="search" maxlength="150" [value]="race()?.city || race()?.name || ''"
+                     placeholder="Ex. trail running, forêt, Belgique">
+            </label>
+            <button mat-stroked-button type="submit" [disabled]="unsplashLoading() || photoSaving() || sending()">
+              {{ unsplashLoading() ? 'Recherche des photos…' : 'Chercher sur Unsplash' }}
+            </button>
+          </form>
+          @if (unsplashError(); as error) {
+            <p role="alert">{{ error }}</p>
+          }
+          @if (unsplashCandidates(); as candidates) {
+            @if (candidates.length) {
+              <ul class="photo-options" aria-label="Photos proposées par Unsplash">
+                @for (candidate of candidates; track candidate.id) {
+                  <li>
+                    <ng-container [ngTemplateOutlet]="photoThumbnail"
+                                  [ngTemplateOutletContext]="{ $implicit: candidate.photo.url, description: 'Photo proposée par ' + candidate.photo.author }" />
+                    <p>Photo de <a [href]="candidate.photo.authorUrl" target="_blank" rel="noopener">{{ candidate.photo.author }}</a>
+                      sur <a [href]="candidate.photo.sourceUrl" target="_blank" rel="noopener">Unsplash</a></p>
+                    @if (photoResult()?.photo?.sourceUrl === candidate.photo.sourceUrl) {
+                      <p>Photo actuelle</p>
+                    } @else {
+                      <button mat-stroked-button type="button" [disabled]="photoSaving() || sending()" (click)="choosePhoto(candidate)">Utiliser cette photo</button>
+                    }
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p>Aucune photo trouvée. Essaie des mots-clés plus larges, comme « trail running » ou « forêt Belgique ».</p>
+            }
+          }
+        </section>
+        <section class="photo-source" aria-labelledby="google-places-photos">
+          <h3 id="google-places-photos">Google Places · Aperçus</h3>
+          @if (race()?.city?.trim()) {
+            <button mat-stroked-button type="button" [disabled]="googlePlacesLoading() || photoSaving() || sending()"
+                    (click)="loadGooglePlacesPreviews()">
+              {{ googlePlacesLoading() ? 'Recherche des photos…' : 'Chercher sur Google Places' }}
+            </button>
+          } @else {
+            <p>Renseigne la ville de la course pour rechercher des photos.</p>
+          }
+          @if (googlePlacesError()) {
+            <p role="alert">Impossible de charger les aperçus Google Places. Vérifie la clé API, les restrictions et le quota.</p>
+          }
+          @if (googlePlacesPreviews(); as previews) {
+            @if (previews.length) {
+              <ul class="photo-options" aria-label="Aperçus Google Places">
+                @for (preview of previews; track $index) {
+                  <li>
+                    <ng-container [ngTemplateOutlet]="photoThumbnail"
+                                  [ngTemplateOutletContext]="{ $implicit: preview.url, description: 'Aperçu de ' + race()?.city }" />
+                    <p translate="no">
+                      @if (preview.sourceUrl; as sourceUrl) {
+                        <a [href]="sourceUrl" target="_blank" rel="noopener noreferrer">Google Maps</a>
+                      } @else {
+                        Google Maps
+                      }
+                      @for (author of preview.authors; track $index) {
+                        · @if (author.url; as authorUrl) {
+                          <a [href]="authorUrl" target="_blank" rel="noopener noreferrer">{{ author.name }}</a>
+                        } @else {
+                          {{ author.name }}
+                        }
+                      }
+                    </p>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p>Aucun aperçu Google Places disponible pour cette ville.</p>
+            }
+          }
+        </section>
+      </div>
+    </section>
+    <section class="mail-card mail-preview" aria-labelledby="mail-preview-heading">
+      <h2 id="mail-preview-heading">Aperçu du mail</h2>
+      @if (templateFailed()) {
+        <p role="alert">Impossible de charger le modèle de mail.</p>
+      } @else {
+        <div class="mail-actions">
+          <button mat-stroked-button type="button" [disabled]="!canExport() || !photoResult() || photoSaving() || sending()" (click)="download()">Télécharger le HTML</button>
+          <button mat-flat-button type="button" [disabled]="!canSend()" (click)="sendTest()">
+            {{ sending() ? 'Préparation du mail…' : 'Envoyer un test aux administrateurs' }}
+          </button>
+        </div>
+        @if (sendNotice(); as notice) {
+          <p [attr.role]="notice.success ? 'status' : 'alert'">{{ notice.text }}</p>
         }
+        @if (uploadedPreview()?.failed) {
+          <p role="status">Impossible de charger la photo importée dans l’aperçu du mail.</p>
+        }
+        <iframe sandbox="" title="Aperçu du mail de résultats" [srcdoc]="preview()"></iframe>
       }
     </section>
   </div>
-  @if (templateFailed()) {
-    <p role="alert">Impossible de charger le modèle de mail.</p>
-  } @else {
-    <div class="mail-actions">
-      <button mat-stroked-button type="button" [disabled]="!canExport() || !photoResult() || photoSaving() || sending()" (click)="download()">Télécharger le HTML</button>
-      <button mat-flat-button type="button" [disabled]="!canSend()" (click)="sendTest()">
-        {{ sending() ? 'Préparation du mail…' : 'Envoyer un test aux administrateurs' }}
-      </button>
-    </div>
-    @if (sendNotice(); as notice) {
-      <p [attr.role]="notice.success ? 'status' : 'alert'">{{ notice.text }}</p>
-    }
-    @if (uploadedPreview()?.failed) {
-      <p role="status">Impossible de charger la photo importée dans l’aperçu du mail.</p>
-    }
-    <iframe sandbox="" title="Aperçu du mail de résultats" [srcdoc]="preview()"></iframe>
-  }
 }
