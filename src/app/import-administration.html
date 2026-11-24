@@ -26,6 +26,10 @@
           }
         </select>
       </label>
+      <label class="reviewed-filter">
+        <input type="checkbox" [ngModel]="showReviewed()" (ngModelChange)="showReviewed.set($event)">
+        {{ 'Afficher les erreurs traitées' | t }}
+      </label>
     </div>
   }
 
@@ -41,93 +45,102 @@
     <div class="empty">{{ 'Aucun import enregistré.' | t }}</div>
   } @else if (seasonState.status === 'loading' || reportState.status === 'loading') {
     <div class="loading" role="status">{{ 'Chargement des imports…' | t }}</div>
-  } @else if (!visibleReports().length) {
+  } @else if (!raceCards().length) {
     <div class="empty" role="status">{{ 'Aucune erreur pour cette sélection.' | t }}</div>
   } @else {
-    <div class="reports">
-      @for (report of visibleReports(); track report.id) {
-        <article class="report">
-          <header>
-            <div>
-              <h2>{{ raceLabel(report) }}</h2>
-              <p>
-                <time [attr.datetime]="report.createdAt">{{ report.createdAt | date:'short':undefined:i18n.locale() }}</time>
-                · {{ (report.source === 'MANUAL' ? 'Import manuel' : 'Import automatique') | t }}
-              </p>
-            </div>
-            <strong class="report-status" [class.failed]="report.status === 'FAILED'">
-              {{ (report.status === 'FAILED' ? 'Échec de l’import' : 'Anomalies d’import') | t }}
-            </strong>
+    <ul class="races">
+      @for (group of raceCards(); track group.race.legacyRunId) {
+        <li class="race">
+          <header class="report-summary">
+            <h2>{{ raceLabel(group.race) }}</h2>
+            @if (group.race.runDate; as date) {
+              <time class="race-meta" [attr.datetime]="date">{{ date | date:'mediumDate':undefined:i18n.locale() }}</time>
+            }
           </header>
-          @if (report.error) {
-            <p class="import-error">{{ report.error }}</p>
-          }
-          @if (report.issues.length) {
-            <ul>
-              @for (issue of report.issues; track issue.id) {
-                <li>
-                  <code>{{ issue.code }}</code> {{ issue.message }}
-                  @if (issue.code === 'CLUB_TRUNCATED' && issue.canCorrectClub) {
-                    @if (clubIssue() === issue.id) {
-                      @let suggestions = clubSuggestions();
-                      <form class="club-correction" (ngSubmit)="saveClubCorrection(issue.id)">
-                        <label>
-                          {{ 'Clubs proches' | t }}
-                          <select name="suggestedClub" [ngModel]="clubChoice()" (ngModelChange)="clubChoice.set($event)"
-                                  [disabled]="reviewing() || suggestions?.status !== 'ready'">
-                            <option value="">{{ 'Aucun choix' | t }}</option>
-                            @if (suggestions?.status === 'ready') {
-                              @for (club of suggestions.data; track club) {
-                                <option [value]="club">{{ club }}</option>
+          <ul class="races import-errors">
+            @for (card of group.errors; track card.issue ? 'issue-' + card.issue.id : 'report-' + card.report.id) {
+              @let report = card.report;
+              <li class="race import-error-card">
+                <p class="race-meta">
+                  <time [attr.datetime]="report.createdAt">{{ report.createdAt | date:'short':undefined:i18n.locale() }}</time>
+                  · {{ (report.source === 'MANUAL' ? 'Import manuel' : 'Import automatique') | t }}
+                </p>
+                @if (card.issue; as issue) {
+                  <div class="import-issue">
+                    <span class="category-pill import-error-badge" [class.club-change-badge]="issue.code === 'CLUB_CHANGED'">{{ issue.code }}</span> {{ issue.message }}
+                    @if (issue.reviewed) {
+                      <span class="category-pill import-reviewed-badge">{{ 'Traitée' | t }}</span>
+                    } @else if (issue.code === 'CLUB_TRUNCATED' && issue.canCorrectClub) {
+                      @if (clubIssue() === issue.id) {
+                        @let suggestions = clubSuggestions();
+                        <form class="club-correction" (ngSubmit)="saveClubCorrection(issue.id)">
+                          <label>
+                            {{ 'Clubs proches' | t }}
+                            <select name="suggestedClub" [ngModel]="clubChoice()" (ngModelChange)="clubChoice.set($event)"
+                                    [disabled]="reviewing() || suggestions?.status !== 'ready'">
+                              <option value="">{{ 'Aucun choix' | t }}</option>
+                              @if (suggestions?.status === 'ready') {
+                                @for (club of suggestions.data; track club) {
+                                  <option [value]="club">{{ club }}</option>
+                                }
                               }
-                            }
-                          </select>
-                        </label>
-                        <label>
-                          {{ 'Nom du club' | t }}
-                          <input name="clubName" maxlength="150" [ngModel]="clubName()"
-                                 (ngModelChange)="clubName.set($event)" [disabled]="reviewing()">
-                        </label>
-                        <button mat-stroked-button type="submit"
-                                [disabled]="reviewing() || !clubToSave() || clubToSave().length > 150">
-                          {{ 'Valider' | t }}
-                        </button>
-                        <button mat-button type="button" [disabled]="reviewing()" (click)="clubIssue.set(null)">
-                          {{ 'Annuler' | t }}
-                        </button>
-                        @if (suggestions?.status === 'error') {
-                          <small role="status">{{ 'Suggestions indisponibles. Saisissez le nom du club.' | t }}</small>
-                        }
-                      </form>
-                    } @else {
+                            </select>
+                          </label>
+                          <label>
+                            {{ 'Nom du club' | t }}
+                            <input name="clubName" maxlength="150" [ngModel]="clubName()"
+                                   (ngModelChange)="clubName.set($event)" [disabled]="reviewing()">
+                          </label>
+                          <button mat-flat-button class="import-action" type="submit"
+                                  [disabled]="reviewing() || !clubToSave() || clubToSave().length > 150">
+                            {{ 'Valider' | t }}
+                          </button>
+                          <button mat-button type="button" [disabled]="reviewing()" (click)="clubIssue.set(null)">
+                            {{ 'Annuler' | t }}
+                          </button>
+                          @if (suggestions?.status === 'error') {
+                            <small role="status">{{ 'Suggestions indisponibles. Saisissez le nom du club.' | t }}</small>
+                          }
+                        </form>
+                      } @else {
+                        <div class="issue-actions">
+                          <button mat-flat-button class="import-action" type="button" [disabled]="reviewing()"
+                                  (click)="openClubCorrection(issue.id)">{{ 'Corriger le club' | t }}</button>
+                        </div>
+                      }
+                    } @else if (issue.code === 'CLUB_CHANGED') {
                       <div class="issue-actions">
-                        <button mat-stroked-button type="button" [disabled]="reviewing()"
-                                (click)="openClubCorrection(issue.id)">{{ 'Corriger le club' | t }}</button>
+                        <button mat-flat-button class="import-action" type="button" [disabled]="reviewing()"
+                                (click)="reviewIssue(issue.id, 'REVIEW')">{{ 'Valider le changement' | t }}</button>
+                      </div>
+                    } @else if (issue.code === 'GENDER_MISMATCH' || issue.code === 'CATEGORY_MISMATCH') {
+                      <div class="issue-actions">
+                        @if (issue.code === 'GENDER_MISMATCH' && issue.canModifyGender) {
+                          <button mat-flat-button class="import-action" type="button" [disabled]="reviewing()"
+                                  (click)="reviewIssue(issue.id, 'MODIFY')">{{ 'Modifier le genre' | t }}</button>
+                        }
+                        @if (issue.code === 'CATEGORY_MISMATCH' && issue.proposedCategory) {
+                          <button mat-flat-button class="import-action" type="button" [disabled]="reviewing()"
+                                  (click)="reviewIssue(issue.id, 'MODIFY_CATEGORY')">
+                            {{ 'Modifier la catégorie' | t }} ({{ issue.proposedCategory }})
+                          </button>
+                        }
+                        <button mat-flat-button class="import-action" type="button" [disabled]="reviewing()"
+                                (click)="reviewIssue(issue.id, 'REVIEW')">{{ 'Marquer comme traité' | t }}</button>
                       </div>
                     }
-                  }
-                  @if (issue.code === 'GENDER_MISMATCH' || issue.code === 'CATEGORY_MISMATCH') {
-                    <div class="issue-actions">
-                      @if (issue.code === 'GENDER_MISMATCH' && issue.canModifyGender) {
-                        <button mat-stroked-button type="button" [disabled]="reviewing()"
-                                (click)="reviewIssue(issue.id, 'MODIFY')">{{ 'Modifier le genre' | t }}</button>
-                      }
-                      @if (issue.code === 'CATEGORY_MISMATCH' && issue.proposedCategory) {
-                        <button mat-stroked-button type="button" [disabled]="reviewing()"
-                                (click)="reviewIssue(issue.id, 'MODIFY_CATEGORY')">
-                          {{ 'Modifier la catégorie' | t }} ({{ issue.proposedCategory }})
-                        </button>
-                      }
-                      <button mat-stroked-button type="button" [disabled]="reviewing()"
-                              (click)="reviewIssue(issue.id, 'REVIEW')">{{ 'Marquer comme traité' | t }}</button>
-                    </div>
-                  }
-                </li>
-              }
-            </ul>
-          }
-        </article>
+                  </div>
+                } @else {
+                  <p class="import-error">
+                    <span class="category-pill import-error-badge">{{ 'Échec de l’import' | t }}</span>
+                    @if (report.error) { · {{ report.error }} }
+                  </p>
+                }
+              </li>
+            }
+          </ul>
+        </li>
       }
-    </div>
+    </ul>
   }
 </section>

@@ -1,9 +1,4 @@
-h1 { margin: 0 0 24px; color: var(--acrho-heading); }
 .season-filter { display: grid; gap: 5px; width: min(100%, 180px); margin-bottom: 24px; font-weight: 600; }
-.races { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
-.race { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 16px; border: 1px solid var(--acrho-border); border-radius: 12px; background: var(--acrho-surface, #fff); }
-h2 { margin: 0 0 4px; color: var(--acrho-heading); font-size: 1rem; }
-.race-meta { color: var(--acrho-muted); font-size: .9rem; }
 .race-actions {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

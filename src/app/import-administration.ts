@@ -16,7 +16,7 @@ type LoadState<T> =
   selector: 'app-import-administration',
   imports: [DatePipe, FormsModule, MatButtonModule, TranslatePipe],
   templateUrl: './import-administration.html',
-  styleUrl: './import-administration.scss',
+  styleUrls: ['./admin-race-list.scss', './import-administration.scss'],
 })
 export class ImportAdministration {
   private readonly api = inject(AcrhoApi);
@@ -24,6 +24,7 @@ export class ImportAdministration {
   private readonly selectedSeason = signal<number | null>(null);
   readonly selectedRace = signal<number | null>(null);
   readonly reviewing = signal(false);
+  readonly showReviewed = signal(false);
   readonly clubIssue = signal<number | null>(null);
   readonly clubChoice = signal('');
   readonly clubName = signal('');
@@ -71,14 +72,29 @@ export class ImportAdministration {
       this.raceLabel(a).localeCompare(this.raceLabel(b), this.i18n.locale()));
   });
 
-  readonly visibleReports = computed(() => {
+  readonly raceCards = computed(() => {
     const state = this.reports();
-    const race = this.selectedRace();
+    const selectedRace = this.selectedRace();
     const reviewed = this.reviewedIssues();
-    return state.status === 'ready' ? state.data
-      .filter(report => race === null || report.legacyRunId === race)
-      .map(report => ({ ...report, issues: report.issues.filter(issue => !reviewed.has(issue.id)) }))
-      .filter(report => report.status === 'FAILED' || report.error || report.issues.length > 0) : [];
+    const showReviewed = this.showReviewed();
+    if (state.status !== 'ready') return [];
+
+    const errorsByRace = new Map<number, { report: ImportReport; issue: ImportReport['issues'][number] | null }[]>();
+    for (const report of state.data) {
+      if (selectedRace !== null && report.legacyRunId !== selectedRace) continue;
+      const errors = errorsByRace.get(report.legacyRunId) ?? [];
+      if (report.status === 'FAILED' || report.error) errors.push({ report, issue: null });
+      for (const issue of report.issues) {
+        const isReviewed = issue.reviewed || reviewed.has(issue.id);
+        if (showReviewed || !isReviewed) errors.push({ report, issue: { ...issue, reviewed: isReviewed } });
+      }
+      if (errors.length) errorsByRace.set(report.legacyRunId, errors);
+    }
+
+    return this.races().flatMap(race => {
+      const errors = errorsByRace.get(race.legacyRunId);
+      return errors ? [{ race, errors }] : [];
+    });
   });
 
   openClubCorrection(id: number) {

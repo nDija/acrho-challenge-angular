@@ -1,5 +1,4 @@
 :host { display: block; }
-h1 { margin: 0 0 24px; color: var(--acrho-heading); }
 .import-filters {
   display: grid;
   grid-template-columns: minmax(110px, 180px) minmax(0, 360px);
@@ -8,20 +7,40 @@ h1 { margin: 0 0 24px; color: var(--acrho-heading); }
 }
 label { display: grid; gap: 5px; min-width: 0; color: var(--acrho-heading); font-weight: 600; }
 select, .club-correction input { width: 100%; }
-.reports { display: grid; gap: 12px; }
-.report { padding: 16px; border: 1px solid var(--acrho-border); border-radius: 12px; background: var(--acrho-surface, #fff); }
-.report header { display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: 12px; }
-h2 { margin: 0 0 4px; color: var(--acrho-heading); font-size: 1.1rem; }
-.report header p { margin: 0; color: var(--acrho-muted); font-size: .9rem; }
-.report-status { padding: 4px 8px; border-radius: 8px; background: var(--acrho-soft); color: var(--acrho-heading); font-size: .8rem; }
-.report-status.failed { color: #842929; background: #ffebeb; }
-.import-error, li { overflow-wrap: anywhere; }
+.reviewed-filter { display: flex; align-items: center; gap: 8px; grid-column: 1 / -1; }
+.reviewed-filter input { min-height: auto; margin: 0; accent-color: var(--acrho-accent); }
+.import-error, .import-issue { overflow-wrap: anywhere; }
 .import-error { color: light-dark(#842929, #ffadad); }
-ul { padding-inline-start: 22px; margin-bottom: 0; }
-li + li { margin-top: 6px; }
 .issue-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 8px; }
 .club-correction { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; margin-block: 8px; }
 .club-correction label { flex: 1 1 180px; max-width: 280px; }
 .club-correction input { box-sizing: border-box; }
 .club-correction small { flex-basis: 100%; }
 @media (max-width: 480px) { .import-filters { grid-template-columns: 1fr; } }
+.report-summary { min-width: 0; overflow-wrap: anywhere; }
+.import-errors { flex: 0 0 100%; }
+.import-error-card { background: var(--acrho-page); }
+.import-error-card .race-meta { margin: 0; }
+.import-error, .import-issue { flex: 0 0 100%; margin: 0; }
+
+.import-action {
+  --mat-button-filled-container-color: #1d4ed8;
+  --mat-button-filled-label-text-color: #fff;
+  --mat-button-filled-state-layer-color: #fff;
+}
+
+.import-error-card .category-pill {
+  color: #fff;
+}
+
+.import-error-card .import-error-badge {
+  background: #b91c1c;
+}
+
+.import-error-card .import-reviewed-badge {
+  background: #166534;
+}
+
+.import-error-card .club-change-badge {
+  background: #a84608;
+}

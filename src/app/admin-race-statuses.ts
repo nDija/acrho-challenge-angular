@@ -14,7 +14,7 @@ type StatusChoice = RaceStatus | 'AUTOMATIC';
   selector: 'app-admin-race-statuses',
   imports: [DatePipe, FormsModule, MatButtonModule, TranslatePipe],
   templateUrl: './admin-race-statuses.html',
-  styleUrl: './admin-race-statuses.scss',
+  styleUrls: ['./admin-race-list.scss', './admin-race-statuses.scss'],
 })
 export class AdminRaceStatuses {
   private readonly api = inject(AcrhoApi);

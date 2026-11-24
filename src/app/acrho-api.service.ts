@@ -187,7 +187,7 @@ export class AcrhoApi {
     return this.http.put<void>(this.apiUrl(`/api/v1/legacy/import-reports/issues/${issueId}/club`), { clubName });
   }
   importReports(year: number) {
-    return this.http.get<ImportReport[]>(this.apiUrl('/api/v1/legacy/import-reports'), { params: { year } });
+    return this.http.get<ImportReport[]>(this.apiUrl('/api/v1/legacy/import-reports'), { params: { year, includeReviewed: true } });
   }
 
   currentStandings() {
