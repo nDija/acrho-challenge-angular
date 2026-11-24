@@ -91,7 +91,7 @@
                             <input name="clubName" maxlength="150" [ngModel]="clubName()"
                                    (ngModelChange)="clubName.set($event)" [disabled]="reviewing()">
                           </label>
-                          <button mat-flat-button class="import-action" type="submit"
+                          <button mat-flat-button type="submit"
                                   [disabled]="reviewing() || !clubToSave() || clubToSave().length > 150">
                             {{ 'Valider' | t }}
                           </button>
@@ -104,28 +104,28 @@
                         </form>
                       } @else {
                         <div class="issue-actions">
-                          <button mat-flat-button class="import-action" type="button" [disabled]="reviewing()"
+                          <button mat-flat-button type="button" [disabled]="reviewing()"
                                   (click)="openClubCorrection(issue.id)">{{ 'Corriger le club' | t }}</button>
                         </div>
                       }
                     } @else if (issue.code === 'CLUB_CHANGED') {
                       <div class="issue-actions">
-                        <button mat-flat-button class="import-action" type="button" [disabled]="reviewing()"
+                        <button mat-flat-button type="button" [disabled]="reviewing()"
                                 (click)="reviewIssue(issue.id, 'REVIEW')">{{ 'Valider le changement' | t }}</button>
                       </div>
                     } @else if (issue.code === 'GENDER_MISMATCH' || issue.code === 'CATEGORY_MISMATCH') {
                       <div class="issue-actions">
                         @if (issue.code === 'GENDER_MISMATCH' && issue.canModifyGender) {
-                          <button mat-flat-button class="import-action" type="button" [disabled]="reviewing()"
+                          <button mat-flat-button type="button" [disabled]="reviewing()"
                                   (click)="reviewIssue(issue.id, 'MODIFY')">{{ 'Modifier le genre' | t }}</button>
                         }
                         @if (issue.code === 'CATEGORY_MISMATCH' && issue.proposedCategory) {
-                          <button mat-flat-button class="import-action" type="button" [disabled]="reviewing()"
+                          <button mat-flat-button type="button" [disabled]="reviewing()"
                                   (click)="reviewIssue(issue.id, 'MODIFY_CATEGORY')">
                             {{ 'Modifier la catégorie' | t }} ({{ issue.proposedCategory }})
                           </button>
                         }
-                        <button mat-flat-button class="import-action" type="button" [disabled]="reviewing()"
+                        <button mat-flat-button type="button" [disabled]="reviewing()"
                                 (click)="reviewIssue(issue.id, 'REVIEW')">{{ 'Marquer comme traité' | t }}</button>
                       </div>
                     }

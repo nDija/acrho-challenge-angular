@@ -466,13 +466,16 @@ html:is([data-acrho-language='art-x-hvy'], [data-acrho-language='en-x-tengwar'],
 
 app-administration {
   color: var(--acrho-text);
-  --mat-button-filled-container-color: var(--acrho-accent);
-  --mat-button-filled-label-text-color: light-dark(#fff, var(--acrho-page));
+  --admin-button-blue: #1d4ed8;
+  --admin-button-blue-ink: light-dark(#1d4ed8, #93c5fd);
+  --mat-button-filled-container-color: var(--admin-button-blue);
+  --mat-button-filled-label-text-color: #fff;
   --mat-button-filled-state-layer-color: var(--mat-button-filled-label-text-color);
-  --mat-button-outlined-label-text-color: var(--acrho-accent-dark);
-  --mat-button-outlined-outline-color: var(--acrho-border);
-  --mat-button-outlined-state-layer-color: var(--acrho-accent);
-  --mat-button-text-label-text-color: var(--acrho-accent-dark);
+  --mat-button-outlined-label-text-color: var(--admin-button-blue-ink);
+  --mat-button-outlined-outline-color: var(--admin-button-blue-ink);
+  --mat-button-outlined-state-layer-color: var(--admin-button-blue-ink);
+  --mat-button-text-label-text-color: var(--admin-button-blue-ink);
+  --mat-button-text-state-layer-color: var(--admin-button-blue-ink);
   --mat-tab-active-indicator-color: var(--acrho-accent);
   --mat-tab-active-focus-indicator-color: var(--acrho-accent);
   --mat-tab-active-hover-indicator-color: var(--acrho-accent);

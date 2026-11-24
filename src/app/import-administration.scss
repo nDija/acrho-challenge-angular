@@ -23,11 +23,6 @@ select, .club-correction input { width: 100%; }
 .import-error-card .race-meta { margin: 0; }
 .import-error, .import-issue { flex: 0 0 100%; margin: 0; }
 
-.import-action {
-  --mat-button-filled-container-color: #1d4ed8;
-  --mat-button-filled-label-text-color: #fff;
-  --mat-button-filled-state-layer-color: #fff;
-}
 
 .import-error-card .category-pill {
   color: #fff;
