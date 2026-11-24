@@ -31,6 +31,26 @@
 }
 @if (race()) {
   <div class="mail-workspace">
+    <section class="mail-card mail-preview" aria-labelledby="mail-preview-heading">
+      <h2 id="mail-preview-heading">Aperçu du mail</h2>
+      @if (templateFailed()) {
+        <p role="alert">Impossible de charger le modèle de mail.</p>
+      } @else {
+        <div class="mail-actions">
+          <button mat-stroked-button type="button" [disabled]="!canExport() || !photoResult() || photoSaving() || sending()" (click)="download()">Télécharger le HTML</button>
+          <button mat-flat-button type="button" [disabled]="!canSend()" (click)="sendTest()">
+            {{ sending() ? 'Préparation du mail…' : 'Envoyer un test aux administrateurs' }}
+          </button>
+        </div>
+        @if (sendNotice(); as notice) {
+          <p [attr.role]="notice.success ? 'status' : 'alert'">{{ notice.text }}</p>
+        }
+        @if (uploadedPreview()?.failed) {
+          <p role="status">Impossible de charger la photo importée dans l’aperçu du mail.</p>
+        }
+        <iframe sandbox="" title="Aperçu du mail de résultats" [srcdoc]="preview()"></iframe>
+      }
+    </section>
     <section class="mail-card mail-editor" aria-labelledby="mail-editor-heading">
       <h2 id="mail-editor-heading">Contenu du mail</h2>
       <label>Texte d’annonce
@@ -60,10 +80,14 @@
         <section class="photo-source" aria-labelledby="upload-race-photo">
           <h3 id="upload-race-photo">Importer une photo</h3>
           <form (submit)="$event.preventDefault(); saveUpload()">
-            <label>Fichier JPEG ou PNG (8 Mo maximum)
-              <input #uploadInput type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png"
-                     [disabled]="photoSaving() || sending()" (change)="chooseUpload(uploadInput)">
-            </label>
+            <input #uploadInput type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" hidden
+                   [disabled]="photoSaving() || sending()" (change)="chooseUpload(uploadInput)">
+            <div class="upload-file">
+              <button mat-stroked-button type="button" [disabled]="photoSaving() || sending()"
+                      aria-describedby="upload-file-limit" (click)="uploadInput.click()">Choisir un fichier</button>
+              <span class="upload-filename" aria-live="polite">{{ upload()?.file?.name }}</span>
+            </div>
+            <small id="upload-file-limit">JPEG ou PNG · 8 Mo maximum</small>
             @if (upload(); as selected) {
               <ng-container [ngTemplateOutlet]="photoThumbnail"
                             [ngTemplateOutletContext]="{ $implicit: selected.preview, description: 'Aperçu de la photo à importer', upload: true }" />
@@ -213,26 +237,6 @@
           }
         </section>
       </div>
-    </section>
-    <section class="mail-card mail-preview" aria-labelledby="mail-preview-heading">
-      <h2 id="mail-preview-heading">Aperçu du mail</h2>
-      @if (templateFailed()) {
-        <p role="alert">Impossible de charger le modèle de mail.</p>
-      } @else {
-        <div class="mail-actions">
-          <button mat-stroked-button type="button" [disabled]="!canExport() || !photoResult() || photoSaving() || sending()" (click)="download()">Télécharger le HTML</button>
-          <button mat-flat-button type="button" [disabled]="!canSend()" (click)="sendTest()">
-            {{ sending() ? 'Préparation du mail…' : 'Envoyer un test aux administrateurs' }}
-          </button>
-        </div>
-        @if (sendNotice(); as notice) {
-          <p [attr.role]="notice.success ? 'status' : 'alert'">{{ notice.text }}</p>
-        }
-        @if (uploadedPreview()?.failed) {
-          <p role="status">Impossible de charger la photo importée dans l’aperçu du mail.</p>
-        }
-        <iframe sandbox="" title="Aperçu du mail de résultats" [srcdoc]="preview()"></iframe>
-      }
     </section>
   </div>
 }
