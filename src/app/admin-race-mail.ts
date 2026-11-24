@@ -5,7 +5,7 @@ import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-i
 import { MatButtonModule } from '@angular/material/button';
 import { DomSanitizer } from '@angular/platform-browser';
 import { catchError, finalize, map, of, startWith, switchMap } from 'rxjs';
-import { AcrhoApi, AdminRace, RacePhoto, RacePhotoCandidate } from './acrho-api.service';
+import { AcrhoApi, AdminRace, RacePhoto, RacePhotoCandidate, UnsplashPhotoCandidate } from './acrho-api.service';
 
 @Component({
   selector: 'app-admin-race-mail',
@@ -17,6 +17,8 @@ import { AcrhoApi, AdminRace, RacePhoto, RacePhotoCandidate } from './acrho-api.
     label { color: var(--acrho-heading); font-weight: 600; }
     textarea { resize: vertical; }
     .mail-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .photo-source { margin-block: 12px; padding: 12px; border: 1px solid var(--acrho-border); border-radius: 8px; }
+    .photo-source h3 { margin-top: 0; }
     .photo-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; padding: 0; list-style: none; }
     .photo-options li { padding: 8px; border: 1px solid var(--acrho-border); border-radius: 8px; background: var(--acrho-surface, #fff); }
     .photo-options img { display: block; width: 100%; aspect-ratio: 2 / 1; object-fit: cover; }
@@ -65,6 +67,9 @@ export class AdminRaceMail {
   ));
   private readonly savedPhoto = signal<{ raceId: number; photo: RacePhoto; failed: false } | null>(null);
   readonly photoCandidates = signal<RacePhotoCandidate[] | null>(null);
+  readonly unsplashCandidates = signal<UnsplashPhotoCandidate[] | null>(null);
+  readonly unsplashLoading = signal(false);
+  readonly unsplashError = signal<string | null>(null);
   readonly photoLoading = signal(false);
   readonly photoSaving = signal(false);
   readonly photoNotice = signal<{ success: boolean; text: string } | null>(null);
@@ -88,11 +93,12 @@ export class AdminRaceMail {
     const photo = this.photoResult()?.photo;
     const photoUrl = httpsUrl(photo?.url ?? '');
     const sourceUrl = httpsUrl(photo?.sourceUrl ?? '');
+    const authorUrl = httpsUrl(photo?.authorUrl ?? '');
     const licenseUrl = httpsUrl(photo?.licenseUrl ?? '');
     const photoHtml = photo && photoUrl && sourceUrl ? `
       <tr><td><img src="${escapeHtml(photoUrl)}" alt="Photo d’illustration de ${escapeHtml(race.city || race.name)}" width="600" height="300" style="display:block;width:100%;max-width:600px;height:auto;aspect-ratio:2 / 1;object-fit:cover;object-position:center"></td></tr>
       <tr><td style="padding:8px 20px;text-align:center;font-size:12px;color:#304B68">
-        Photo d’illustration · ${escapeHtml(photo.author)} · <a href="${escapeHtml(sourceUrl)}">Wikimedia Commons</a> ·
+        Photo d’illustration · ${authorUrl ? `<a href="${escapeHtml(authorUrl)}">${escapeHtml(photo.author)}</a>` : escapeHtml(photo.author)} · <a href="${escapeHtml(sourceUrl)}">${authorUrl ? 'Unsplash' : 'Wikimedia Commons'}</a> ·
         ${licenseUrl ? `<a href="${escapeHtml(licenseUrl)}">${escapeHtml(photo.license)}</a>` : escapeHtml(photo.license)}
       </td></tr>` : '';
     const values: Record<string, string> = {
@@ -123,6 +129,9 @@ export class AdminRaceMail {
     this.race.set(race);
     this.savedPhoto.set(null);
     this.photoCandidates.set(null);
+    this.unsplashCandidates.set(null);
+    this.unsplashLoading.set(false);
+    this.unsplashError.set(null);
     this.photoLoading.set(false);
     this.photoNotice.set(null);
     this.sendNotice.set(null);
@@ -149,12 +158,35 @@ export class AdminRaceMail {
     });
   }
 
-  choosePhoto(candidate: RacePhotoCandidate) {
+  loadUnsplashCandidates() {
+    const race = this.race();
+    if (!race || this.unsplashLoading() || this.photoSaving()) return;
+    this.unsplashLoading.set(true);
+    this.unsplashError.set(null);
+    this.unsplashCandidates.set(null);
+    this.api.adminUnsplashPhotoCandidates(race.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: candidates => {
+        if (this.race() !== race) return;
+        this.unsplashCandidates.set(candidates);
+        this.unsplashLoading.set(false);
+      },
+      error: error => {
+        if (this.race() !== race) return;
+        this.unsplashError.set(error?.error?.detail || 'Impossible de charger les photos Unsplash.');
+        this.unsplashLoading.set(false);
+      },
+    });
+  }
+
+  choosePhoto(candidate: RacePhotoCandidate | UnsplashPhotoCandidate) {
     const race = this.race();
     if (!race || this.photoSaving() || this.sending()) return;
     this.photoSaving.set(true);
     this.photoNotice.set(null);
-    this.api.selectAdminRacePhoto(race.id, candidate.filename).pipe(
+    const selection = 'id' in candidate
+      ? this.api.selectAdminUnsplashPhoto(race.id, candidate.id)
+      : this.api.selectAdminRacePhoto(race.id, candidate.filename);
+    selection.pipe(
       takeUntilDestroyed(this.destroyRef),
       finalize(() => this.photoSaving.set(false)),
     ).subscribe({
@@ -162,7 +194,7 @@ export class AdminRaceMail {
         this.savedPhoto.set({ raceId: race.id, photo, failed: false });
         this.photoNotice.set({ success: true, text: 'Photo enregistrée pour le mail et la fiche de course.' });
       },
-      error: () => this.photoNotice.set({ success: false, text: 'Impossible d’enregistrer la photo.' }),
+      error: error => this.photoNotice.set({ success: false, text: error?.error?.detail || 'Impossible d’enregistrer la photo.' }),
     });
   }
 

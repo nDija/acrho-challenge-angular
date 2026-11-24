@@ -31,37 +31,69 @@
     <input #unsubscribe type="url" [value]="unsubscribeUrl()" (input)="unsubscribeUrl.set(unsubscribe.value)">
   </label>
   @if (!photoResult()) {
-    <p role="status">Recherche de la photo Wikimedia Commons…</p>
+    <p role="status">Recherche de la photo de la course…</p>
   } @else if (photoResult()?.failed) {
-    <p role="status">Impossible de récupérer la photo Wikimedia Commons.</p>
+    <p role="status">Impossible de récupérer la photo de la course.</p>
   } @else if (!photoResult()?.photo) {
-    <p>Aucune photo Wikimedia Commons disponible pour cette course.</p>
+    <p>Aucune photo disponible pour cette course.</p>
   }
-  <button mat-stroked-button type="button" [disabled]="photoLoading() || photoSaving() || sending()" (click)="loadPhotoCandidates()">
-    {{ photoLoading() ? 'Recherche des photos…' : 'Choisir une autre photo' }}
-  </button>
   @if (photoNotice(); as notice) {
     <p [attr.role]="notice.success ? 'status' : 'alert'">{{ notice.text }}</p>
   }
-  @if (photoCandidates(); as candidates) {
-    @if (candidates.length) {
-      <ul class="photo-options" aria-label="Photos proposées par Wikimedia Commons">
-        @for (candidate of candidates; track candidate.filename) {
-          <li>
-            <img [src]="candidate.photo.url" [alt]="candidate.filename" loading="lazy">
-            <p><a [href]="candidate.photo.sourceUrl" target="_blank" rel="noopener">{{ candidate.photo.author || 'Wikimedia Commons' }}</a> · {{ candidate.photo.license }}</p>
-            @if (photoResult()?.photo?.sourceUrl === candidate.photo.sourceUrl) {
-              <p>Photo actuelle</p>
-            } @else {
-              <button mat-stroked-button type="button" [disabled]="photoSaving() || sending()" (click)="choosePhoto(candidate)">Utiliser cette photo</button>
-            }
-          </li>
-        }
-      </ul>
-    } @else {
-      <p>Aucune photo proposée par Wikimedia Commons pour cette localité.</p>
+  <section class="photo-source" aria-labelledby="wikimedia-photos">
+    <h3 id="wikimedia-photos">Wikimedia Commons</h3>
+    <button mat-stroked-button type="button" [disabled]="photoLoading() || photoSaving() || sending()" (click)="loadPhotoCandidates()">
+      {{ photoLoading() ? 'Recherche des photos…' : 'Chercher sur Wikimedia Commons' }}
+    </button>
+    @if (photoCandidates(); as candidates) {
+      @if (candidates.length) {
+        <ul class="photo-options" aria-label="Photos proposées par Wikimedia Commons">
+          @for (candidate of candidates; track candidate.filename) {
+            <li>
+              <img [src]="candidate.photo.url" [alt]="candidate.filename" loading="lazy">
+              <p><a [href]="candidate.photo.sourceUrl" target="_blank" rel="noopener">{{ candidate.photo.author || 'Wikimedia Commons' }}</a> · {{ candidate.photo.license }}</p>
+              @if (photoResult()?.photo?.sourceUrl === candidate.photo.sourceUrl) {
+                <p>Photo actuelle</p>
+              } @else {
+                <button mat-stroked-button type="button" [disabled]="photoSaving() || sending()" (click)="choosePhoto(candidate)">Utiliser cette photo</button>
+              }
+            </li>
+          }
+        </ul>
+      } @else {
+        <p>Aucune photo proposée par Wikimedia Commons pour cette localité.</p>
+      }
     }
-  }
+  </section>
+  <section class="photo-source" aria-labelledby="unsplash-photos">
+    <h3 id="unsplash-photos">Unsplash</h3>
+    <button mat-stroked-button type="button" [disabled]="unsplashLoading() || photoSaving() || sending()" (click)="loadUnsplashCandidates()">
+      {{ unsplashLoading() ? 'Recherche des photos…' : 'Chercher sur Unsplash' }}
+    </button>
+    @if (unsplashError(); as error) {
+      <p role="alert">{{ error }}</p>
+    }
+    @if (unsplashCandidates(); as candidates) {
+      @if (candidates.length) {
+        <ul class="photo-options" aria-label="Photos proposées par Unsplash">
+          @for (candidate of candidates; track candidate.id) {
+            <li>
+              <img [src]="candidate.photo.url" [alt]="'Photo proposée par ' + candidate.photo.author" loading="lazy">
+              <p>Photo de <a [href]="candidate.photo.authorUrl" target="_blank" rel="noopener">{{ candidate.photo.author }}</a>
+                sur <a [href]="candidate.photo.sourceUrl" target="_blank" rel="noopener">Unsplash</a></p>
+              @if (photoResult()?.photo?.sourceUrl === candidate.photo.sourceUrl) {
+                <p>Photo actuelle</p>
+              } @else {
+                <button mat-stroked-button type="button" [disabled]="photoSaving() || sending()" (click)="choosePhoto(candidate)">Utiliser cette photo</button>
+              }
+            </li>
+          }
+        </ul>
+      } @else {
+        <p>Aucune photo proposée par Unsplash pour cette localité.</p>
+      }
+    }
+  </section>
   @if (templateFailed()) {
     <p role="alert">Impossible de charger le modèle de mail.</p>
   } @else {

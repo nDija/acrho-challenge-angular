@@ -13,9 +13,14 @@ export interface RacePhoto {
   author: string;
   license: string;
   licenseUrl: string | null;
+  authorUrl?: string | null;
 }
 export interface RacePhotoCandidate {
   filename: string;
+  photo: RacePhoto;
+}
+export interface UnsplashPhotoCandidate {
+  id: string;
   photo: RacePhoto;
 }
 export interface RaceDetail extends Race { organizer?: string; routes: RouteInfo[]; practicalInfo?: RacePracticalInfo | null; }
@@ -146,6 +151,14 @@ export class AcrhoApi {
 
   selectAdminRacePhoto(id: number, filename: string) {
     return this.http.put<RacePhoto>(this.apiUrl(`/api/v1/admin/races/${id}/photo`), { filename });
+  }
+
+  adminUnsplashPhotoCandidates(id: number) {
+    return this.http.get<UnsplashPhotoCandidate[]>(this.apiUrl(`/api/v1/admin/races/${id}/photo/unsplash/candidates`));
+  }
+
+  selectAdminUnsplashPhoto(id: number, photoId: string) {
+    return this.http.put<RacePhoto>(this.apiUrl(`/api/v1/admin/races/${id}/photo/unsplash`), { id: photoId });
   }
 
   sendRaceResultsTest(subject: string, html: string) {
