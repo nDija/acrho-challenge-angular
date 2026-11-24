@@ -40,7 +40,7 @@
                 <option [value]="status">{{ statusLabels[status] | t }}</option>
               }
             </select>
-            <button type="button" class="save-status"
+            <button mat-flat-button type="button"
                     [disabled]="!canSave(race)" (click)="save(race)">
               {{ (saving() === race.id ? 'Enregistrement…' : 'Enregistrer') | t }}
             </button>

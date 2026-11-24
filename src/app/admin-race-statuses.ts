@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, computed, DestroyRef, inject, output, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { catchError, finalize, map, of, startWith, switchMap } from 'rxjs';
 import { AcrhoApi, type AdminRace, type RaceStatus } from './acrho-api.service';
 import { LanguageService } from './language.service';
@@ -11,7 +12,7 @@ type StatusChoice = RaceStatus | 'AUTOMATIC';
 
 @Component({
   selector: 'app-admin-race-statuses',
-  imports: [DatePipe, FormsModule, TranslatePipe],
+  imports: [DatePipe, FormsModule, MatButtonModule, TranslatePipe],
   templateUrl: './admin-race-statuses.html',
   styleUrl: './admin-race-statuses.scss',
 })

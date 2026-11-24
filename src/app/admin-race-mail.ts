@@ -2,19 +2,23 @@ import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
 import { DomSanitizer } from '@angular/platform-browser';
 import { catchError, finalize, map, of, startWith, switchMap } from 'rxjs';
 import { AcrhoApi, AdminRace, RacePhoto, RacePhotoCandidate } from './acrho-api.service';
 
 @Component({
   selector: 'app-admin-race-mail',
+  imports: [MatButtonModule],
   templateUrl: './admin-race-mail.html',
   styles: [`
     :host { display: block; padding-top: 20px; }
     label { display: grid; gap: 6px; margin-bottom: 14px; max-width: 600px; }
-    input, select, textarea, button { font: inherit; padding: 8px; }
+    label { color: var(--acrho-heading); font-weight: 600; }
+    textarea { resize: vertical; }
+    .mail-actions { display: flex; flex-wrap: wrap; gap: 8px; }
     .photo-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; padding: 0; list-style: none; }
-    .photo-options li { padding: 8px; border: 1px solid var(--acrho-border); border-radius: 8px; }
+    .photo-options li { padding: 8px; border: 1px solid var(--acrho-border); border-radius: 8px; background: var(--acrho-surface, #fff); }
     .photo-options img { display: block; width: 100%; aspect-ratio: 2 / 1; object-fit: cover; }
     .photo-options p { margin: 6px 0; font-size: .85rem; }
     iframe { display: block; width: 100%; height: 680px; margin-top: 16px; border: 1px solid var(--acrho-border); }

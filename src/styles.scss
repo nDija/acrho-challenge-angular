@@ -463,3 +463,40 @@ html:is([data-acrho-language='art-x-hvy'], [data-acrho-language='en-x-tengwar'],
     :is(.auth-btn-primary, .filter-panel .apply-filter) mat-icon { color: inherit; }
   }
 }
+
+app-administration {
+  color: var(--acrho-text);
+  --mat-button-filled-container-color: var(--acrho-accent);
+  --mat-button-filled-label-text-color: light-dark(#fff, var(--acrho-page));
+  --mat-button-filled-state-layer-color: var(--mat-button-filled-label-text-color);
+  --mat-button-outlined-label-text-color: var(--acrho-accent-dark);
+  --mat-button-outlined-outline-color: var(--acrho-border);
+  --mat-button-outlined-state-layer-color: var(--acrho-accent);
+  --mat-button-text-label-text-color: var(--acrho-accent-dark);
+  --mat-tab-active-indicator-color: var(--acrho-accent);
+  --mat-tab-active-focus-indicator-color: var(--acrho-accent);
+  --mat-tab-active-hover-indicator-color: var(--acrho-accent);
+  --mat-tab-active-label-text-color: var(--acrho-heading);
+  --mat-tab-active-focus-label-text-color: var(--acrho-heading);
+  --mat-tab-active-hover-label-text-color: var(--acrho-heading);
+  --mat-tab-inactive-label-text-color: var(--acrho-muted);
+
+  :is(select, input, textarea) {
+    min-width: 0;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--acrho-border);
+    border-radius: 8px;
+    background: var(--acrho-surface, #fff);
+    color: var(--acrho-heading);
+    font: inherit;
+  }
+
+  :is(select, input, textarea, button):focus-visible {
+    outline: 2px solid var(--acrho-accent);
+    outline-offset: 2px;
+  }
+
+  a { color: var(--acrho-accent-dark); }
+  [role='alert'] { color: light-dark(#842929, #ffadad); }
+}

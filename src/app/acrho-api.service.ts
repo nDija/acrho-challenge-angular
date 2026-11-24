@@ -128,6 +128,10 @@ export class AcrhoApi {
   private apiUrl(path: string) { return `${environment.apiBaseUrl}${path}`; }
   health() { return this.http.get<{ status: string }>('https://acrho-challenge.ddns.net/actuator/health'); }
   seasons() { return this.http.get<Season[]>(this.apiUrl('/api/v1/seasons')); }
+  adminVersion() {
+    return this.http.get<{ version: string | null; commit: string | null }>(this.apiUrl('/api/v1/admin/version'));
+  }
+
   adminRaces(year: number) {
     return this.http.get<AdminRace[]>(this.apiUrl('/api/v1/admin/races'), { params: { year } });
   }
