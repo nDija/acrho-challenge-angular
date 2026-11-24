@@ -158,13 +158,13 @@ export class AdminRaceMail {
     });
   }
 
-  loadUnsplashCandidates() {
+  loadUnsplashCandidates(query: string) {
     const race = this.race();
-    if (!race || this.unsplashLoading() || this.photoSaving()) return;
+    if (!race || this.unsplashLoading() || this.photoSaving() || this.sending()) return;
     this.unsplashLoading.set(true);
     this.unsplashError.set(null);
     this.unsplashCandidates.set(null);
-    this.api.adminUnsplashPhotoCandidates(race.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.api.adminUnsplashPhotoCandidates(race.id, query.trim()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: candidates => {
         if (this.race() !== race) return;
         this.unsplashCandidates.set(candidates);

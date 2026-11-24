@@ -153,8 +153,10 @@ export class AcrhoApi {
     return this.http.put<RacePhoto>(this.apiUrl(`/api/v1/admin/races/${id}/photo`), { filename });
   }
 
-  adminUnsplashPhotoCandidates(id: number) {
-    return this.http.get<UnsplashPhotoCandidate[]>(this.apiUrl(`/api/v1/admin/races/${id}/photo/unsplash/candidates`));
+  adminUnsplashPhotoCandidates(id: number, query: string) {
+    return this.http.get<UnsplashPhotoCandidate[]>(
+      this.apiUrl(`/api/v1/admin/races/${id}/photo/unsplash/candidates`), { params: { query } },
+    );
   }
 
   selectAdminUnsplashPhoto(id: number, photoId: string) {
