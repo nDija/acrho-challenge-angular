@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { catchError, finalize, map, of, startWith, switchMap } from 'rxjs';
-import { AcrhoApi, AdminRace } from './acrho-api.service';
+import { AcrhoApi, AdminRace, RacePhoto, RacePhotoCandidate } from './acrho-api.service';
 
 @Component({
   selector: 'app-admin-race-mail',
@@ -13,6 +13,10 @@ import { AcrhoApi, AdminRace } from './acrho-api.service';
     :host { display: block; padding-top: 20px; }
     label { display: grid; gap: 6px; margin-bottom: 14px; max-width: 600px; }
     input, select, textarea, button { font: inherit; padding: 8px; }
+    .photo-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; padding: 0; list-style: none; }
+    .photo-options li { padding: 8px; border: 1px solid var(--acrho-border); border-radius: 8px; }
+    .photo-options img { display: block; width: 100%; aspect-ratio: 2 / 1; object-fit: cover; }
+    .photo-options p { margin: 6px 0; font-size: .85rem; }
     iframe { display: block; width: 100%; height: 680px; margin-top: 16px; border: 1px solid var(--acrho-border); }
   `],
 })
@@ -55,13 +59,21 @@ export class AdminRaceMail {
       catchError(() => of({ raceId: race.id, photo: null, failed: true })),
     ) : of(null)),
   ));
+  private readonly savedPhoto = signal<{ raceId: number; photo: RacePhoto; failed: false } | null>(null);
+  readonly photoCandidates = signal<RacePhotoCandidate[] | null>(null);
+  readonly photoLoading = signal(false);
+  readonly photoSaving = signal(false);
+  readonly photoNotice = signal<{ success: boolean; text: string } | null>(null);
+
   readonly photoResult = computed(() => {
+    const saved = this.savedPhoto();
+    if (saved && saved.raceId === this.race()?.id) return saved;
     const result = this.racePhoto();
     return result?.raceId === this.race()?.id ? result : null;
   });
   readonly sending = signal(false);
   readonly sendNotice = signal<{ success: boolean; text: string } | null>(null);
-  readonly canSend = computed(() => !!this.html() && !!this.photoResult() && !this.sending());
+  readonly canSend = computed(() => !!this.html() && !!this.photoResult() && !this.photoSaving() && !this.sending());
   readonly templateFailed = computed(() => this.template() === null);
   readonly canExport = computed(() => !!this.html() && !!httpsUrl(this.resultsUrl()) && !!httpsUrl(this.unsubscribeUrl()));
 
@@ -74,7 +86,7 @@ export class AdminRaceMail {
     const sourceUrl = httpsUrl(photo?.sourceUrl ?? '');
     const licenseUrl = httpsUrl(photo?.licenseUrl ?? '');
     const photoHtml = photo && photoUrl && sourceUrl ? `
-      <tr><td><img src="${escapeHtml(photoUrl)}" alt="Photo d’illustration de ${escapeHtml(race.city || race.name)}" width="600" style="display:block;width:100%;max-width:600px;height:auto"></td></tr>
+      <tr><td><img src="${escapeHtml(photoUrl)}" alt="Photo d’illustration de ${escapeHtml(race.city || race.name)}" width="600" height="300" style="display:block;width:100%;max-width:600px;height:auto;aspect-ratio:2 / 1;object-fit:cover;object-position:center"></td></tr>
       <tr><td style="padding:8px 20px;text-align:center;font-size:12px;color:#304B68">
         Photo d’illustration · ${escapeHtml(photo.author)} · <a href="${escapeHtml(sourceUrl)}">Wikimedia Commons</a> ·
         ${licenseUrl ? `<a href="${escapeHtml(licenseUrl)}">${escapeHtml(photo.license)}</a>` : escapeHtml(photo.license)}
@@ -105,9 +117,49 @@ export class AdminRaceMail {
   selectRace(id: string) {
     const race = this.races()?.find(race => race.id === Number(id)) ?? null;
     this.race.set(race);
+    this.savedPhoto.set(null);
+    this.photoCandidates.set(null);
+    this.photoLoading.set(false);
+    this.photoNotice.set(null);
     this.sendNotice.set(null);
     this.resultsUrl.set('');
     this.message.set(race ? `Les résultats de la course ${race.name} du ${formatRaceDate(race.raceDate)} sont disponibles sur acrho.run.` : '');
+  }
+
+  loadPhotoCandidates() {
+    const race = this.race();
+    if (!race || this.photoLoading() || this.photoSaving()) return;
+    this.photoLoading.set(true);
+    this.photoNotice.set(null);
+    this.api.adminRacePhotoCandidates(race.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: candidates => {
+        if (this.race() !== race) return;
+        this.photoCandidates.set(candidates);
+        this.photoLoading.set(false);
+      },
+      error: () => {
+        if (this.race() !== race) return;
+        this.photoNotice.set({ success: false, text: 'Impossible de charger les autres photos.' });
+        this.photoLoading.set(false);
+      },
+    });
+  }
+
+  choosePhoto(candidate: RacePhotoCandidate) {
+    const race = this.race();
+    if (!race || this.photoSaving() || this.sending()) return;
+    this.photoSaving.set(true);
+    this.photoNotice.set(null);
+    this.api.selectAdminRacePhoto(race.id, candidate.filename).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => this.photoSaving.set(false)),
+    ).subscribe({
+      next: photo => {
+        this.savedPhoto.set({ raceId: race.id, photo, failed: false });
+        this.photoNotice.set({ success: true, text: 'Photo enregistrée pour le mail et la fiche de course.' });
+      },
+      error: () => this.photoNotice.set({ success: false, text: 'Impossible d’enregistrer la photo.' }),
+    });
   }
 
   sendTest() {

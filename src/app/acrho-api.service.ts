@@ -14,6 +14,10 @@ export interface RacePhoto {
   license: string;
   licenseUrl: string | null;
 }
+export interface RacePhotoCandidate {
+  filename: string;
+  photo: RacePhoto;
+}
 export interface RaceDetail extends Race { organizer?: string; routes: RouteInfo[]; practicalInfo?: RacePracticalInfo | null; }
 export interface Runner { id: number; firstName: string; lastName: string; gender?: string; club?: string; category?: string | null; categoryYear?: number | null; pictureUrl?: string | null; bannerColor?: string; }
 export interface Me { showPicture?: boolean; id: number; email: string; displayName?: string; role: 'USER' | 'ADMIN'; pictureUrl?: string | null; createdAt?: string | null; runnerId?: number | null; }
@@ -130,6 +134,14 @@ export class AcrhoApi {
 
   findOrDiscoverAdminRacePhoto(id: number) {
     return this.http.post<RacePhoto | null>(this.apiUrl(`/api/v1/admin/races/${id}/photo`), null);
+  }
+
+  adminRacePhotoCandidates(id: number) {
+    return this.http.get<RacePhotoCandidate[]>(this.apiUrl(`/api/v1/admin/races/${id}/photo/candidates`));
+  }
+
+  selectAdminRacePhoto(id: number, filename: string) {
+    return this.http.put<RacePhoto>(this.apiUrl(`/api/v1/admin/races/${id}/photo`), { filename });
   }
 
   sendRaceResultsTest(subject: string, html: string) {

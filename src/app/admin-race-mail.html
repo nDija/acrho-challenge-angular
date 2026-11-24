@@ -1,12 +1,12 @@
 <label>Saison
-  <select #season [disabled]="sending()" [value]="selectedYear()" (change)="selectYear(season.value)">
+  <select #season [disabled]="sending() || photoSaving()" [value]="selectedYear()" (change)="selectYear(season.value)">
     @for (item of seasons(); track item.id) {
       <option [value]="item.year" [selected]="item.year === selectedYear()">{{ item.year }}</option>
     }
   </select>
 </label>
 <label>Course
-  <select #raceSelect [disabled]="sending()" [value]="race()?.id ?? ''" (change)="selectRace(raceSelect.value)">
+  <select #raceSelect [disabled]="sending() || photoSaving()" [value]="race()?.id ?? ''" (change)="selectRace(raceSelect.value)">
     <option value="">Choisir une course</option>
     @for (item of races(); track item.id) {
       <option [value]="item.id">{{ item.name }} · {{ statusLabels[item.status] }}</option>
@@ -37,10 +37,35 @@
   } @else if (!photoResult()?.photo) {
     <p>Aucune photo Wikimedia Commons disponible pour cette course.</p>
   }
+  <button type="button" [disabled]="photoLoading() || photoSaving() || sending()" (click)="loadPhotoCandidates()">
+    {{ photoLoading() ? 'Recherche des photos…' : 'Choisir une autre photo' }}
+  </button>
+  @if (photoNotice(); as notice) {
+    <p [attr.role]="notice.success ? 'status' : 'alert'">{{ notice.text }}</p>
+  }
+  @if (photoCandidates(); as candidates) {
+    @if (candidates.length) {
+      <ul class="photo-options" aria-label="Photos proposées par Wikimedia Commons">
+        @for (candidate of candidates; track candidate.filename) {
+          <li>
+            <img [src]="candidate.photo.url" [alt]="candidate.filename" loading="lazy">
+            <p><a [href]="candidate.photo.sourceUrl" target="_blank" rel="noopener">{{ candidate.photo.author || 'Wikimedia Commons' }}</a> · {{ candidate.photo.license }}</p>
+            @if (photoResult()?.photo?.sourceUrl === candidate.photo.sourceUrl) {
+              <p>Photo actuelle</p>
+            } @else {
+              <button type="button" [disabled]="photoSaving() || sending()" (click)="choosePhoto(candidate)">Utiliser cette photo</button>
+            }
+          </li>
+        }
+      </ul>
+    } @else {
+      <p>Aucune photo proposée par Wikimedia Commons pour cette localité.</p>
+    }
+  }
   @if (templateFailed()) {
     <p role="alert">Impossible de charger le modèle de mail.</p>
   } @else {
-    <button type="button" [disabled]="!canExport() || !photoResult()" (click)="download()">Télécharger le HTML</button>
+    <button type="button" [disabled]="!canExport() || !photoResult() || photoSaving()" (click)="download()">Télécharger le HTML</button>
     <button type="button" [disabled]="!canSend()" (click)="sendTest()">
       {{ sending() ? 'Envoi en cours…' : 'Envoyer un test aux administrateurs' }}
     </button>
