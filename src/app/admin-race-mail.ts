@@ -3,13 +3,14 @@ import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { catchError, finalize, map, of, startWith, switchMap, throwError } from 'rxjs';
 import { AcrhoApi, AdminRace, GooglePlacesPhotoPreview, RacePhoto, RacePhotoCandidate, UnsplashPhotoCandidate } from './acrho-api.service';
 
 @Component({
   selector: 'app-admin-race-mail',
-  imports: [MatButtonModule, NgTemplateOutlet],
+  imports: [MatButtonModule, MatIconModule, NgTemplateOutlet],
   templateUrl: './admin-race-mail.html',
   styleUrl: './admin-race-mail.scss',
 })
@@ -61,6 +62,7 @@ export class AdminRaceMail {
   readonly photoCandidates = signal<RacePhotoCandidate[] | null>(null);
   readonly googlePlacesPreviews = signal<GooglePlacesPhotoPreview[] | null>(null);
   readonly googlePlacesLoading = signal(false);
+  readonly googlePlacesRulesOpen = signal(false);
   readonly googlePlacesError = signal(false);
   readonly unsplashCandidates = signal<UnsplashPhotoCandidate[] | null>(null);
   readonly unsplashLoading = signal(false);

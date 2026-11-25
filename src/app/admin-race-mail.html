@@ -195,7 +195,25 @@
           }
         </section>
         <section class="photo-source" aria-labelledby="google-places-photos">
-          <h3 id="google-places-photos">Google Places · Aperçus</h3>
+          <div class="photo-source-heading">
+            <h3 id="google-places-photos">Google Places · Aperçus</h3>
+            <button mat-icon-button type="button" aria-label="Règles d’utilisation de Google Places"
+                    aria-controls="google-places-rules" [attr.aria-expanded]="googlePlacesRulesOpen()"
+                    (click)="googlePlacesRulesOpen.set(!googlePlacesRulesOpen())">
+              <mat-icon aria-hidden="true">info_outline</mat-icon>
+            </button>
+          </div>
+          <div class="photo-source-rules" id="google-places-rules" [hidden]="!googlePlacesRulesOpen()">
+            <ul>
+              <li>Les aperçus restent dans l’administration. Ils ne sont ni enregistrés ni utilisés sur les fiches de course ou dans les mails.</li>
+              <li>Conserve la mention Google Maps, les crédits des photographes et les liens fournis avec les images.</li>
+              <li>Pour un compte facturé dans l’EEE, vérifie que l’usage figure dans la liste des usages autorisés par Google.</li>
+            </ul>
+            <a href="https://developers.google.com/maps/documentation/places/web-service/policies" target="_blank"
+               rel="noopener noreferrer">Règles et attributions Google Places</a>
+            <a href="https://cloud.google.com/terms/maps-platform/eea-places-api-permitted-uses" target="_blank"
+               rel="noopener noreferrer">Usages autorisés dans l’EEE</a>
+          </div>
           @if (race()?.city?.trim()) {
             <button mat-stroked-button type="button" [disabled]="googlePlacesLoading() || photoSaving() || sending()"
                     (click)="loadGooglePlacesPreviews()">
