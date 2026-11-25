@@ -62,6 +62,8 @@ export class AdminRaceMail {
   readonly photoCandidates = signal<RacePhotoCandidate[] | null>(null);
   readonly googlePlacesPreviews = signal<GooglePlacesPhotoPreview[] | null>(null);
   readonly googlePlacesLoading = signal(false);
+  readonly wikimediaRulesOpen = signal(false);
+  readonly unsplashRulesOpen = signal(false);
   readonly googlePlacesRulesOpen = signal(false);
   readonly googlePlacesError = signal(false);
   readonly unsplashCandidates = signal<UnsplashPhotoCandidate[] | null>(null);

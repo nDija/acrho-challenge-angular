@@ -105,7 +105,23 @@
           }
         </section>
         <section class="photo-source" aria-labelledby="wikimedia-photos">
-          <h3 id="wikimedia-photos">Wikimedia Commons</h3>
+          <div class="photo-source-heading">
+            <h3 id="wikimedia-photos">Wikimedia Commons</h3>
+            <button mat-icon-button type="button" aria-label="Règles d’utilisation de Wikimedia Commons"
+                    aria-controls="wikimedia-rules" [attr.aria-expanded]="wikimediaRulesOpen()"
+                    (click)="wikimediaRulesOpen.set(!wikimediaRulesOpen())">
+              <mat-icon aria-hidden="true">info_outline</mat-icon>
+            </button>
+          </div>
+          <div class="photo-source-rules" id="wikimedia-rules" [hidden]="!wikimediaRulesOpen()">
+            <ul>
+              <li>Vérifie la licence sur la page du fichier avant de publier la photo.</li>
+              <li>Conserve le crédit de l’auteur, le lien vers le fichier et la mention ou le lien de la licence selon ses conditions.</li>
+              <li>Si tu modifies une photo, indique les changements et respecte les conditions de partage à l’identique si la licence l’exige.</li>
+            </ul>
+            <a href="https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia/fr" target="_blank"
+               rel="noopener noreferrer">Réutiliser des fichiers Wikimedia Commons</a>
+          </div>
           <button mat-stroked-button type="button" [disabled]="photoLoading() || photoSaving() || sending()" (click)="loadPhotoCandidates()">
             {{ photoLoading() ? 'Recherche des photos…' : 'Chercher sur Wikimedia Commons' }}
           </button>
@@ -131,7 +147,23 @@
           }
         </section>
         <section class="photo-source" aria-labelledby="unsplash-photos">
-          <h3 id="unsplash-photos">Unsplash</h3>
+          <div class="photo-source-heading">
+            <h3 id="unsplash-photos">Unsplash</h3>
+            <button mat-icon-button type="button" aria-label="Règles d’utilisation de Unsplash"
+                    aria-controls="unsplash-rules" [attr.aria-expanded]="unsplashRulesOpen()"
+                    (click)="unsplashRulesOpen.set(!unsplashRulesOpen())">
+              <mat-icon aria-hidden="true">info_outline</mat-icon>
+            </button>
+          </div>
+          <div class="photo-source-rules" id="unsplash-rules" [hidden]="!unsplashRulesOpen()">
+            <ul>
+              <li>Crédite le photographe et Unsplash, avec un lien vers le profil du photographe.</li>
+              <li>Affiche l’image avec l’URL fournie par Unsplash. Si tu copies le HTML du mail, conserve cette URL et les crédits.</li>
+              <li>Le bouton « Utiliser cette photo » signale automatiquement la sélection à Unsplash.</li>
+            </ul>
+            <a href="https://help.unsplash.com/en/collections/1451694-api-guidelines" target="_blank"
+               rel="noopener noreferrer">Règles d’utilisation de l’API Unsplash</a>
+          </div>
           <form (submit)="$event.preventDefault(); loadUnsplashCandidates(unsplashQuery.value)">
             <label>Suggestions de recherche
               <select #unsplashSuggestion
