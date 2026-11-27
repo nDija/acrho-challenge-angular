@@ -57,9 +57,9 @@
         </div>
           <label class="season-select calendar-season">
             <span>{{ "Saison" | t }}</span>
-            <select [ngModel]="selectedYear" (ngModelChange)="selectedYear = $event; loadRaces()">
+            <select #calendarSeason (change)="changeYear(calendarSeason.value)">
               @for (season of seasons; track season.year) {
-                <option [ngValue]="season.year">{{ season.year }}</option>
+                <option [value]="season.year" [selected]="season.year === selectedYear">{{ season.year }}</option>
               }
             </select>
           </label>
@@ -77,29 +77,11 @@
                     <div class="date-tile"><b>{{race.raceDate | date:'dd':undefined:i18n.locale()}}</b><span>{{race.raceDate | date:'MMM':undefined:i18n.locale()}}</span></div><div class="race-info"><strong>{{race.name}}</strong><span><mat-icon>location_on</mat-icon>{{race.city || ("Lieu à confirmer" | t)}}</span><app-race-weather [race]="race" /></div><div class="race-meta"><span class="race-coef">{{ "COEF." | t }} {{race.coefficient ?? '—'}}</span><span class="race-state">{{(race.status || 'AU CALENDRIER') | t}}</span></div><mat-icon class="row-arrow">{{expandedRaceId === race.id ? 'expand_less' : 'expand_more'}}</mat-icon>
                   </button>
                   @if (expandedRaceId === race.id) {
-                    <div class="practical-info-panel">
-                      @if (expandedRacePhoto | async; as photo) {
-                        <figure class="planned-race-photo" [hidden]="expandedRacePhotoLoaded !== photo.url">
-                          <img [src]="photo.url" alt="" referrerpolicy="no-referrer"
-                               (load)="expandedRacePhotoLoaded = photo.url">
-                          @if (expandedRacePhotoLoaded === photo.url) {
-                            @defer (on immediate) { <app-race-photo-credit [photo]="photo" /> }
-                          }
-                        </figure>
-                      }
-                      @if (practicalInfoLoading) { <div class="inline-loading"><mat-spinner diameter="28"></mat-spinner><span>{{ "Chargement des détails…" | t }}</span></div> }
-                      @if (!practicalInfoLoading && expandedRaceDetails) {
-                        @if (expandedRaceDetails.routes?.length) {
-                          <div class="practical-routes"><h3>{{ "Parcours" | t }}</h3><div class="practical-route-list">@for (route of expandedRaceDetails.routes; track route.id) { <div><strong>{{route.label}}</strong><span>{{route.distanceM ? (route.distanceM / 1000 | number:'1.1-1':i18n.locale()) + ' km' : ("Distance à confirmer" | t)}}@if (route.startTime) { {{ "· départ" | t }} {{route.startTime.slice(0, 5)}} }@if (route.challenge) { {{ "· Challenge" | t }} }</span></div> }</div></div>
-                        }
-                        <div class="practical-info-grid">
-                          @for (section of practicalSections(expandedRaceDetails); track section.key) { <article class="practical-info-section"><h3>{{section.label | t}}</h3><p>{{section.value}}</p></article> }
-                          @if (practicalRouteDescription) { <article class="practical-info-section"><h3>{{ "Informations sur le parcours" | t }}</h3><p>{{practicalRouteDescription}}</p>@if (openRunnerUrl) { <a [href]="openRunnerUrl" target="_blank" rel="noopener noreferrer">{{ "Voir le parcours sur OpenRunner ↗" | t }}</a> }</article> }
-                        </div>
-                        @if (expandedRaceDetails.practicalInfo?.sourceUrl) { <a class="practical-source" [href]="expandedRaceDetails.practicalInfo?.sourceUrl" target="_blank" rel="noopener noreferrer">{{ "Voir la fiche sur acrho.org ↗" | t }}</a> }
-                        @if (!expandedRaceDetails.routes?.length && !practicalSections(expandedRaceDetails).length && !practicalRouteDescription) { <p class="no-practical-info">{{ "Aucune information pratique n’a été importée pour cette course." | t }}</p> }
-                      }
-                    </div>
+                    @defer (on immediate) {
+                      <app-planned-race-details [photoSource]="expandedRacePhoto" [loading]="practicalInfoLoading"
+                        [details]="expandedRaceDetails" [sections]="expandedRaceDetails ? practicalSections(expandedRaceDetails) : []"
+                        [routeDescription]="practicalRouteDescription" [openRunnerUrl]="openRunnerUrl" />
+                    }
                   }
                 </div>
               }
@@ -206,9 +188,11 @@
                 <div><b>{{runnerDetailLoading ? '…' : (runnerDistanceKm | number:'1.0-2':i18n.locale())}}</b><span>{{ "km avalés" | t }}@if (runnerYear) { {{ "· saison" | t }} {{runnerYear}} }</span></div>
               </article>
             }
-            <app-runner-standing-card class="stat-card" [runnerId]="runner.id" aria-labelledby="runner-standing-title">
-              <span class="stat-icon blue"><mat-icon aria-hidden="true">leaderboard</mat-icon></span>
-            </app-runner-standing-card>
+            @defer (on immediate) {
+              <app-runner-standing-card class="stat-card" [runnerId]="runner.id" aria-labelledby="runner-standing-title">
+                <span class="stat-icon blue"><mat-icon aria-hidden="true">leaderboard</mat-icon></span>
+              </app-runner-standing-card>
+            }
             <button class="stat-card upcoming-card runner-vdot-toggle" [class.selected]="showRunnerVdot"
               type="button" aria-controls="runner-vdot-panel" [attr.aria-expanded]="showRunnerVdot"
               [disabled]="vdotSeasonId == null" (click)="showRunnerVdot = !showRunnerVdot">
@@ -228,8 +212,10 @@
             }
           </div>
           @if (vdotSeasonId != null) {
-            <app-runner-achievements [runnerId]="runner.id" [seasonId]="vdotSeasonId" [year]="runnerYear"
-              [results]="runnerResults" />
+            @defer (on immediate) {
+              <app-runner-achievements [runnerId]="runner.id" [seasonId]="vdotSeasonId" [year]="runnerYear"
+                [results]="runnerResults" />
+            }
           }
           <div class="section-head"><h2>{{ "Résultats" | t }} {{runnerYear}} @if (!runnerDetailLoading && !runnerDetailError) { <span>({{runnerResults.length}})</span> }</h2></div>
           @if (runnerDetailLoading) { <div class="loading"><mat-spinner diameter="34"></mat-spinner></div> }

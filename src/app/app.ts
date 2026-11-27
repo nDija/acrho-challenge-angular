@@ -1,3 +1,4 @@
+import { PlannedRaceDetails } from './planned-race-details';
 import { KoFiButton } from './ko-fi-button';
 import { Administration } from './administration';
 import { Paginator } from './paginator';
@@ -24,7 +25,6 @@ import { TranslatePipe } from './translate.pipe';
 import { ClubNamePipe } from './club-name.pipe';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule, ViewportScroller } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, forkJoin, from, mergeMap, of, switchMap, timer, timeout, toArray } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -36,7 +36,7 @@ import type { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root', standalone: true,
-  imports: [Administration, Paginator, RacePhotoCredit, RunnerSeason, RunnerSearch, ResultFilters, RaceBoosts, AccountSettings, Regulation, Photos, Sponsors, ProjectCredits, KoFiButton, RaceTips, RaceRegistration, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, RunnerAchievements, Standings, TranslatePipe, ClubNamePipe, CommonModule, FormsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [PlannedRaceDetails, Administration, Paginator, RacePhotoCredit, RunnerSeason, RunnerSearch, ResultFilters, RaceBoosts, AccountSettings, Regulation, Photos, Sponsors, ProjectCredits, KoFiButton, RaceTips, RaceRegistration, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, RunnerAchievements, Standings, TranslatePipe, ClubNamePipe, CommonModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './app.html', styleUrl: './app.scss'
 })
 export class App implements OnInit {
@@ -60,7 +60,6 @@ export class App implements OnInit {
   racePhoto?: Observable<RacePhoto | null>;
   racePhotoLoaded?: string;
   expandedRacePhoto?: Observable<RacePhoto | null>;
-  expandedRacePhotoLoaded?: string;
   expandedRaceId?: number; expandedRaceDetails?: RaceDetail; practicalInfoLoading = false;
   mobileMenuOpen = false;
   activeView: 'calendar' | 'runners' | 'regulation' | 'settings' | 'favorites' | 'standings' | 'sponsors' | 'photos' | 'tips' | 'registration' | 'credits' | 'administration' = 'calendar'; loading = false; error = '';
@@ -281,7 +280,6 @@ export class App implements OnInit {
       return;
     }
     this.expandedRaceId = race.id;
-    this.expandedRacePhotoLoaded = undefined;
     this.expandedRacePhoto = this.api.racePhoto(race.id).pipe(catchError(() => of(null)));
     this.expandedRaceDetails = undefined;
     this.practicalInfoLoading = true;
@@ -537,8 +535,12 @@ export class App implements OnInit {
       },
     });
   }
-  changeLanguage(language: string) {
-    this.i18n.setLanguage(language);
+  changeYear(value: string) {
+    this.selectedYear = Number(value);
+    this.loadRaces();
+  }
+  async changeLanguage(language: string) {
+    if (!await this.i18n.setLanguage(language)) return;
     this.regulationMarkdown = '';
     this.regulationError = '';
     this.regulationLoading = false;

@@ -1,0 +1,28 @@
+:host { display:block; }
+.practical-info-panel { padding:20px 24px 22px; border-top:1px solid #eff2f0; background:#fbfcfb; }
+.planned-race-photo {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto 18px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.planned-race-photo img { display: block; width: 100%; aspect-ratio: 2 / 1; object-fit: cover; }
+.planned-race-photo app-race-photo-credit {
+  position: absolute;
+  inset: 8px 8px auto auto;
+}
+.practical-info-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.practical-info-section { min-width:0; padding:13px 15px; border:1px solid var(--acrho-border); border-radius:10px; background:#fff; }
+.practical-info-section h3,.practical-routes h3 { margin:0 0 7px; color:var(--acrho-heading); font:700 12px Manrope,sans-serif; }
+.practical-info-section p { margin:0; color:var(--acrho-text); font-size:12px; line-height:1.55; white-space:pre-line; }
+.practical-info-section a,.practical-source { display:inline-block; margin-top:9px; color:var(--acrho-accent); font-size:11px; font-weight:700; text-decoration:none; }
+.practical-info-section a:hover,.practical-source:hover { text-decoration:underline; }
+.practical-routes { margin-bottom:16px; }
+.practical-route-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.practical-route-list>div { display:flex; flex-direction:column; gap:3px; padding:10px 12px; border-radius:9px; background:var(--acrho-soft); }
+.practical-route-list strong { color:var(--acrho-heading); font-size:12px; }
+.practical-route-list span,.no-practical-info { color:var(--acrho-muted); font-size:11px; }
+.inline-loading { display:flex; align-items:center; justify-content:center; gap:10px; min-height:64px; color:var(--acrho-muted); font-size:12px; }
+.practical-source { margin-top:14px; }
+@media(max-width:550px) { .practical-info-panel { padding:14px 12px; }.practical-info-grid,.practical-route-list { grid-template-columns:1fr; } }

@@ -1,9 +1,36 @@
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, registerLocaleData } from '@angular/common';
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
-import { highValyrian } from './high-valyrian';
-import { klingon } from './klingon';
-import { tengwar } from './tengwar';
-import { translations, type Language } from './translations';
+import type { Language } from './translations';
+
+const localeLoaders = {
+  nl: () => import('@angular/common/locales/nl'),
+  de: () => import('@angular/common/locales/de'),
+  es: () => import('@angular/common/locales/es'),
+};
+
+async function loadDictionary(language: Language): Promise<ReadonlyMap<string, string>> {
+  switch (language) {
+    case 'fr': return new Map();
+    case 'art-x-hvy': return (await import('./high-valyrian')).highValyrian;
+    case 'tlh': {
+      const [{ translations }, { klingon }] = await Promise.all([import('./translations'), import('./klingon')]);
+      return new Map([...translations.map(row => [row[0], row[1]] as const), ...klingon]);
+    }
+    case 'en-x-tengwar': {
+      const [{ translations }, { tengwar }] = await Promise.all([import('./translations'), import('./tengwar')]);
+      return new Map([...translations.map(row => [row[0], row[1]] as const), ...tengwar]);
+    }
+    default: {
+      const [{ translations }, locale] = await Promise.all([
+        import('./translations'),
+        language === 'en' ? undefined : localeLoaders[language](),
+      ]);
+      if (locale) registerLocaleData(locale.default);
+      const index = { en: 1, nl: 2, de: 3, es: 4 }[language];
+      return new Map(translations.map(row => [row[0], row[index]]));
+    }
+  }
+}
 
 const themes = [
   { value: 'auto', label: 'Thème automatique' },
@@ -33,14 +60,17 @@ export class LanguageService {
   readonly themes = themes;
   private readonly themePreference = signal<ThemePreference>(this.savedTheme());
   readonly theme = this.themePreference.asReadonly();
-  readonly language = signal<Language>(this.savedLanguage());
+  private readonly activeLanguage = signal<{ code: Language; dictionary: ReadonlyMap<string, string> }>({
+    code: 'fr', dictionary: new Map(),
+  });
+  readonly language = computed(() => this.activeLanguage().code);
+  private languageRequest = 0;
   readonly locale = computed(() => {
     const language = this.language();
     if (language === 'en-x-tengwar' || language === 'tlh') return 'en';
     return language === 'art-x-hvy' ? 'fr' : language;
   });
   private readonly document = inject(DOCUMENT);
-  private readonly dictionaries = new Map(translations.map(row => [row[0], row]));
 
   constructor() {
     effect(() => {
@@ -76,21 +106,36 @@ export class LanguageService {
     } catch { return 'auto'; }
   }
 
-  setLanguage(value: string) {
-    if (this.language() === value || !this.languages.some(language => language.value === value)) return;
-    this.language.set(value as Language);
+  async initialize(): Promise<void> {
+    await this.activateLanguage(this.savedLanguage());
+  }
+
+  async setLanguage(value: string): Promise<boolean> {
+    const language = this.languages.find(option => option.value === value)?.value;
+    if (!language || !await this.activateLanguage(language)) return false;
     if (this.theme() !== 'auto') this.setTheme('auto');
-    try { localStorage.setItem('acrho-language', value); } catch { /* Storage may be unavailable. */ }
+    try { localStorage.setItem('acrho-language', language); } catch { /* Storage may be unavailable. */ }
+    return true;
+  }
+
+  private async activateLanguage(code: Language): Promise<boolean> {
+    const request = ++this.languageRequest;
+    if (code === this.language()) return false;
+    try {
+      const dictionary = await loadDictionary(code);
+      if (request !== this.languageRequest) return false;
+      this.activeLanguage.set({ code, dictionary });
+      return true;
+    } catch (error) {
+      console.error('Could not load language', code, error);
+      return false;
+    }
   }
 
   t(value: string | null | undefined): string {
     if (!value) return '';
     if (value.startsWith('Erreur API (')) return value.replace('Erreur API', this.t('Erreur API'));
-    if (this.language() === 'art-x-hvy') return highValyrian.get(value) ?? value;
-    const index = { fr: 0, en: 1, nl: 2, de: 3, es: 4 }[this.locale()];
-    const translated = this.dictionaries.get(value)?.[index] ?? value;
-    if (this.language() === 'tlh') return klingon.get(value) ?? translated;
-    return this.language() === 'en-x-tengwar' ? tengwar.get(value) ?? translated : translated;
+    return this.activeLanguage().dictionary.get(value) ?? value;
   }
 
   private savedLanguage(): Language {

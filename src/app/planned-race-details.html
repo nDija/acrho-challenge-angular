@@ -1,0 +1,23 @@
+<div class="practical-info-panel">
+  @if (photoSource() | async; as photo) {
+    <figure class="planned-race-photo" [hidden]="loadedPhoto() !== photo.url">
+      <img [src]="photo.url" alt="" referrerpolicy="no-referrer"
+           (load)="loadedPhoto.set(photo.url)">
+      @if (loadedPhoto() === photo.url) {
+        @defer (on immediate) { <app-race-photo-credit [photo]="photo" /> }
+      }
+    </figure>
+  }
+  @if (loading()) { <div class="inline-loading"><mat-spinner diameter="28"></mat-spinner><span>{{ "Chargement des détails…" | t }}</span></div> }
+  @if (!loading() && details(); as expandedRaceDetails) {
+    @if (expandedRaceDetails.routes?.length) {
+      <div class="practical-routes"><h3>{{ "Parcours" | t }}</h3><div class="practical-route-list">@for (route of expandedRaceDetails.routes; track route.id) { <div><strong>{{route.label}}</strong><span>{{route.distanceM ? (route.distanceM / 1000 | number:'1.1-1':i18n.locale()) + ' km' : ("Distance à confirmer" | t)}}@if (route.startTime) { {{ "· départ" | t }} {{route.startTime.slice(0, 5)}} }@if (route.challenge) { {{ "· Challenge" | t }} }</span></div> }</div></div>
+    }
+    <div class="practical-info-grid">
+      @for (section of sections(); track section.key) { <article class="practical-info-section"><h3>{{section.label | t}}</h3><p>{{section.value}}</p></article> }
+      @if (routeDescription()) { <article class="practical-info-section"><h3>{{ "Informations sur le parcours" | t }}</h3><p>{{routeDescription()}}</p>@if (openRunnerUrl()) { <a [href]="openRunnerUrl()" target="_blank" rel="noopener noreferrer">{{ "Voir le parcours sur OpenRunner ↗" | t }}</a> }</article> }
+    </div>
+    @if (expandedRaceDetails.practicalInfo?.sourceUrl) { <a class="practical-source" [href]="expandedRaceDetails.practicalInfo?.sourceUrl" target="_blank" rel="noopener noreferrer">{{ "Voir la fiche sur acrho.org ↗" | t }}</a> }
+    @if (!expandedRaceDetails.routes?.length && !sections().length && !routeDescription()) { <p class="no-practical-info">{{ "Aucune information pratique n’a été importée pour cette course." | t }}</p> }
+  }
+</div>
