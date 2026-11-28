@@ -77,7 +77,7 @@ import { RankedRunnerAvatar } from './ranked-runner-avatar';
     mat-form-field { width: min(100%, 19rem); }
     .standing-cards {
       display: grid;
-      grid-template-columns: 42px minmax(0, 1fr) clamp(3.25rem, 19cqi, 6rem);
+      grid-template-columns: 42px minmax(0, 1fr) clamp(3rem, 15cqi, 4.5rem);
       gap: 12px 8px;
       padding: 0;
       margin: 0 0 12px;
@@ -115,7 +115,7 @@ import { RankedRunnerAvatar } from './ranked-runner-avatar';
       display: grid;
       grid-column: 1 / -1;
       grid-row: 3;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(4.5rem, max-content);
       gap: 8px;
       margin: 0;
     }
@@ -151,13 +151,13 @@ import { RankedRunnerAvatar } from './ranked-runner-avatar';
     .runner-link:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
     .provisional { color: #964000; background: #fff5e9; }
     @container (width < 680px) {
-      .standing-cards { grid-template-columns: 42px minmax(0, 1fr) clamp(3.25rem, 19cqi, 6rem); column-gap: 6px; }
+      .standing-cards { grid-template-columns: 42px minmax(0, 1fr) clamp(3rem, 15cqi, 4.5rem); column-gap: 6px; }
       .runner-link strong { font-size: clamp(.8rem, 3.5cqi, 1rem); }
       .card-heading .category-pill { text-align: center; padding-inline: 3px; }
     }
     @container (min-width: 680px) {
       .standing-cards {
-        grid-template-columns: 42px minmax(0, 1fr) 6rem 5.5rem repeat(4, clamp(3rem, 6cqi, 5rem));
+        grid-template-columns: 42px minmax(0, 1fr) 4.5rem 5.5rem repeat(3, clamp(3rem, 6cqi, 5rem)) minmax(5rem, max-content);
         column-gap: clamp(8px, 1.5cqi, 20px);
       }
       .standing-card { grid-template-rows: 50px; align-items: stretch; padding-block: 8px; }
