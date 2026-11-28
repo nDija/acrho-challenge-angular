@@ -422,7 +422,7 @@ app-root {
   app-root:has(app-race-registration) .shell .content { max-width: none; padding: 0; }
 }
 
-app-root .calendar-season {
+app-root .season-field {
   display: grid;
   flex-shrink: 0;
   gap: 4px;
@@ -431,7 +431,7 @@ app-root .calendar-season {
   font-weight: 700;
 }
 
-app-root .calendar-season select {
+app-root .season-field select {
   width: 100%;
   min-height: 44px;
   padding: 8px 12px;
@@ -442,7 +442,7 @@ app-root .calendar-season select {
   font: 600 1rem 'DM Sans', sans-serif;
 }
 
-app-root .calendar-season select:focus-visible {
+app-root .season-field select:focus-visible {
   outline: 2px solid var(--acrho-accent);
   outline-offset: 2px;
 }
@@ -491,7 +491,7 @@ html:is([data-acrho-language='art-x-hvy'], [data-acrho-language='en-x-tengwar'],
     :is(.topbar, .stat-card, .race-list, .race-row, .route-card, .runner-card, .runner-history-card,
         .result-card, .favorite-card, .filter-panel, .filter-toggle, .account-panel, .language-card,
         .practical-info-section, .regulation-sheet, .report, .race, .sponsor-card, .photo-card,
-        .credit-card, .tip-card, .calendar-season select, select, input:not([type='radio']):not([type='checkbox'])) {
+        .credit-card, .tip-card, .season-field select, select, input:not([type='radio']):not([type='checkbox'])) {
       background-color: var(--acrho-surface);
       color: var(--acrho-heading);
     }

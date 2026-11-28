@@ -175,7 +175,8 @@
 .runner-history-card { padding:0; overflow:hidden; border:1px solid var(--acrho-border); border-radius:12px; background:#fff; }
 .runner-history-card h3 { margin:0 0 8px; color:var(--acrho-heading); }
 .runner-history-card p { margin:5px 0; color:var(--acrho-muted); font-size:13px; }
-.runner-history-card dl { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:16px; margin:20px 0 0; }
+.runner-history-card dl { display:flex; gap:16px; margin:20px 0 0; padding-bottom:4px; overflow-x:auto; }
+.runner-history-card dl > div { flex:1 0 auto; white-space:nowrap; }
 .runner-history-card dt { color:var(--acrho-muted); font-size:12px; }
 .runner-history-card dd { margin:6px 0 0; color:var(--acrho-heading); font-size:14px; font-weight:700; }
 

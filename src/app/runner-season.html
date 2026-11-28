@@ -1,5 +1,5 @@
 @let app = context();
-<label>
+<label class="season-field">
   {{ 'Saison' | t }}
   <select [ngModel]="app.runnerYear" [disabled]="app.runnerDetailLoading || !app.runnerSeasons.length"
           (ngModelChange)="app.runnerYear = $event; app.loadRunnerResults()">
