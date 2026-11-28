@@ -17,6 +17,8 @@ export const translations: readonly (readonly [string, string, string, string, s
   ['Enregistrement…', 'Saving…', 'Opslaan…', 'Wird gespeichert…', "Guardando…"],
   ['Résultats reçus', 'Results received', 'Resultaten ontvangen', 'Ergebnisse erhalten', "Resultados recibidos"],
   ['Thème', 'Theme', 'Thema', 'Design', "Tema"],
+  ['Sombre', 'Dark', 'Donker', 'Dunkel', 'Oscuro'],
+  ['Très sombre', 'Very dark', 'Zeer donker', 'Sehr dunkel', 'Muy oscuro'],
   ['Thème automatique', 'Automatic theme', 'Automatisch thema', 'Automatisches Design', "Tema automático"],
   ['Rose et rouge', 'Rose and red', 'Roze en rood', 'Rosé und Rot', "Rosa y rojo"],
   ['Cyan et orange (sombre)', 'Cyan and orange (dark)', 'Cyaan en oranje (donker)', 'Cyan und Orange (dunkel)', "Cian y naranja (oscuro)"],

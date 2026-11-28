@@ -35,6 +35,8 @@ async function loadDictionary(language: Language): Promise<ReadonlyMap<string, s
 const themes = [
   { value: 'auto', label: 'Thème automatique' },
   { value: 'azure-blue', label: 'Bleu azur' },
+  { value: 'dark', label: 'Sombre' },
+  { value: 'very-dark', label: 'Très sombre' },
   { value: 'rose-red', label: 'Rose et rouge' },
   { value: 'cyan-orange', label: 'Cyan et orange (sombre)' },
   { value: 'magenta-violet', label: 'Magenta et violet (sombre)' },
