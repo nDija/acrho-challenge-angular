@@ -433,6 +433,7 @@ app-root .season-field {
 
 app-root .season-field select {
   width: 100%;
+  min-width: 0;
   min-height: 44px;
   padding: 8px 12px;
   border: 1px solid var(--acrho-border);
@@ -519,6 +520,15 @@ html:is([data-acrho-language='art-x-hvy'], [data-acrho-language='en-x-tengwar'],
       border-color: #77443d;
     }
   }
+}
+
+.report-menu {
+  @include mat.menu-overrides((
+    container-color: #912018,
+    item-label-text-color: #fff,
+    item-hover-state-layer-color: rgb(255 255 255 / 12%),
+    item-focus-state-layer-color: rgb(255 255 255 / 20%),
+  ));
 }
 
 app-administration {

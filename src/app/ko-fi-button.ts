@@ -9,11 +9,12 @@ import { Component } from '@angular/core';
     </a>
   `,
   styles: `
+    :host { display: flex; }
     .support-button {
       display: inline-flex;
       align-items: center;
       gap: .5rem;
-      margin-top: .85rem;
+      min-height: 40px;
       padding: .5rem .85rem;
       border-radius: .65rem;
       background: #72a4f2;

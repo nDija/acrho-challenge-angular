@@ -1,6 +1,21 @@
+<dialog #siteInfo aria-labelledby="site-info-title" aria-describedby="site-info-description" class="site-info">
+  <h2 id="site-info-title">{{ 'À propos de ce site' | t }}</h2>
+  <p id="site-info-description">
+    {{ 'Ce site non officiel est une initiative personnelle. Il ne remplace pas le site officiel du challenge ACRHO.' | t }}
+  </p>
+  <a href="https://acrho.org/" target="_blank" rel="noopener">acrho.org</a>
+  <div class="site-info-actions">
+    <button mat-stroked-button type="button" (click)="siteInfo.close()">{{ 'Fermer' | t }}</button>
+  </div>
+</dialog>
+
 <ng-template #headerActions>
   @if (me) { <button class="avatar profile-button" type="button" (click)="openLinkedRunner()" [disabled]="openingLinkedRunner || deletingAccount || runnerLinkSaving" [title]="me.runnerId ? (&quot;Mes résultats&quot; | t) : (&quot;Lier mon compte à un coureur&quot; | t)" [attr.aria-label]="me.runnerId ? (&quot;Mes résultats&quot; | t) : (&quot;Lier mon compte à un coureur&quot; | t)">@if (me.pictureUrl && !avatarFailed) { <img [src]="me.pictureUrl" [alt]="&quot;Photo de profil&quot; | t" referrerpolicy="no-referrer" (error)="avatarFailed = true"> } @else { {{initials}} }</button> }
   <button class="auth-btn auth-icon-btn" type="button" (click)="showSettings()" [title]="&quot;Paramètres&quot; | t" [attr.aria-label]="&quot;Paramètres&quot; | t"><mat-icon>settings</mat-icon></button>
+  <button class="auth-btn auth-icon-btn" type="button" aria-haspopup="dialog" (click)="siteInfo.showModal()"
+          [title]="'À propos de ce site' | t" [attr.aria-label]="'À propos de ce site' | t">
+    <mat-icon aria-hidden="true">info</mat-icon>
+  </button>
   @if (me) { <button class="auth-btn auth-icon-btn" type="button" (click)="logout()" [disabled]="deletingAccount || runnerLinkSaving" [title]="&quot;Se déconnecter&quot; | t" [attr.aria-label]="&quot;Se déconnecter&quot; | t"><mat-icon>logout</mat-icon></button> } @else if (authChecked) { <button class="auth-btn auth-icon-btn" type="button" (click)="login()" [title]="&quot;Se connecter avec Google&quot; | t" [attr.aria-label]="&quot;Se connecter avec Google&quot; | t"><mat-icon>login</mat-icon></button> }
 </ng-template>
 
@@ -53,7 +68,25 @@
     <section class="content">
       @if (activeView === 'calendar' && !selectedRace) {
         <div class="page-heading"><div><div class="eyebrow">{{ "VOTRE CALENDRIER DE RUNNING" | t }}</div><h1>{{ "La saison," | t }} <em>{{ "en mouvement." | t }}</em></h1><p>{{ "Retrouvez les courses et résultats du challenge ACRHO." | t }}</p>
-          <app-ko-fi-button />
+          <div class="calendar-actions">
+            <app-ko-fi-button />
+            <button class="bug-report-button" type="button" [matMenuTriggerFor]="reportMenu">
+              <mat-icon aria-hidden="true">bug_report</mat-icon>
+              {{ 'Signaler un problème' | t }}
+              <mat-icon aria-hidden="true">expand_more</mat-icon>
+            </button>
+            <mat-menu #reportMenu="matMenu" class="report-menu">
+              <a mat-menu-item href="https://github.com/nDija/acrho-bugs/issues/new?template=bug_report.yml" target="_blank" rel="noopener">
+                {{ 'Signaler un bug' | t }}
+              </a>
+              <a mat-menu-item href="https://github.com/nDija/acrho-bugs/issues/new?template=classement_points.yml" target="_blank" rel="noopener">
+                {{ 'Classement et points' | t }}
+              </a>
+              <a mat-menu-item href="https://github.com/nDija/acrho-bugs/issues/new?template=identite_coureur.yml" target="_blank" rel="noopener">
+                {{ 'Identité du coureur' | t }}
+              </a>
+            </mat-menu>
+          </div>
         </div>
           <label class="season-select season-field">
             <span>{{ "Saison" | t }}</span>

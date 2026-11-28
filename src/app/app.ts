@@ -31,12 +31,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AcrhoApi, Category, Me, Page, Race, RaceDetail, RacePhoto, Result, RouteInfo, Runner, RunnerResult, Season } from './acrho-api.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import type { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root', standalone: true,
-  imports: [PlannedRaceDetails, Administration, Paginator, RacePhotoCredit, RunnerSeason, RunnerSearch, ResultFilters, RaceBoosts, AccountSettings, Regulation, Photos, Sponsors, ProjectCredits, KoFiButton, RaceTips, RaceRegistration, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, RunnerAchievements, Standings, TranslatePipe, ClubNamePipe, CommonModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [PlannedRaceDetails, Administration, Paginator, RacePhotoCredit, RunnerSeason, RunnerSearch, ResultFilters, RaceBoosts, AccountSettings, Regulation, Photos, Sponsors, ProjectCredits, KoFiButton, RaceTips, RaceRegistration, RaceWeather, RankedRunnerAvatar, RunnerStandingCard, RunnerVdotChart, RunnerAchievements, Standings, TranslatePipe, ClubNamePipe, CommonModule, MatButtonModule, MatIconModule, MatMenuModule, MatProgressSpinnerModule],
   templateUrl: './app.html', styleUrl: './app.scss'
 })
 export class App implements OnInit {

@@ -235,3 +235,43 @@
 .race-hero--photo .race-hero-copy { grid-area:1 / 1; }
 
 .race-hero-credit-slot { grid-area: 1 / 2; align-self: start; }
+
+.site-info {
+  width: min(32rem, calc(100% - 2rem));
+  padding: 1.5rem;
+  border: 1px solid var(--acrho-border);
+  border-radius: 14px;
+  background: var(--acrho-surface, #fff);
+  color: var(--acrho-text);
+}
+
+.site-info::backdrop { background: rgb(0 0 0 / 55%); }
+.site-info h2 { margin: 0; color: var(--acrho-heading); }
+.site-info p { line-height: 1.6; }
+.site-info a { color: var(--acrho-accent-dark); }
+.site-info-actions { display: flex; justify-content: flex-end; margin-top: 1rem; }
+
+.calendar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  margin-top: .85rem;
+}
+
+.bug-report-button {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .5rem .85rem;
+  border-radius: .65rem;
+  background: #b42318;
+  color: #fff;
+  border: 0;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.bug-report-button mat-icon { color: inherit; }
+.bug-report-button:hover { background: #912018; text-decoration: underline; }
+.bug-report-button:focus-visible { outline: 2px solid var(--acrho-accent-dark); outline-offset: 2px; }
